@@ -14,7 +14,7 @@ namespace ProjectManagementSystem.Persistance
 
             services.AddDbContext<AppDbContext>(options => options.UseMySQL(mySql));
 
-            services.AddIdentityCore<AppUser>().AddRoles<AppRole>().AddEntityFrameworkStores<AppDbContext>();
+            services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<AppDbContext>();
         }
     }
 }
