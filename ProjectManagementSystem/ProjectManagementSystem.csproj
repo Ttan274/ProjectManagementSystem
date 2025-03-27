@@ -6,4 +6,25 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.14">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.14">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ProjectManagementSystem.Application.Abstractions\ProjectManagementSystem.Application.Abstractions.csproj" />
+    <ProjectReference Include="..\ProjectManagementSystem.Application\ProjectManagementSystem.Application.csproj" />
+    <ProjectReference Include="..\ProjectManagementSystem.Common\ProjectManagementSystem.Common.csproj" />
+    <ProjectReference Include="..\ProjectManagementSystem.Infrastructure\ProjectManagementSystem.Infrastructure.csproj" />
+    <ProjectReference Include="..\ProjectManagementSystem.Persistance\ProjectManagementSystem.Persistance.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,7 +1,9 @@
+using ProjectManagementSystem.Persistance;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddRequiredServices(builder.Configuration);
 
 var app = builder.Build();
 
