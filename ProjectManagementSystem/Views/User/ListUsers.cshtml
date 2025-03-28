@@ -1,0 +1,92 @@
+﻿@model IEnumerable<UserDto>
+@{
+    Layout = null;
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+
+<table border="solid 2px black">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Email</th>
+            <th>UserName</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Surname</td>
+                <td>@item.Email</td>
+                <td>@item.UserName</td>
+                <td>
+                    <div class="post-actions">
+                        <div class="delete-action">
+                            <form asp-action="DeleteUser" asp-controller="User" method="post">
+                                <input type="hidden" name="Id" value="@item.Id">
+                                <button type="submit" class="delete-button"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </div>
+                    </div>
+
+                </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="3">Return Admin Page</td>
+            <td colspan="2"><a asp-action="AdminPage" asp-controller="User">Return</a></td>
+        </tr>
+    </tbody>
+</table>
+
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background-color: #17a2b8;
+        color: black;
+    }
+
+    table {
+        background: #fff;
+        width: 60%;
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 30px;
+        text-align: center;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 1);
+    }
+
+    a {
+        color: black;
+    }
+
+        a:hover {
+            color: aqua;
+        }
+
+    .post-actions {
+        top: 0;
+        right: 0;
+        font-size: 1.5em;
+    }
+
+
+
+    .delete-action button {
+        background-color: transparent;
+        border: none;
+    }
+</style>

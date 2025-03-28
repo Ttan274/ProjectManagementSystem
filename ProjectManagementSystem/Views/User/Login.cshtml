@@ -1,14 +1,35 @@
-﻿@model ProjectManagementSystem.ViewModel.LoginViewModel
+﻿@model UserDto
 
-<form asp-action="Login">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <input type="text" placeholder="Email Address" asp-for="Email">
-    <br>
-    <br>
-    <br>
-    <input type="text" placeholder="Password" asp-for="Password">
-    <br>
-    <br>
-    <br>
-    <input type="submit">
-</form>
+@{
+    Layout = null;
+}
+
+<link href="~/css/Login.css" rel="stylesheet">
+
+<div class="container">
+    <header>Login Form</header>
+    <div class="form-outer">
+        <form method="post">
+            <div class="page slide-page">
+                <div class="title">
+                    Login Info:
+                </div>
+                <div class="field">
+                    <div class="label">
+                        Email
+                    </div>
+                    <input type="text" asp-for="Email" required autocomplete="off">
+                </div>
+                <div class="field">
+                    <div class="label">
+                        Password
+                    </div>
+                    <input type="password" asp-for="Password" required autocomplete="off">
+                </div>
+                <div class="field">
+                    <button class="submit" type="submit">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,84 +1,91 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProjectManagementSystem.Domain.Entities;
-using ProjectManagementSystem.Persistance.DbContext;
-using ProjectManagementSystem.ViewModel;
+using ProjectManagementSystem.Application.Abstractions.User;
+using ProjectManagementSystem.Application.Abstractions.User.Dtos;
 
 namespace ProjectManagementSystem.Controllers
 {
     public class UserController : Controller
     {
-        private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;
-        private readonly AppDbContext _context;
+        private readonly IUserService _userService;
+        private readonly ILoginService _loginService;
 
-        public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, AppDbContext context)
+        public UserController(IUserService userService, ILoginService loginService)
         {
-            _userManager = userManager;
-            _context = context;
-            _signInManager = signInManager;
+            _userService = userService;
+            _loginService = loginService;
         }
 
-        [HttpGet]
-        public IActionResult CreateUser()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateUser(CreateUserViewModel userVM)
-        {
-            var user = await _userManager.FindByEmailAsync(userVM.Email);
-            if(user != null)
-            {
-                TempData["Error"] = "Email has been taken";
-                return View(userVM);
-            }
-
-            if(ModelState.IsValid)
-            {
-                AppUser appUser = new AppUser
-                {
-                    UserName = userVM.Name + userVM.Surname,
-                    Email = userVM.Email,
-                    Gender = Common.Enums.Gender.Male,
-                };
-
-                IdentityResult result = await _userManager.CreateAsync(appUser, userVM.Password);
-
-                if (result.Succeeded)
-                {
-                    _context.Update(appUser);
-                    _context.SaveChanges();
-                    return RedirectToAction("Login", "User");
-                }
-                  
-            }
-
-            return View();
-        }
-
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
 
+        [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel login)
+        public async Task<IActionResult> Login(UserDto userDto)
         {
-            if (!ModelState.IsValid) return View(login);
+            if(!ModelState.IsValid) return View(userDto);
 
-            var user = await _userManager.FindByEmailAsync(login.Email);
+            var result = await _loginService.Login(userDto);
+            var isAdmin = await _loginService.CheckRole(userDto.Email, "Admin");
 
-            if(user != null)
+            if(result)
             {
-                var result = await _signInManager.PasswordSignInAsync(user, login.Password, false, false);
-                if(result.Succeeded)
+                if (isAdmin)
+                    return RedirectToAction("AdminPage", "User");
+                else
                     return RedirectToAction("Index", "Home");
             }
 
             return View();
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AdminPage()
+        {
+            var admin = await _userService.GetAdmin(User);
+            return View(admin);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ListUsers()
+        {
+            var users = await _userService.GetAllUsers();
+            users.Sort((x, y) => DateTime.Compare(y.CreatedDate, x.CreatedDate));
+            return View(users);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult CreateUser()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreateUser(UserDto userDto)
+        {
+            if(ModelState.IsValid)
+            {
+                var response = await _userService.AddUser(userDto);
+
+                if (response)
+                    return RedirectToAction("ListUsers", "User");
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(Guid id)
+        {
+            await _userService.DeleteUser(id);
+            return RedirectToAction("ListUsers", "User");
         }
     }
 }

@@ -1,0 +1,74 @@
+﻿@model UserDto
+
+@{
+    Layout = null;
+}
+
+<div class="container">
+    <div class="profile">
+        <p>Name: @Model.Name</p>
+        <p>Surname: @Model.Surname</p>
+        <p>Username: @Model.UserName</p>
+    </div>
+    <div class="actions">
+        <a asp-action="ListUsers" asp-controller="User">List Users</a>
+        <a asp-action="CreateUser" asp-controller="User">Create Users</a>
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #17a2b8;
+    }
+
+    .container {
+        display: flex;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 1);
+        padding: 20px;
+        width: 400px;
+    }
+
+    .profile {
+        flex: 1;
+        text-align: center;
+    }
+
+    .profile p {
+        margin: 5px 0;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .actions {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+    }
+
+       
+    .actions a {
+        padding: 10px 15px;
+        margin: 5px 0;
+        border: none;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: white;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .actions a:hover {
+        background-color: #0056b3;
+    }
+</style>

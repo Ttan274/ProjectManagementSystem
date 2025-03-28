@@ -11,19 +11,28 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{74ADDC50-22C5-4AD4-B6CB-88D105020DB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectManagementSystem", "ProjectManagementSystem\ProjectManagementSystem.csproj", "{98F67014-E73D-43A1-B53F-6C284FCF3FA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectManagementSystem", "ProjectManagementSystem\ProjectManagementSystem.csproj", "{98F67014-E73D-43A1-B53F-6C284FCF3FA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectManagementSystem.Common", "ProjectManagementSystem.Common\ProjectManagementSystem.Common.csproj", "{C1D23450-CDF5-4FA6-B9F6-FC64E9FCE660}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectManagementSystem.Common", "ProjectManagementSystem.Common\ProjectManagementSystem.Common.csproj", "{C1D23450-CDF5-4FA6-B9F6-FC64E9FCE660}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectManagementSystem.Infrastructure", "ProjectManagementSystem.Infrastructure\ProjectManagementSystem.Infrastructure.csproj", "{6D5C8985-55A3-45E7-AE47-056A4EDB36A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectManagementSystem.Infrastructure", "ProjectManagementSystem.Infrastructure\ProjectManagementSystem.Infrastructure.csproj", "{6D5C8985-55A3-45E7-AE47-056A4EDB36A8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6059424F-757D-4CF2-84F9-4B952218434D} = {6059424F-757D-4CF2-84F9-4B952218434D}
+		{BF203DF2-185F-4D55-8A4B-030A062C9069} = {BF203DF2-185F-4D55-8A4B-030A062C9069}
+		{C1D23450-CDF5-4FA6-B9F6-FC64E9FCE660} = {C1D23450-CDF5-4FA6-B9F6-FC64E9FCE660}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectManagementSystem.Persistance", "ProjectManagementSystem.Persistance\ProjectManagementSystem.Persistance.csproj", "{85B57472-26EE-4C7D-91A1-907BE4F953CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectManagementSystem.Persistance", "ProjectManagementSystem.Persistance\ProjectManagementSystem.Persistance.csproj", "{85B57472-26EE-4C7D-91A1-907BE4F953CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectManagementSystem.Domain", "ProjectManagementSystem.Domain\ProjectManagementSystem.Domain.csproj", "{0D302A3A-0407-4166-BC85-9D1D4F53206B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectManagementSystem.Domain", "ProjectManagementSystem.Domain\ProjectManagementSystem.Domain.csproj", "{0D302A3A-0407-4166-BC85-9D1D4F53206B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectManagementSystem.Application", "ProjectManagementSystem.Application\ProjectManagementSystem.Application.csproj", "{6059424F-757D-4CF2-84F9-4B952218434D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectManagementSystem.Application", "ProjectManagementSystem.Application\ProjectManagementSystem.Application.csproj", "{6059424F-757D-4CF2-84F9-4B952218434D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectManagementSystem.Application.Abstractions", "ProjectManagementSystem.Application.Abstractions\ProjectManagementSystem.Application.Abstractions.csproj", "{BF203DF2-185F-4D55-8A4B-030A062C9069}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectManagementSystem.Application.Abstractions", "ProjectManagementSystem.Application.Abstractions\ProjectManagementSystem.Application.Abstractions.csproj", "{BF203DF2-185F-4D55-8A4B-030A062C9069}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0D302A3A-0407-4166-BC85-9D1D4F53206B} = {0D302A3A-0407-4166-BC85-9D1D4F53206B}
+		{C1D23450-CDF5-4FA6-B9F6-FC64E9FCE660} = {C1D23450-CDF5-4FA6-B9F6-FC64E9FCE660}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
