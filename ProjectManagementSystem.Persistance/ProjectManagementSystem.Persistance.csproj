@@ -28,4 +28,8 @@
     <ProjectReference Include="..\ProjectManagementSystem.Infrastructure\ProjectManagementSystem.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repositories\Team\" />
+  </ItemGroup>
+
 </Project>

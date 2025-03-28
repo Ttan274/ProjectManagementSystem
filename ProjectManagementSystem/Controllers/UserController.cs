@@ -16,6 +16,7 @@ namespace ProjectManagementSystem.Controllers
             _loginService = loginService;
         }
 
+        #region AnonymousUser
         [AllowAnonymous]
         [HttpGet]
         public IActionResult Login()
@@ -42,7 +43,9 @@ namespace ProjectManagementSystem.Controllers
 
             return View();
         }
+        #endregion
 
+        #region AdminRegion
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AdminPage()
         {
@@ -87,5 +90,6 @@ namespace ProjectManagementSystem.Controllers
             await _userService.DeleteUser(id);
             return RedirectToAction("ListUsers", "User");
         }
+        #endregion
     }
 }
