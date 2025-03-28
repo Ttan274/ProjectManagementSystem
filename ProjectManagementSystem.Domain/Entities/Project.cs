@@ -1,4 +1,5 @@
-﻿using ProjectManagementSystem.Domain.Common;
+﻿using ProjectManagementSystem.Common.Enums;
+using ProjectManagementSystem.Domain.Common;
 
 namespace ProjectManagementSystem.Domain.Entities
 {
@@ -6,9 +7,10 @@ namespace ProjectManagementSystem.Domain.Entities
     {
         public string? ProjectName { get; set; }
         public string? ProjectDesc { get; set; }
+        public string? ProjectNumber { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? FinishDate { get; set; }
-        public bool? Completed { get; set; }
+        public ProjecStatus ProjectStatus { get; set; }
 
         //Connections
         public Guid TeamId { get; set; }

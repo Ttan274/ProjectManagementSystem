@@ -12,6 +12,8 @@ namespace ProjectManagementSystem.Persistance.DbContext
         public DbSet<Project> Projects { get; set; }
         public DbSet<Sprint> Sprints { get; set; }
         public DbSet<Domain.Entities.Task> Tasks { get; set; }
+        public DbSet<Documentation> Documentations { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

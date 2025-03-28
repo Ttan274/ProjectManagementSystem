@@ -39,10 +39,9 @@ namespace ProjectManagementSystem.Controllers
             {
                 AppUser appUser = new AppUser
                 {
-                    UserName = "TestObject",
+                    UserName = userVM.Name + userVM.Surname,
                     Email = userVM.Email,
                     Gender = Common.Enums.Gender.Male,
-                    TeamId = Guid.Parse("BB212DDB-0C15-4D63-8080-92BE98B309FD")
                 };
 
                 IdentityResult result = await _userManager.CreateAsync(appUser, userVM.Password);

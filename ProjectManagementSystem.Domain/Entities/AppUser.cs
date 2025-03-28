@@ -12,7 +12,7 @@ namespace ProjectManagementSystem.Domain.Entities
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
         //Connections
-        public Guid TeamId { get; set; }
+        public Guid? TeamId { get; set; }
         public Team? Team { get; set; }
     }
 }
