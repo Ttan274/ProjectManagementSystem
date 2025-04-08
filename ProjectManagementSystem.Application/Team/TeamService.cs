@@ -19,6 +19,42 @@ namespace ProjectManagementSystem.Application.Team
             _mapper = mapper;
         }
 
+        public async Task<bool> CreateTeam(TeamDto team)
+        {
+            if (team is null)
+                return false;
+
+            try
+            {
+                var mappedResult = _mapper.Map<TeamDto, Domain.Entities.Team>(team);
+
+                var response = await _teamWriteRepository.AddAsync(mappedResult);
+
+                return response;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteTeam(Guid id)
+        {
+            if (id == Guid.Empty)
+                return false;
+
+            try
+            {
+                var response = await _teamWriteRepository.RemoveAsync(id);
+
+                return response;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public async Task<List<TeamDto>> GetAllTeams()
         {
             try
