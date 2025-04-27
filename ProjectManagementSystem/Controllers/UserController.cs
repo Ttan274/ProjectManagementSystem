@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using ProjectManagementSystem.Application.Abstractions.Team;
 using ProjectManagementSystem.Application.Abstractions.User;
 using ProjectManagementSystem.Application.Abstractions.User.Dtos;
+using ProjectManagementSystem.ViewModel;
 
 namespace ProjectManagementSystem.Controllers
 {
@@ -9,11 +12,13 @@ namespace ProjectManagementSystem.Controllers
     {
         private readonly IUserService _userService;
         private readonly ILoginService _loginService;
+        private readonly ITeamService _teamService;
 
-        public UserController(IUserService userService, ILoginService loginService)
+        public UserController(IUserService userService, ILoginService loginService, ITeamService teamService)
         {
             _userService = userService;
             _loginService = loginService;
+            _teamService = teamService;
         }
 
         #region AnonymousUser
@@ -38,7 +43,7 @@ namespace ProjectManagementSystem.Controllers
                 if (isAdmin)
                     return RedirectToAction("AdminPage", "User");
                 else
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("DeptMain", "Dept");
             }
 
             return View();
@@ -49,46 +54,70 @@ namespace ProjectManagementSystem.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AdminPage()
         {
-            var admin = await _userService.GetAdmin(User);
-            return View(admin);
-        }
-
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> ListUsers()
-        {
             var users = await _userService.GetAllUsers();
             users.Sort((x, y) => DateTime.Compare(y.CreatedDate, x.CreatedDate));
-            return View(users);
-        }
 
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public IActionResult CreateUser()
-        {
-            return View();
+            var teams = await _teamService.GetAllTeams();
+            teams.Sort((x, y) => DateTime.Compare(y.CreatedDate, x.CreatedDate));
+
+            var depts = teams.Select(x => new SelectListItem() { Text = x.TeamName, Value = x.Id.ToString() });
+
+            AdminViewModel adminViewModel = new AdminViewModel();
+            adminViewModel.Users = users;
+            adminViewModel.Teams = teams;
+            adminViewModel.UserToCreate = new()
+            {
+                TeamList = depts.ToList(),
+            };
+            
+
+            return View(adminViewModel);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreateUser(UserDto userDto)
+        public async Task<IActionResult> CreateUser(AdminViewModel viewModel)
         {
             if(ModelState.IsValid)
             {
-                var response = await _userService.AddUser(userDto);
+                var response = await _userService.AddUser(viewModel.UserToCreate);
 
                 if (response)
-                    return RedirectToAction("ListUsers", "User");
+                    return RedirectToAction("AdminPage", "User");
             }
 
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
             await _userService.DeleteUser(id);
-            return RedirectToAction("ListUsers", "User");
+            return RedirectToAction("AdminPage", "User");
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreateDept(AdminViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _teamService.CreateTeam(viewModel.TeamToCreate);
+
+                if (response)
+                    return RedirectToAction("AdminPage", "User");
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteDept(Guid id)
+        {
+            await _teamService.DeleteTeam(id);
+            return RedirectToAction("AdminPage", "User");
         }
         #endregion
     }

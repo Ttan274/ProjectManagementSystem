@@ -1,4 +1,6 @@
-﻿using ProjectManagementSystem.Application.Abstractions.Base;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using ProjectManagementSystem.Application.Abstractions.Base;
+
 
 namespace ProjectManagementSystem.Application.Abstractions.User.Dtos
 {
@@ -9,5 +11,7 @@ namespace ProjectManagementSystem.Application.Abstractions.User.Dtos
         public string? UserName { get; set; }
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
+        public string? TeamId { get; set; }
+        public List<SelectListItem>? TeamList { get; set; }
     }
 }

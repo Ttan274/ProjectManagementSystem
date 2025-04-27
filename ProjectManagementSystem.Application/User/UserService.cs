@@ -84,7 +84,7 @@ namespace ProjectManagementSystem.Application.User
             }
         }
 
-        public async Task<UserDto> GetAdmin(ClaimsPrincipal principal)
+        public async Task<string> GetTeamId(ClaimsPrincipal principal)
         {
             try
             {
@@ -95,11 +95,11 @@ namespace ProjectManagementSystem.Application.User
 
                 var mappedResult = _mapper.Map<AppUser, UserDto>(user);
 
-                return mappedResult;
+                return mappedResult.TeamId;
             }
             catch (Exception)
             {
-                return new UserDto();
+                return "";
             }
         }
     }
