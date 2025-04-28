@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using ProjectManagementSystem.Application.Abstractions.Project;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Team;
 using ProjectManagementSystem.Application.Abstractions.Team;
 using ProjectManagementSystem.Application.Abstractions.Team.Dto;
+using ProjectManagementSystem.Application.Abstractions.User;
 
 namespace ProjectManagementSystem.Application.Team
 {
@@ -10,12 +12,17 @@ namespace ProjectManagementSystem.Application.Team
     {
         private readonly ITeamReadRepository _teamReadRepository;
         private readonly ITeamWriteRepository _teamWriteRepository;
+        private readonly IProjectService _projectService;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
-        public TeamService(ITeamReadRepository teamReadRepository, ITeamWriteRepository teamWriteRepository, IMapper mapper)
+        public TeamService(ITeamReadRepository teamReadRepository, ITeamWriteRepository teamWriteRepository, 
+            IProjectService projectService, IUserService userService, IMapper mapper)
         {
             _teamReadRepository = teamReadRepository;
             _teamWriteRepository = teamWriteRepository;
+            _projectService = projectService;
+            _userService = userService;
             _mapper = mapper;
         }
 
@@ -59,7 +66,7 @@ namespace ProjectManagementSystem.Application.Team
         {
             try
             {
-                var teams = await _teamReadRepository.GetQueryable().Where(x => x.Status).ToListAsync();
+                var teams = await _teamReadRepository.GetQueryable().Include(x => x.Projects).Where(x => x.Status).ToListAsync();
 
                 if (teams is null)
                     return [];
@@ -84,6 +91,10 @@ namespace ProjectManagementSystem.Application.Team
                 var team = await _teamReadRepository.GetByIdAsync(id);
 
                 var mappedResult = _mapper.Map<Domain.Entities.Team, TeamDto>(team);
+
+                mappedResult.Projects = await _projectService.GetAllProjectsByTeamId(id);
+
+                mappedResult.Users = await _userService.GetAllUsersByTeamId(id);
 
                 return mappedResult;
             }

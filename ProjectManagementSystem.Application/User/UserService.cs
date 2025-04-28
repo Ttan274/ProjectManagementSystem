@@ -84,6 +84,25 @@ namespace ProjectManagementSystem.Application.User
             }
         }
 
+        public async Task<List<UserDto>> GetAllUsersByTeamId(Guid id)
+        {
+            try
+            {
+                var users = await _userManager.Users.Where(x => x.TeamId == id).ToListAsync();
+
+                if (users is null)
+                    return [];
+
+                var mappedResult = _mapper.Map<List<AppUser>, List<UserDto>>(users);
+
+                return mappedResult;
+            }
+            catch (Exception)
+            {
+                return [];
+            }
+        }
+
         public async Task<string> GetTeamId(ClaimsPrincipal principal)
         {
             try

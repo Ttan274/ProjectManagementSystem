@@ -203,23 +203,23 @@
     <div class="overview">
         <div class="card">
             <h3>Projects</h3>
-            <p><strong>18</strong></p>
-            <small>4 Completed</small>
+            <p><strong>@Model.Projects.Count</strong></p>
+            <small>0 Completed</small>
         </div>
         <div class="card">
             <h3>Sprints</h3>
-            <p><strong>60</strong></p>
-            <small>22 Completed</small>
+            <p><strong>0</strong></p>
+            <small>0 Completed</small>
         </div>
         <div class="card">
             <h3>Tasks</h3>
-            <p><strong>200</strong></p>
-            <small>70 Completed</small>
+            <p><strong>0</strong></p>
+            <small>0 Completed</small>
         </div>
         <div class="card">
             <h3>Employees</h3>
-            <p><strong>30</strong></p>
-            <small>10% Available</small>
+            <p><strong>@Model.Users.Count</strong></p>
+            <small>100% Available</small>
         </div>
     </div>
     <div class="projects-section">
@@ -236,67 +236,41 @@
                 </tr>
             </thead>
             <tbody>
-              <!--@foreach (var item in collection)-->
+                @foreach (var item in Model.Projects)
+                {
+                    <tr>
+                        <td>@item.ProjectName</td>
+                        <td>@item.ProjectDesc</td>
+                        <td>@item.EstimatedHours</td>
+                        <td>
+                            <span class="badge high">@item.Priority.ToString()</span>
+                        </td>
+                        <td><button class="details-button">Details</button></td>
+                        <td><div class="progress-bar"><div class="progress-fill" style="width: 0%"></div></div></td>
 
-                <tr>
-                    <td>SSS</td>
-                    <td>Selpak Sikme Sistemi</td>
-                    <td>200</td>
-                    <td><span class="badge high">High</span></td>
-                    <td><button class="details-button">Details</button></td>
-                    <td><div class="progress-bar"><div class="progress-fill" style="width: 15%"></div></div></td>
-                </tr>
-                <tr>
-                    <td>MKO</td>
-                    <td>MKO Twitter Yorum OKuma</td>
-                    <td>30</td>
-                    <td><span class="badge medium">Medium</span></td>
-                    <td><button class="details-button">Details</button></td>
-                    <td><div class="progress-bar"><div class="progress-fill" style="width: 35%"></div></div></td>
-                </tr>
-                <tr>
-                    <td>ALİKOÇ</td>
-                    <td>Eşekbahçemi şampiyon yapma projesi</td>
-                    <td>0.5</td>
-                    <td><span class="badge low">Low</span></td>
-                    <td><button class="details-button">Details</button></td>
-                    <td><div class="progress-bar"><div class="progress-fill" style="width: 75%"></div></div></td>
-                </tr>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
-    <div class="projects-section">
-        <h3>Finished Projects</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Project Name</th>
-                    <th>Project Description</th>
-                    <th>Project Details</th>
-                    <th>Progress</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>FÇM</td>
-                    <td>Fizik Çalışma Masasının kurulması</td>
-                    <td><button class="details-button">Details</button></td>
-                    <td><div class="progress-bar"><div class="progress-fill" style="width: 100%"></div></div></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
+    
     <!--Project Modal-->
     <div id="projectModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="document.getElementById('projectModal').style.display='none'">&times;</span>
             <h2>Create New Project</h2>
-            <input type="text" placeholder="Project Name">
-            <input type="text" placeholder="Project Description">
-            <input type="number" placeholder="Estimated Hours">
-            <input type="text" placeholder="Priority (High, Medium, Low)">
-            <button>Create</button>
+            <form method="post" asp-action="CreateProject" asp-controller="Dept">
+                <input type="hidden" asp-for="ProjectDto.TeamId" value="@Model.Id">
+                <input type="text" asp-for="ProjectDto.ProjectName" placeholder="Project Name" autocomplete="off" required>
+                <input type="text" asp-for="ProjectDto.ProjectDesc" placeholder="Project Description" autocomplete="off" required>
+                <input type="text" asp-for="ProjectDto.EstimatedHours" placeholder="Estimated Hours" autocomplete="off" required>
+                <select asp-for="ProjectDto.Priority">
+                    <option value="@Priority.Low">Low</option>
+                    <option value="@Priority.Medium">Medium</option>
+                    <option value="@Priority.High">High</option>
+                </select>
+                <button type="submit">Create</button>
+            </form>
         </div>
     </div>
 </main>

@@ -6,6 +6,6 @@ namespace ProjectManagementSystem.Application.Abstractions.Project
     {
         Task<bool> CreateProject(ProjectDto project);
         Task<ProjectDto> GetProjectById(Guid id);
-        Task<List<ProjectDto>> GetAllProjects();
+        Task<List<ProjectDto>> GetAllProjectsByTeamId(Guid id);
     }
 }

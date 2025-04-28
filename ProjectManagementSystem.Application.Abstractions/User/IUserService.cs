@@ -8,6 +8,7 @@ namespace ProjectManagementSystem.Application.Abstractions.User
         Task<bool> AddUser(UserDto userDto);
         Task<bool> DeleteUser(Guid id);
         Task<List<UserDto>> GetAllUsers();
+        Task<List<UserDto>> GetAllUsersByTeamId(Guid id);
         Task<string> GetTeamId(ClaimsPrincipal principal);
     }
 }

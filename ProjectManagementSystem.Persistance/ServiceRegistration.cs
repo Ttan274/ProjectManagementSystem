@@ -10,6 +10,9 @@ using ProjectManagementSystem.Application.Team;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Team;
 using ProjectManagementSystem.Persistance.Repositories.Team;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Project;
+using ProjectManagementSystem.Persistance.Repositories.Project;
+using ProjectManagementSystem.Application.Abstractions.Project;
+using ProjectManagementSystem.Application.Project;
 
 namespace ProjectManagementSystem.Persistance
 {
@@ -40,8 +43,9 @@ namespace ProjectManagementSystem.Persistance
             services.AddScoped<ITeamService, TeamService>();
 
             //Project
-            //services.AddScoped<IProjectReadRepository, ProjectReadRepository>()
-            //services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<IProjectReadRepository, ProjectReadRepository>();
+            services.AddScoped<IProjectWriteRepository, ProjectWriteRepository>();
+            services.AddScoped<IProjectService, ProjectService>();
         }
     }
 }

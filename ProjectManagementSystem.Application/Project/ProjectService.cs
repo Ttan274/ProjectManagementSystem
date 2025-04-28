@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Application.Abstractions.Project;
 using ProjectManagementSystem.Application.Abstractions.Project.Dto;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Project;
+using ProjectManagementSystem.Application.Abstractions.Repositories.Team;
 
 namespace ProjectManagementSystem.Application.Project
 {
@@ -10,12 +11,14 @@ namespace ProjectManagementSystem.Application.Project
     {
         private readonly IProjectReadRepository _projectReadRepository;
         private readonly IProjectWriteRepository _projectWriteRepository;
+        private readonly ITeamReadRepository _teamReadRepository;
         private readonly IMapper _mapper;
 
-        public ProjectService(IProjectReadRepository projectReadRepository, IProjectWriteRepository projectWriteRepository, IMapper mapper)
+        public ProjectService(IProjectReadRepository projectReadRepository, IProjectWriteRepository projectWriteRepository, ITeamReadRepository teamReadRepository, IMapper mapper)
         {
             _projectReadRepository = projectReadRepository;
             _projectWriteRepository = projectWriteRepository;
+            _teamReadRepository = teamReadRepository;
             _mapper = mapper;
         }
 
@@ -26,9 +29,9 @@ namespace ProjectManagementSystem.Application.Project
 
             try
             {
-                //Team assignment
-
+                var dept = await _teamReadRepository.GetFirstOrDefaultAsync(x => x.Id == project.TeamId);
                 var mappedResult = _mapper.Map<ProjectDto, Domain.Entities.Project>(project);
+                mappedResult.Team = dept;
 
                 var response = await _projectWriteRepository.AddAsync(mappedResult);
 
@@ -40,11 +43,11 @@ namespace ProjectManagementSystem.Application.Project
             }
         }
 
-        public async Task<List<ProjectDto>> GetAllProjects()
+        public async Task<List<ProjectDto>> GetAllProjectsByTeamId(Guid id)
         {
             try
             {
-                var projects = await _projectReadRepository.GetQueryable().Where(x => x.Status).ToListAsync();
+                var projects = await _projectReadRepository.GetQueryable().Where(x => x.Status).Where(y => y.TeamId == id).ToListAsync();
 
                 if (projects is null)
                     return [];
