@@ -25,7 +25,14 @@ namespace ProjectManagementSystem.Controllers
         {
             var teamId = await _userService.GetTeamId(User);
             var team = await _teamService.GetTeamById(Guid.Parse(teamId));
+            return View(team);
+        }
 
+        [Authorize(Roles = "Employee")]
+        public async Task<IActionResult> DeptCrew()
+        {
+            var teamId = await _userService.GetTeamId(User);
+            var team = await _teamService.GetTeamById(Guid.Parse(teamId));
             return View(team);
         }
 
