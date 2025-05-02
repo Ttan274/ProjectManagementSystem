@@ -1,28 +1,14 @@
 ﻿@model AdminViewModel
 @{
-    Layout = null;
+    Layout = "_Layout";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-    :root {
-      --card-bg: #ffffff;
-      --border-color: #e0e0e0;
-      --primary-color: #4a90e2;
-      --btn-bg: #4a90e2;
-      --btn-text: #fff;
-      --btn-hover: #3a78c2;
-    }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       font-family: "Segoe UI", sans-serif;
-    }
-
-    body {
-      background-color:bisque;
-      padding: 30px;
     }
 
     .container {
@@ -59,13 +45,6 @@
 
     .buttons button:hover {
       background-color: var(--btn-hover);
-    }
-
-    .profile-circle {
-      width: 42px;
-      height: 42px;
-      background-color: #ddd;
-      border-radius: 50%;
     }
 
     .tables {
@@ -114,12 +93,6 @@
       color: #555;
     }
 
-    img.profile-pic {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
 
     button.action {
       background-color: #f0f0f0;
@@ -195,7 +168,6 @@
             <button id="openUserModalBtn">Create User</button>
             <button id="openTeamModalBtn">Create Team</button>
         </div>
-        <div class="profile-circle"></div>
     </div>
 
     <div class="tables">

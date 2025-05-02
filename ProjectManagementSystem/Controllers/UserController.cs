@@ -51,7 +51,6 @@ namespace ProjectManagementSystem.Controllers
         #endregion
 
         #region AdminRegion
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AdminPage()
         {
             var users = await _userService.GetAllUsers();
@@ -75,7 +74,6 @@ namespace ProjectManagementSystem.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateUser(AdminViewModel viewModel)
         {
             if(ModelState.IsValid)
@@ -98,7 +96,6 @@ namespace ProjectManagementSystem.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateDept(AdminViewModel viewModel)
         {
             if (ModelState.IsValid)
