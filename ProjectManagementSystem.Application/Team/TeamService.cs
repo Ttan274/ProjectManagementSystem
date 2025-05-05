@@ -5,6 +5,7 @@ using ProjectManagementSystem.Application.Abstractions.Repositories.Team;
 using ProjectManagementSystem.Application.Abstractions.Team;
 using ProjectManagementSystem.Application.Abstractions.Team.Dto;
 using ProjectManagementSystem.Application.Abstractions.User;
+using System.Security.Claims;
 
 namespace ProjectManagementSystem.Application.Team
 {
@@ -81,13 +82,14 @@ namespace ProjectManagementSystem.Application.Team
             }
         }
 
-        public async Task<TeamDto> GetTeamById(Guid id)
+        public async Task<TeamDto> GetTeam(ClaimsPrincipal principal)
         {
-            if (id == Guid.Empty)
-                return new TeamDto();
-
             try
             {
+                var teamId = await _userService.GetTeamId(principal);
+                
+                var id = Guid.Parse(teamId);
+
                 var team = await _teamReadRepository.GetByIdAsync(id);
 
                 var mappedResult = _mapper.Map<Domain.Entities.Team, TeamDto>(team);

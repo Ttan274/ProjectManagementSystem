@@ -4,190 +4,16 @@
 }
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
-    }
+<link href="~/css/UserView.css" rel="stylesheet">
 
-    body {
-      display: flex;
-      background: bisque;
-    }
-
-    .sidebar {
-      width: 220px;
-      background: #1a202c;
-      color: white;
-      min-height: 100vh;
-      padding: 20px 16px;
-    }
-
-    .sidebar h2 {
-      margin-bottom: 30px;
-      font-size: 20px;
-    }
-
-    .sidebar ul {
-      list-style: none;
-    }
-
-    .sidebar ul li {
-      margin-bottom: 16px;
-      color: #a0aec0;
-      cursor: pointer;
-    }
-
-    .content {
-      flex: 1;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 32px;
-      background: white;
-    }
-
-    .create-btn button {
-      padding: 8px 16px;
-      background-color: #6c5ce7;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .overview {
-      background: #6c5ce7;
-      color: white;
-      padding: 30px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .card {
-      background: white;
-      color: black;
-      border-radius: 10px;
-      padding: 20px;
-      width: 22%;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-
-    .card h3 {
-      margin-bottom: 10px;
-    }
-
-    .projects-section {
-      margin: 30px;
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      padding: 12px;
-      text-align: left;
-    }
-
-    thead {
-      background: #f1f5f9;
-    }
-
-    .badge {
-      padding: 4px 10px;
-      border-radius: 12px;
-      color: white;
-      font-size: 12px;
-    }
-
-    .medium { background-color: #f4b400; }
-    .high { background-color: #e74c3c; }
-    .low { background-color: #3498db; }
-
-    .progress-bar {
-      height: 6px;
-      background-color: #e0e0e0;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background-color: #6c5ce7;
-    }
-
-    .details-button {
-      padding: 6px 12px;
-      background-color: #6c5ce7;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 10;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0, 0, 0, 0.4);
-    }
-
-    .modal-content {
-      background-color: #fff;
-      margin: 10% auto;
-      padding: 20px;
-      border-radius: 8px;
-      width: 40%;
-    }
-
-    .modal-content input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-
-    .modal-content button {
-      background-color: #6c5ce7;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .close {
-      float: right;
-      font-size: 20px;
-      cursor: pointer;
-    }
-  </style>
 
 <aside class="sidebar">
     <h2>@Model.TeamName</h2>
     <ul>
-        <li>Dashboard</li>
+        <li><a asp-action="DeptMain" asp-controller="Dept">Dashboard</a></li>
         <li><a asp-action="DeptCrew" asp-controller="Dept">Crew</a></li>
-        <li>Tasks</li>
-        <li>Documents</li>
+        <li><a asp-action="" asp-controller="">Tasks</a></li>
+        <li><a asp-action="" asp-controller="">Documents</a></li>
     </ul>
 </aside>
 
@@ -243,11 +69,21 @@
                         <td>@item.ProjectDesc</td>
                         <td>@item.EstimatedHours</td>
                         <td>
-                            <span class="badge high">@item.Priority.ToString()</span>
+                            @if (@item.Priority.ToString() == "Low")
+                            {
+                                <span class="badge low">@item.Priority.ToString()</span>
+                            }
+                            else if (@item.Priority.ToString() == "Medium")
+                            {
+                                <span class="badge medium">@item.Priority.ToString()</span>
+                            }
+                            else
+                            {
+                                <span class="badge high">@item.Priority.ToString()</span>
+                            }
                         </td>
                         <td><button class="details-button">Details</button></td>
-                        <td><div class="progress-bar"><div class="progress-fill" style="width: 0%"></div></div></td>
-
+                        <td><div class="progress-bar"><div class="progress-fill" style="width: 0"></div></div></td>
                     </tr>
                 }
             </tbody>

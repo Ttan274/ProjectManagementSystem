@@ -3,3 +3,48 @@
     Layout = null;
 }
 
+<link rel="stylesheet" href="~/css/UserView.css">
+
+<aside class="sidebar">
+    <h2>@Model.TeamName</h2>
+    <ul>
+        <li><a asp-action="DeptMain" asp-controller="Dept">Dashboard</a></li>
+        <li><a asp-action="DeptCrew" asp-controller="Dept">Crew</a></li>
+        <li>Tasks</li>
+        <li>Documents</li>
+    </ul>
+</aside>
+<main class="content">
+    <div class="header">
+        <div class="create-btn">
+            <button>Nothing</button>
+        </div>
+        <div>
+            <img src="https://i.pravatar.cc/40" alt="User" style="border-radius: 50%">
+        </div>
+    </div>
+    <div class="projects-section">
+        <h3>Users</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Users)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.Surname</td>
+                        <td>@item.Email</td>
+                        <td>Employee</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</main>
