@@ -33,19 +33,14 @@
             <small>0 Completed</small>
         </div>
         <div class="card">
-            <h3>Sprints</h3>
-            <p><strong>0</strong></p>
-            <small>0 Completed</small>
-        </div>
-        <div class="card">
-            <h3>Tasks</h3>
-            <p><strong>0</strong></p>
-            <small>0 Completed</small>
-        </div>
-        <div class="card">
             <h3>Employees</h3>
             <p><strong>@Model.Users.Count</strong></p>
             <small>100% Available</small>
+        </div>
+        <div class="card">
+            <h3>Test</h3>
+            <p><strong>Test</strong></p>
+            <small>Test</small>
         </div>
     </div>
     <div class="projects-section">
@@ -82,7 +77,12 @@
                                 <span class="badge high">@item.Priority.ToString()</span>
                             }
                         </td>
-                        <td><button class="details-button">Details</button></td>
+                        <td>
+                            <form method="get" asp-action="ProjectMain" asp-controller="Project">
+                                <input type="hidden" asp-for="Id" value="@item.Id">
+                                <button class="details-button">Details</button>
+                            </form>
+                        </td>
                         <td><div class="progress-bar"><div class="progress-fill" style="width: 0"></div></div></td>
                     </tr>
                 }

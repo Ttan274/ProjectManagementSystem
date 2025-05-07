@@ -1,0 +1,138 @@
+﻿@model ProjectViewModel
+
+@{
+    Layout = null;
+}
+
+<link rel="stylesheet" href="~/css/UserView.css">
+
+<aside class="sidebar">
+    <h2>@Model.Project.ProjectName</h2>
+    <ul>
+        <li>Dashboard</li>
+        <li>Task Board</li>
+    </ul>
+</aside>
+<main class="content">
+    <div class="header">
+        <div class="create-btn">
+            <button onclick="document.getElementById('sprintModal').style.display='block'">Create New Sprint</button>
+            <button onclick="document.getElementById('taskModal').style.display='block'">Create New Task</button>
+        </div>
+        <div>
+            <img src="https://i.pravatar.cc/40" alt="User" style="border-radius: 50%">
+        </div>
+    </div>
+    <div class="overview">
+        <div class="card">
+            <h3>Sprints</h3>
+            <p><strong>@Model.Project.Sprints.Count</strong></p>
+            <small>0 Completed</small>
+        </div>
+        <div class="card">
+            <h3>Tasks</h3>
+            <p><strong>0</strong></p>
+            <small>0 Completed</small>
+        </div>
+        <div class="card">
+            <h3>Test</h3>
+            <p><strong>Test</strong></p>
+            <small>Test</small>
+        </div>
+    </div>
+    <div class="projects-section">
+        <h3>Sprints</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sprint Name</th>
+                    <th>Start Date</th>
+                    <th>Finish Date</th>
+                    <th>Total Task</th>
+                    <th>Progress</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Project.Sprints)
+                {
+                    <tr>
+                        <td>@item.SprintName</td>
+                        <td>@item.StartDate.ToString()</td>
+                        <td>@item.FinishDate.ToString()</td>
+                        <td>0</td>
+                        <td><div class="progress-bar"><div class="progress-fill" style="width: 0%"></div></div></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="projects-section">
+        <h3>Tasks</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Task Name</th>
+                    <th>Task Description</th>
+                    <th>Related Sprint</th>
+                    <th>Assigned Employee</th>
+                    <th>Task Priority</th>
+                    <th>Task Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Task01</td>
+                    <td>Emirin Göt deliğini sik</td>
+                    <td>Sprint01</td>
+                    <td>Selpak</td>
+                    <td><span class="badge high">High</span></td>
+                    <td>New</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="sprintModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('sprintModal')">&times;</span>
+            <h2>Create Sprint</h2>
+            <form method="post" asp-action="CreateSprint" asp-controller="Project">
+                <input type="hidden" asp-for="SprintToCreate.ProjectId" value="@Model.Project.Id">
+                <input type="text" asp-for="SprintToCreate.SprintName"  placeholder="Sprint Name" autocomplete="off" required>
+                <input type="date" asp-for="SprintToCreate.StartDate"  placeholder="Sprint Start Date" required>
+                <input type="date" asp-for="SprintToCreate.FinishDate"  placeholder="Sprint Finish Date" required>
+                <button type="submit">Create</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('taskModal')">&times;</span>
+            <h2>Create Task</h2>
+            <form method="post" asp-action="CreateTask" asp-controller="Project">
+                <input type="text" asp-for="TaskToCreate.TaskName" placeholder="Task Name">
+                <input type="text" asp-for="TaskToCreate.TaskDesc" placeholder="Task Description">
+                <input type="number" placeholder="Estimated Hours">
+                
+            </form>
+            
+            <button>Create</button>
+        </div>
+    </div>
+</main>
+<script>
+    const sModal = document.getElementById("sprintModal");
+    const tModal = document.getElementById("taskModal");
+    
+    window.onclick = (e) => {
+        if (e.target === sModal) sModal.style.display = "none";
+        if (e.target === tModal) tModal.style.display = "none";
+    };
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = "none";
+    }
+
+</script>

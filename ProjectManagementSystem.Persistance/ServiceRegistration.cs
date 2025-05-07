@@ -13,6 +13,14 @@ using ProjectManagementSystem.Application.Abstractions.Repositories.Project;
 using ProjectManagementSystem.Persistance.Repositories.Project;
 using ProjectManagementSystem.Application.Abstractions.Project;
 using ProjectManagementSystem.Application.Project;
+using ProjectManagementSystem.Application.Abstractions.Repositories.Sprint;
+using ProjectManagementSystem.Persistance.Repositories.Sprint;
+using ProjectManagementSystem.Application.Abstractions.Repositories.Task;
+using ProjectManagementSystem.Persistance.Repositories.Task;
+using ProjectManagementSystem.Application.Abstractions.Sprint;
+using ProjectManagementSystem.Application.Sprint;
+using ProjectManagementSystem.Application.Abstractions.Task;
+using ProjectManagementSystem.Application.Task;
 
 namespace ProjectManagementSystem.Persistance
 {
@@ -46,6 +54,16 @@ namespace ProjectManagementSystem.Persistance
             services.AddScoped<IProjectReadRepository, ProjectReadRepository>();
             services.AddScoped<IProjectWriteRepository, ProjectWriteRepository>();
             services.AddScoped<IProjectService, ProjectService>();
+
+            //Sprint
+            services.AddScoped<ISprintReadRepository, SprintReadRepository>();
+            services.AddScoped<ISprintWriteRepository, SprintWriteRepository>();
+            services.AddScoped<ISprintService, SprintService>();
+
+            //Task
+            services.AddScoped<ITaskReadRepository, TaskReadRepository>();
+            services.AddScoped<ITaskWriteRepository, TaskWriteRepository>();
+            services.AddScoped<ITaskService, TaskService>();
         }
     }
 }

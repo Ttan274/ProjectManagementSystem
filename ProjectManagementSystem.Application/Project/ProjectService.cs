@@ -4,6 +4,7 @@ using ProjectManagementSystem.Application.Abstractions.Project;
 using ProjectManagementSystem.Application.Abstractions.Project.Dto;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Project;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Team;
+using ProjectManagementSystem.Application.Abstractions.Sprint;
 
 namespace ProjectManagementSystem.Application.Project
 {
@@ -12,13 +13,16 @@ namespace ProjectManagementSystem.Application.Project
         private readonly IProjectReadRepository _projectReadRepository;
         private readonly IProjectWriteRepository _projectWriteRepository;
         private readonly ITeamReadRepository _teamReadRepository;
+        private readonly ISprintService _sprintService;
         private readonly IMapper _mapper;
 
-        public ProjectService(IProjectReadRepository projectReadRepository, IProjectWriteRepository projectWriteRepository, ITeamReadRepository teamReadRepository, IMapper mapper)
+        public ProjectService(IProjectReadRepository projectReadRepository, IProjectWriteRepository projectWriteRepository, 
+            ITeamReadRepository teamReadRepository, ISprintService sprintService, IMapper mapper)
         {
             _projectReadRepository = projectReadRepository;
             _projectWriteRepository = projectWriteRepository;
             _teamReadRepository = teamReadRepository;
+            _sprintService = sprintService;
             _mapper = mapper;
         }
 
@@ -70,8 +74,10 @@ namespace ProjectManagementSystem.Application.Project
             try
             {
                 var project = await _projectReadRepository.GetByIdAsync(id);
+                var sprints = await _sprintService.GetAllSprintsByProjectId(id);
 
                 var mappedResult = _mapper.Map<Domain.Entities.Project, ProjectDto>(project);
+                mappedResult.Sprints = sprints;
 
                 return mappedResult;
             }

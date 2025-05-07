@@ -1,4 +1,5 @@
 ﻿using Org.BouncyCastle.Asn1.Mozilla;
+using ProjectManagementSystem.Common.Enums;
 using ProjectManagementSystem.Domain.Common;
 
 namespace ProjectManagementSystem.Domain.Entities
@@ -8,8 +9,8 @@ namespace ProjectManagementSystem.Domain.Entities
         public string? TaskName { get; set; }
         public string? TaskDesc { get; set; }
         public string? TaskNumber { get; set; }
-        public int? Priority { get; set; }
-        public int? TaskEffort { get; set; }
+        public Priority? Priority { get; set; }
+        public ProjecStatus? TaskEffort { get; set; }
         public bool? IsUrgent { get; set; }
         public bool? Completed { get; set; }
 

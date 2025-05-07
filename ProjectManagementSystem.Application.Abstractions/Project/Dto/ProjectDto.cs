@@ -1,4 +1,5 @@
 ﻿using ProjectManagementSystem.Application.Abstractions.Base;
+using ProjectManagementSystem.Application.Abstractions.Sprint.Dto;
 using ProjectManagementSystem.Common.Enums;
 
 namespace ProjectManagementSystem.Application.Abstractions.Project.Dto
@@ -10,5 +11,6 @@ namespace ProjectManagementSystem.Application.Abstractions.Project.Dto
         public int? EstimatedHours { get; set; }
         public Priority? Priority { get; set; }
         public Guid? TeamId { get; set; }
+        public ICollection<SprintDto>? Sprints { get; set; }
     }
 }
