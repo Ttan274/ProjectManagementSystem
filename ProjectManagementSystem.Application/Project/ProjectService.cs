@@ -5,6 +5,7 @@ using ProjectManagementSystem.Application.Abstractions.Project.Dto;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Project;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Team;
 using ProjectManagementSystem.Application.Abstractions.Sprint;
+using ProjectManagementSystem.Application.Abstractions.Team;
 
 namespace ProjectManagementSystem.Application.Project
 {
@@ -75,6 +76,7 @@ namespace ProjectManagementSystem.Application.Project
             {
                 var project = await _projectReadRepository.GetByIdAsync(id);
                 var sprints = await _sprintService.GetAllSprintsByProjectId(id);
+                //project.Team = await _teamReadRepository.GetByIdAsync(project.TeamId);
 
                 var mappedResult = _mapper.Map<Domain.Entities.Project, ProjectDto>(project);
                 mappedResult.Sprints = sprints;

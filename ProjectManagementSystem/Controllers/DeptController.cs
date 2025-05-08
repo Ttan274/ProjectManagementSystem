@@ -20,14 +20,14 @@ namespace ProjectManagementSystem.Controllers
         [Authorize(Roles = "Employee")]
         public async Task<IActionResult> DeptMain()
         {
-            var team = await _teamService.GetTeam(User);
+            var team = await _teamService.GetTeamByUser(User);
             return View(team);
         }
 
         [Authorize(Roles = "Employee")]
         public async Task<IActionResult> DeptCrew()
         {
-            var team = await _teamService.GetTeam(User);
+            var team = await _teamService.GetTeamByUser(User);
             return View(team);
         }
 

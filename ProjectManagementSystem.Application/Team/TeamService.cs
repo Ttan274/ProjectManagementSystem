@@ -82,28 +82,48 @@ namespace ProjectManagementSystem.Application.Team
             }
         }
 
-        public async Task<TeamDto> GetTeam(ClaimsPrincipal principal)
+        public async Task<TeamDto> GetTeamByUser(ClaimsPrincipal principal)
         {
             try
             {
                 var teamId = await _userService.GetTeamId(principal);
                 
-                var id = Guid.Parse(teamId);
+                var result = await GetTeam(Guid.Parse(teamId));
 
-                var team = await _teamReadRepository.GetByIdAsync(id);
-
-                var mappedResult = _mapper.Map<Domain.Entities.Team, TeamDto>(team);
-
-                mappedResult.Projects = await _projectService.GetAllProjectsByTeamId(id);
-
-                mappedResult.Users = await _userService.GetAllUsersByTeamId(id);
-
-                return mappedResult;
+                return result;
             }
             catch (Exception)
             {
                 return new TeamDto();
             }
+        }
+
+        public async Task<TeamDto> GetTeamById(Guid id)
+        {
+            try
+            {
+                var result = await GetTeam(id);
+
+                return result;
+            }
+            catch (Exception)
+            {
+                return new TeamDto();
+            }
+        }
+
+        //Utility method
+        private async Task<TeamDto> GetTeam(Guid id)
+        {
+            var team = await _teamReadRepository.GetByIdAsync(id);
+
+            var mappedResult = _mapper.Map<Domain.Entities.Team, TeamDto>(team);
+
+            mappedResult.Projects = await _projectService.GetAllProjectsByTeamId(id);
+
+            mappedResult.Users = await _userService.GetAllUsersByTeamId(id);
+
+            return mappedResult;
         }
     }
 }

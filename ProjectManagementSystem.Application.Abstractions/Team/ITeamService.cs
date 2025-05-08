@@ -7,7 +7,8 @@ namespace ProjectManagementSystem.Application.Abstractions.Team
     {
         Task<bool> CreateTeam(TeamDto team);
         Task<bool> DeleteTeam(Guid id);
-        Task<TeamDto> GetTeam(ClaimsPrincipal principal); 
+        Task<TeamDto> GetTeamByUser(ClaimsPrincipal principal);
+        Task<TeamDto> GetTeamById(Guid id);
         Task<List<TeamDto>> GetAllTeams();
     }
 }

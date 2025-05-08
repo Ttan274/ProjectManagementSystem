@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using ProjectManagementSystem.Application.Abstractions.Project;
 using ProjectManagementSystem.Application.Abstractions.Sprint;
 using ProjectManagementSystem.Application.Abstractions.Task;
+using ProjectManagementSystem.Application.Abstractions.User;
 using ProjectManagementSystem.ViewModel;
 
 namespace ProjectManagementSystem.Controllers
@@ -13,12 +14,15 @@ namespace ProjectManagementSystem.Controllers
         private readonly IProjectService _projectService;
         private readonly ISprintService _sprintService;
         private readonly ITaskService _taskService;
+        private readonly IUserService _userService;
 
-        public ProjectController(IProjectService projectService, ISprintService sprintService, ITaskService taskService)
+        public ProjectController(IProjectService projectService, ISprintService sprintService, 
+            ITaskService taskService, IUserService userService)
         {
             _projectService = projectService;
             _sprintService = sprintService;
             _taskService = taskService;
+            _userService = userService;
         }
 
         [Authorize(Roles = "Employee")]
@@ -69,12 +73,15 @@ namespace ProjectManagementSystem.Controllers
         {
             var project = await _projectService.GetProjectById(id);
             var sprints = project.Sprints.Select(x => new SelectListItem() { Text = x.SprintName, Value = x.Id.ToString() });
+            //var users = await _userService.GetAllUsersByTeamId(project.TeamId);
+
 
             ProjectViewModel projectModel = new ProjectViewModel();
             projectModel.Project = project;
             projectModel.TaskToCreate = new()
             {
                 SprintList = sprints.ToList(),
+                //UserList = users.ToList(),
             };
 
             return projectModel;
