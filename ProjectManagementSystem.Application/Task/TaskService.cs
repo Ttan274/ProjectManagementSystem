@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Sprint;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Task;
 using ProjectManagementSystem.Application.Abstractions.Task;
@@ -29,7 +30,7 @@ namespace ProjectManagementSystem.Application.Task
 
             try
             {
-                var sprint = await _sprintReadRepository.GetFirstOrDefaultAsync(x => x.Id == task.SprintId);
+                var sprint = await _sprintReadRepository.GetFirstOrDefaultAsync(x => x.Id == Guid.Parse(task.SprintId));
                 var mappedResult = _mapper.Map<TaskDto, Domain.Entities.Task>(task);
                 mappedResult.Sprint = sprint;
 
@@ -40,6 +41,25 @@ namespace ProjectManagementSystem.Application.Task
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        public async Task<List<TaskDto>> GetAllTasksBySprintId(Guid id)
+        {
+            try
+            {
+                var tasks = await _taskReadRepository.GetQueryable().Where(x => x.Status).Where(y => y.SprintId == id).ToListAsync();
+
+                if (tasks is null)
+                    return [];
+
+                var mappedResult = _mapper.Map<List<Domain.Entities.Task>, List<TaskDto>>(tasks);
+
+                return mappedResult;
+            }
+            catch (Exception)
+            {
+                return [];
             }
         }
     }

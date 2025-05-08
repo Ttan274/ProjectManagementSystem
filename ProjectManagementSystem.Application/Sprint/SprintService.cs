@@ -5,6 +5,7 @@ using ProjectManagementSystem.Application.Abstractions.Repositories.Project;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Sprint;
 using ProjectManagementSystem.Application.Abstractions.Sprint;
 using ProjectManagementSystem.Application.Abstractions.Sprint.Dto;
+using ProjectManagementSystem.Application.Abstractions.Task;
 
 namespace ProjectManagementSystem.Application.Sprint
 {
@@ -13,14 +14,16 @@ namespace ProjectManagementSystem.Application.Sprint
         private readonly ISprintReadRepository _sprintReadRepository;
         private readonly ISprintWriteRepository _sprintWriteRepository;
         private readonly IProjectReadRepository _projectReadRepository;
+        private readonly ITaskService _taskService;
         private readonly IMapper _mapper;
 
         public SprintService(ISprintReadRepository sprintReadRepository, ISprintWriteRepository sprintWriteRepository, 
-            IProjectReadRepository projectReadRepository, IMapper mapper)
+            IProjectReadRepository projectReadRepository, ITaskService taskService, IMapper mapper)
         {
             _sprintReadRepository = sprintReadRepository;
             _sprintWriteRepository = sprintWriteRepository;
             _projectReadRepository = projectReadRepository;
+            _taskService = taskService;
             _mapper = mapper;
         }
 
@@ -55,6 +58,11 @@ namespace ProjectManagementSystem.Application.Sprint
                     return [];
 
                 var mappedResult = _mapper.Map<List<Domain.Entities.Sprint>, List<SprintDto>> (sprints);
+
+                foreach (var item in mappedResult)
+                {
+                    item.Tasks = await _taskService.GetAllTasksBySprintId(item.Id);
+                }
 
                 return mappedResult;
             }

@@ -81,14 +81,33 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Task01</td>
-                    <td>Emirin Göt deliğini sik</td>
-                    <td>Sprint01</td>
-                    <td>Selpak</td>
-                    <td><span class="badge high">High</span></td>
-                    <td>New</td>
-                </tr>
+                    @foreach (var sprint in Model.Project.Sprints)
+                    {
+                        @foreach (var item in sprint.Tasks)
+                        {
+                            <tr>
+                                <td>@item.TaskName</td>
+                                <td>@item.TaskDesc</td>
+                                <td>@sprint.SprintName</td>
+                                <td>User Not Assigned</td>
+                                <td>
+                                    @if (@item.Priority.ToString() == "Low")
+                                    {
+                                        <span class="badge low">@item.Priority.ToString()</span>
+                                    }
+                                    else if (@item.Priority.ToString() == "Medium")
+                                    {
+                                        <span class="badge medium">@item.Priority.ToString()</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge high">@item.Priority.ToString()</span>
+                                    }
+                                </td>
+                                <td>@item.TaskEffort.ToString()</td>
+                            </tr>
+                        }
+                    }                
             </tbody>
         </table>
     </div>
@@ -98,7 +117,7 @@
             <span class="close" onclick="closeModal('sprintModal')">&times;</span>
             <h2>Create Sprint</h2>
             <form method="post" asp-action="CreateSprint" asp-controller="Project">
-                <input type="hidden" asp-for="SprintToCreate.ProjectId" value="@Model.Project.Id">
+                <input type="hidden" asp-for="Project.Id" value="@Model.Project.Id">
                 <input type="text" asp-for="SprintToCreate.SprintName"  placeholder="Sprint Name" autocomplete="off" required>
                 <input type="date" asp-for="SprintToCreate.StartDate"  placeholder="Sprint Start Date" required>
                 <input type="date" asp-for="SprintToCreate.FinishDate"  placeholder="Sprint Finish Date" required>
@@ -112,13 +131,26 @@
             <span class="close" onclick="closeModal('taskModal')">&times;</span>
             <h2>Create Task</h2>
             <form method="post" asp-action="CreateTask" asp-controller="Project">
+                <input type="hidden" asp-for="Project.Id" value="@Model.Project.Id">
                 <input type="text" asp-for="TaskToCreate.TaskName" placeholder="Task Name">
                 <input type="text" asp-for="TaskToCreate.TaskDesc" placeholder="Task Description">
-                <input type="number" placeholder="Estimated Hours">
-                
+                <select asp-for="TaskToCreate.Priority">
+                    <option value="@Priority.Low">Low</option>
+                    <option value="@Priority.Medium">Medium</option>
+                    <option value="@Priority.High">High</option>
+                </select>
+                <select asp-for="TaskToCreate.TaskEffort">
+                    <option value="@ProjecStatus.New">New</option>
+                    <option value="@ProjecStatus.Pending">Pending</option>
+                    <option value="@ProjecStatus.Committed">Committed</option>
+                    <option value="@ProjecStatus.InProgress">InProgress</option>
+                    <option value="@ProjecStatus.Finished">Finished</option>
+                </select>
+                <select asp-for="TaskToCreate.SprintId" asp-items="@Model.TaskToCreate.SprintList" required>
+                    <option value="">Select Dept</option>
+                </select>
+                <button type="submit">Create</button>
             </form>
-            
-            <button>Create</button>
         </div>
     </div>
 </main>

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ProjectManagementSystem.Application.Abstractions.Project;
 using ProjectManagementSystem.Application.Abstractions.Sprint;
-using ProjectManagementSystem.Application.Abstractions.Sprint.Dto;
 using ProjectManagementSystem.Application.Abstractions.Task;
 using ProjectManagementSystem.ViewModel;
 
@@ -21,14 +21,11 @@ namespace ProjectManagementSystem.Controllers
             _taskService = taskService;
         }
 
-        [HttpGet]
         [Authorize(Roles = "Employee")]
         public async Task<IActionResult> ProjectMain(Guid id)
         {
-            var project = await _projectService.GetProjectById(id);
-            ProjectViewModel projectModel = new ProjectViewModel();
-            projectModel.Project = project;
-            return View(projectModel);
+            var model = await GetProjectViewModel(id);
+            return View(model);
         }
 
         [HttpPost]
@@ -40,7 +37,10 @@ namespace ProjectManagementSystem.Controllers
                 var response = await _sprintService.CreateSprint(projectModel.SprintToCreate);
 
                 if (response)
-                    return RedirectToAction("ProjectMain", "Project");
+                {
+                    var model = await GetProjectViewModel(projectModel.Project.Id);
+                    return View("ProjectMain", model);
+                }
             }
 
             return View();
@@ -55,10 +55,29 @@ namespace ProjectManagementSystem.Controllers
                 var response = await _taskService.CreateTask(projectModel.TaskToCreate);
 
                 if (response)
-                    return RedirectToAction("ProjectMain", "Project");
+                {
+                    var model = await GetProjectViewModel(projectModel.Project.Id);
+                    return View("ProjectMain", model);
+                }
             }
 
             return View();
+        }
+
+        //Utility Method
+        private async Task<ProjectViewModel> GetProjectViewModel(Guid id)
+        {
+            var project = await _projectService.GetProjectById(id);
+            var sprints = project.Sprints.Select(x => new SelectListItem() { Text = x.SprintName, Value = x.Id.ToString() });
+
+            ProjectViewModel projectModel = new ProjectViewModel();
+            projectModel.Project = project;
+            projectModel.TaskToCreate = new()
+            {
+                SprintList = sprints.ToList(),
+            };
+
+            return projectModel;
         }
     }
 }

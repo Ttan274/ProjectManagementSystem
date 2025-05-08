@@ -1,4 +1,5 @@
-﻿using ProjectManagementSystem.Common.Enums;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using ProjectManagementSystem.Common.Enums;
 
 namespace ProjectManagementSystem.Application.Abstractions.Task.Dto
 {
@@ -8,6 +9,7 @@ namespace ProjectManagementSystem.Application.Abstractions.Task.Dto
         public string? TaskDesc { get; set; }
         public Priority? Priority { get; set; }
         public ProjecStatus? TaskEffort { get; set; }
-        public Guid? SprintId { get; set; }
+        public string? SprintId { get; set; }
+        public List<SelectListItem>? SprintList { get; set; }
     }
 }
