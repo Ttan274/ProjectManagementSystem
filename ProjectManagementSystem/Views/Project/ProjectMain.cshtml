@@ -59,7 +59,7 @@
                         <td>@item.SprintName</td>
                         <td>@item.StartDate.ToString()</td>
                         <td>@item.FinishDate.ToString()</td>
-                        <td>0</td>
+                        <td>@item.Tasks.Count</td>
                         <td><div class="progress-bar"><div class="progress-fill" style="width: 0%"></div></div></td>
                     </tr>
                 }
@@ -118,9 +118,10 @@
             <h2>Create Sprint</h2>
             <form method="post" asp-action="CreateSprint" asp-controller="Project">
                 <input type="hidden" asp-for="Project.Id" value="@Model.Project.Id">
+                <input type="hidden" asp-for="SprintToCreate.ProjectId" value="@Model.Project.Id">
                 <input type="text" asp-for="SprintToCreate.SprintName"  placeholder="Sprint Name" autocomplete="off" required>
-                <input type="date" asp-for="SprintToCreate.StartDate"  placeholder="Sprint Start Date" required>
-                <input type="date" asp-for="SprintToCreate.FinishDate"  placeholder="Sprint Finish Date" required>
+                <input type="date" asp-for="SprintToCreate.StartDate"  placeholder="Sprint Start Date">
+                <input type="date" asp-for="SprintToCreate.FinishDate"  placeholder="Sprint Finish Date">
                 <button type="submit">Create</button>
             </form>
         </div>
