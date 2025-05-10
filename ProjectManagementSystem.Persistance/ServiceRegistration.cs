@@ -21,6 +21,8 @@ using ProjectManagementSystem.Application.Abstractions.Sprint;
 using ProjectManagementSystem.Application.Sprint;
 using ProjectManagementSystem.Application.Abstractions.Task;
 using ProjectManagementSystem.Application.Task;
+using ProjectManagementSystem.Application.Abstractions.SubTaskProducer;
+using ProjectManagementSystem.Application.SubTaskProducer;
 
 namespace ProjectManagementSystem.Persistance
 {
@@ -32,7 +34,10 @@ namespace ProjectManagementSystem.Persistance
             var mySql = config.GetConnectionString("MySql") ?? string.Empty;
 
             //Database
-            services.AddDbContext<AppDbContext>(options => options.UseMySQL(mySql));
+            services.AddDbContext<AppDbContext>(options =>
+            options.UseMySQL(mySql, opt =>
+                opt.MigrationsAssembly("ProjectManagementSystem")));
+
 
             //Identity
             services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<AppDbContext>();
@@ -64,6 +69,9 @@ namespace ProjectManagementSystem.Persistance
             services.AddScoped<ITaskReadRepository, TaskReadRepository>();
             services.AddScoped<ITaskWriteRepository, TaskWriteRepository>();
             services.AddScoped<ITaskService, TaskService>();
+
+            //SubTask
+            services.AddScoped<ISubTaskProducerService, SubTaskProducerService>();
         }
     }
 }

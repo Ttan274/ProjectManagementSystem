@@ -1,9 +1,17 @@
+using ProjectManagementSystem.Application.Abstractions.SubTaskProducer;
+using ProjectManagementSystem.Application.SubTaskProducer;
 using ProjectManagementSystem.Persistance;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddRequiredServices(builder.Configuration);
+
+builder.Services.AddHttpClient<ISubTaskProducerService, SubTaskProducerService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["OllamaOptions:BaseAddress"]);
+});
 
 var app = builder.Build();
 
