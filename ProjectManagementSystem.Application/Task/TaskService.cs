@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Sprint;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Task;
@@ -48,7 +49,11 @@ namespace ProjectManagementSystem.Application.Task
         {
             try
             {
-                var tasks = await _taskReadRepository.GetQueryable().Where(x => x.Status).Where(y => y.SprintId == id).ToListAsync();
+                var tasks = await _taskReadRepository.GetQueryable()
+                                                     .Include(x => x.AppUser)
+                                                     .Where(x => x.Status)
+                                                     .Where(y => y.SprintId == id)
+                                                     .OrderByDescending(x => x.CreatedDatee).ToListAsync();
 
                 if (tasks is null)
                     return [];
@@ -61,6 +66,19 @@ namespace ProjectManagementSystem.Application.Task
             {
                 return [];
             }
+        }
+        public async Task<List<TaskDto>> GetMyAllTasks(Guid userId)
+        {
+            var tasks = await _taskReadRepository.GetQueryable()
+                                                 .Where(x => x.UserId == userId && x.Status)
+                                                 .OrderByDescending(x => x.CreatedDatee)
+                                                 .ToListAsync();
+            if (tasks is null)
+                return [];
+
+            var mappedResult = _mapper.Map<List<Domain.Entities.Task>, List<TaskDto>>(tasks);
+
+            return mappedResult;
         }
     }
 }

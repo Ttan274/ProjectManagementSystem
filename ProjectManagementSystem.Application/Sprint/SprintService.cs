@@ -52,7 +52,11 @@ namespace ProjectManagementSystem.Application.Sprint
         {
             try
             {
-                var sprints = await _sprintReadRepository.GetQueryable().Where(x => x.Status).Where(y => y.ProjectId == id).ToListAsync();
+                var sprints = await _sprintReadRepository.GetQueryable()
+                                                         .Where(x => x.Status)
+                                                         .Where(y => y.ProjectId == id)
+                                                         .OrderByDescending(x => x.CreatedDatee)
+                                                         .ToListAsync();
 
                 if (sprints is null)
                     return [];

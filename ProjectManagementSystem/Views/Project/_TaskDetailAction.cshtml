@@ -1,0 +1,68 @@
+﻿@* @model ProjectManagementSystem.Application.Abstractions.Task.Dto.TaskDetailDto
+@{
+    Layout = null;
+}
+
+<div>
+    <form id="taskForm">
+        <div class="modal-body p-4">
+            <!-- Task Name -->
+            <div class="mb-3">
+                <label for="taskName" class="form-label">Görev Adı</label>
+                <input type="text" class="form-control" id="taskName" name="name" required />
+            </div>
+
+            <!-- Description -->
+            <div class="mb-3">
+                <label for="taskDescription" class="form-label">Açıklama</label>
+                <textarea class="form-control" id="taskDescription" name="description" rows="4"></textarea>
+            </div>
+
+            <!-- Created Date -->
+            <div class="mb-3">
+                <label for="taskCreatedDate" class="form-label">Oluşturulma Tarihi</label>
+                <input type="datetime-local" class="form-control" id="taskCreatedDate" name="createdDate" disabled />
+            </div>
+
+            <!-- Is Urgent + Effort -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-check mt-4">
+                        <input class="form-check-input" type="checkbox" id="isUrgent" name="isUrgent" />
+                        <label class="form-check-label" for="isUrgent">Acil Görev</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="taskEffort" class="form-label">Görev Eforu (saat)</label>
+                    <input type="number" class="form-control" id="taskEffort" name="effort" min="0" />
+                </div>
+            </div>
+
+            <!-- Priority + Status -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="taskPriority" class="form-label">Öncelik</label>
+                    <select class="form-select" id="taskPriority" name="priority">
+                        <option value="low">Düşük</option>
+                        <option value="medium">Orta</option>
+                        <option value="high">Yüksek</option>
+                        <option value="critical">Kritik</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="taskStatus" class="form-label">Durum</label>
+                    <select class="form-select" id="taskStatus" name="status">
+                        <option value="todo">Yapılacak</option>
+                        <option value="inprogress">Devam Ediyor</option>
+                        <option value="done">Tamamlandı</option>
+                        <option value="blocked">Engellendi</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer p-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+            <button type="submit" class="btn btn-success">Güncelle</button>
+        </div>
+    </form>
+</div> *@

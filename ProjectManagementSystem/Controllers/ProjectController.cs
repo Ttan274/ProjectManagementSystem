@@ -1,10 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis;
 using ProjectManagementSystem.Application.Abstractions.Project;
+using ProjectManagementSystem.Application.Abstractions.Project.Dto;
 using ProjectManagementSystem.Application.Abstractions.Sprint;
 using ProjectManagementSystem.Application.Abstractions.Task;
 using ProjectManagementSystem.Application.Abstractions.User;
+using ProjectManagementSystem.Domain.Entities;
 using ProjectManagementSystem.ViewModel;
 
 namespace ProjectManagementSystem.Controllers
@@ -15,14 +19,16 @@ namespace ProjectManagementSystem.Controllers
         private readonly ISprintService _sprintService;
         private readonly ITaskService _taskService;
         private readonly IUserService _userService;
+        private readonly UserManager<AppUser> _userManager;
 
         public ProjectController(IProjectService projectService, ISprintService sprintService, 
-            ITaskService taskService, IUserService userService)
+            ITaskService taskService, IUserService userService, UserManager<AppUser> userManager)
         {
             _projectService = projectService;
             _sprintService = sprintService;
             _taskService = taskService;
             _userService = userService;
+            _userManager = userManager;
         }
 
         [Authorize(Roles = "Employee")]
@@ -30,6 +36,15 @@ namespace ProjectManagementSystem.Controllers
         {
             var model = await GetProjectViewModel(id);
             return View(model);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Employee")]
+        public async Task<IActionResult> CreateSprint(Guid projectId)
+        {
+            var model = new ProjectViewModel { Project = new ProjectDto { Id = projectId } };
+
+            return View("_SprintAction", model);
         }
 
         [HttpPost]
@@ -43,11 +58,32 @@ namespace ProjectManagementSystem.Controllers
                 if (response)
                 {
                     var model = await GetProjectViewModel(projectModel.Project.Id);
-                    return View("ProjectMain", model);
+                    return RedirectToAction("ProjectMain", new { id = projectModel.Project.Id });
                 }
             }
 
             return View();
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Employee")]
+        public async Task<IActionResult> CreateTask(Guid projectId, Guid teamId)
+        {
+            var project = await _projectService.GetProjectById(projectId);
+
+            var users = await _userService.GetAllUsersByTeamId(project.TeamId);
+
+            var model = new ProjectViewModel()
+            {
+                Project = project,
+                TaskToCreate = new()
+                {
+                    SprintList = project?.Sprints?.Select(x => new SelectListItem() { Text = x.SprintName, Value = x.Id.ToString() }).ToList(),
+                    UserList = users.Select(x => new SelectListItem() { Text = x.UserName, Value = x.Id.ToString() }).ToList()
+                }
+            };
+
+            return View("_TaskAction", model);
         }
 
         [HttpPost]
@@ -61,29 +97,51 @@ namespace ProjectManagementSystem.Controllers
                 if (response)
                 {
                     var model = await GetProjectViewModel(projectModel.Project.Id);
-                    return View("ProjectMain", model);
+                    return RedirectToAction("ProjectMain", new { id = projectModel.Project.Id });
                 }
             }
 
             return View();
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Employee")]
+        public async Task<IActionResult> GetMyTasks()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            var tasks = await _taskService.GetMyAllTasks(user.Id);
+
+            tasks.ForEach(x => { x.AppUser = user; });
+
+            return View(tasks);
+        }
+
         //Utility Method
         private async Task<ProjectViewModel> GetProjectViewModel(Guid id)
         {
             var project = await _projectService.GetProjectById(id);
-            var sprints = project.Sprints.Select(x => new SelectListItem() { Text = x.SprintName, Value = x.Id.ToString() });
-            //var users = await _userService.GetAllUsersByTeamId(project.TeamId);
 
+            var users = await _userService.GetAllUsersByTeamId(project.TeamId);
 
             ProjectViewModel projectModel = new ProjectViewModel();
             projectModel.Project = project;
             projectModel.TaskToCreate = new()
             {
-                SprintList = sprints.ToList(),
-                //UserList = users.ToList(),
+                SprintList = project.Sprints.Select(x => new SelectListItem() { Text = x.SprintName, Value = x.Id.ToString() }).ToList(),
+                UserList = users.Select(x => new SelectListItem() { Text = x.UserName, Value = x.Id.ToString() }).ToList()
             };
 
+            
+
+            foreach (var sprint in project.Sprints)
+            {
+                foreach (var item in sprint.Tasks)
+                {
+                    var user = await _userService.FindById(item.UserId);
+                    item.AppUser = user;
+                }
+            }
             return projectModel;
         }
     }

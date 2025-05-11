@@ -1,11 +1,10 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using ProjectManagementSystem.Application.Abstractions.Team;
 using ProjectManagementSystem.Application.Abstractions.User;
 using ProjectManagementSystem.Application.Abstractions.User.Dtos;
 using ProjectManagementSystem.Domain.Entities;
-using System.Security.Claims;
 
 namespace ProjectManagementSystem.Application.User
 {
@@ -119,6 +118,23 @@ namespace ProjectManagementSystem.Application.User
             catch (Exception)
             {
                 return "";
+            }
+        }
+
+        public async Task<AppUser> FindById(string userId)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(userId);
+
+                if (user is null)
+                    throw new Exception();
+
+                return user;
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
     }

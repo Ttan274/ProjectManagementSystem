@@ -11,7 +11,7 @@ namespace ProjectManagementSystem.Application.Abstractions.Project.Dto
         public string? ProjectDesc { get; set; }
         public int? EstimatedHours { get; set; }
         public Priority? Priority { get; set; }
-        public Guid? TeamId { get; set; }
+        public Guid TeamId { get; set; }
         public TeamDto? Team { get; set; }
         public ICollection<SprintDto>? Sprints { get; set; }
     }

@@ -1,0 +1,73 @@
+﻿@model ProjectViewModel
+@{
+    Layout = null;
+}
+<div>      
+    <h2>Create Task</h2>
+    <form method="post" asp-action="CreateTask" asp-controller="Project">
+        <input type="hidden" asp-for="Project.Id" value="@Model.Project.Id">
+        <input type="text" asp-for="TaskToCreate.TaskName" placeholder="Task Name">
+        <input type="text" asp-for="TaskToCreate.TaskDesc" id="taskDescInput" placeholder="Task Description">
+        <div class="container pad-0">
+            <div class="row">
+                <div class="col-6 mb-3">
+                    <select asp-for="TaskToCreate.Priority" class="js-example-basic-single">
+                        <option value="@Priority.Low">Low</option>
+                        <option value="@Priority.Medium">Medium</option>
+                        <option value="@Priority.High">High</option>
+                    </select>
+                </div>
+                <div class="col-6 mb-3">
+                    <select asp-for="TaskToCreate.TaskEffort" class="js-example-basic-single">
+                        <option value="@ProjecStatus.New">New</option>
+                        <option value="@ProjecStatus.Pending">Pending</option>
+                        <option value="@ProjecStatus.Committed">Committed</option>
+                        <option value="@ProjecStatus.InProgress">InProgress</option>
+                        <option value="@ProjecStatus.Finished">Finished</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <select asp-for="TaskToCreate.SprintId" asp-items="@Model.TaskToCreate.SprintList" class="js-example-basic-single" required>
+                        <option value="">Select Sprint</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <select asp-for="TaskToCreate.UserId" asp-items="@Model.TaskToCreate.UserList" class="js-example-basic-single" required>
+                        <option value="">Select User</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <button type="submit">Create</button>
+    </form>
+    
+    <div id="aiRequestSection" class="mt-3">
+        <button class="btn btn-outline-primary" onclick="fetchSubTasks()">AI ile sub task önerileri al</button>
+    </div>
+    
+    <div id="spinnerSection" class="text-center mt-3 d-none">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2">Yanıt bekleniyor, lütfen pencereyi kapatmayınız...</p>
+    </div>
+    
+    <div id="subtaskResults" class="mt-3"></div>
+    
+    <div id="aiError" class="alert alert-danger d-none mt-3" role="alert">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-x-circle-fill me-2" style="font-size: 1.5rem;"></i>
+            <div>Yapay zeka yanıt oluşturamadı.</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('.js-example-basic-single').select2({
+            width: '100%'
+        });
+    });
+</script>

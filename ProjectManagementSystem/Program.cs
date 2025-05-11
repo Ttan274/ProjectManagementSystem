@@ -5,7 +5,9 @@ using ProjectManagementSystem.Persistance;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+                .AddRazorRuntimeCompilation();
+
 builder.Services.AddRequiredServices(builder.Configuration);
 
 builder.Services.AddHttpClient<ISubTaskProducerService, SubTaskProducerService>(client =>

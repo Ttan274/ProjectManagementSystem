@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using ProjectManagementSystem.Common.Enums;
+using ProjectManagementSystem.Domain.Entities;
 
 namespace ProjectManagementSystem.Application.Abstractions.Task.Dto
 {
@@ -13,5 +14,6 @@ namespace ProjectManagementSystem.Application.Abstractions.Task.Dto
         public List<SelectListItem>? SprintList { get; set; }
         public string? UserId { get; set; }
         public List<SelectListItem>? UserList { get; set; }
+        public AppUser? AppUser { get; set; }
     }
 }
