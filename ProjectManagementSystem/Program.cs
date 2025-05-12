@@ -1,5 +1,6 @@
 using ProjectManagementSystem.Application.Abstractions.SubTaskProducer;
 using ProjectManagementSystem.Application.SubTaskProducer;
+using ProjectManagementSystem.Models;
 using ProjectManagementSystem.Persistance;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,8 @@ builder.Services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation();
 
 builder.Services.AddRequiredServices(builder.Configuration);
+
+builder.Services.Configure<List<NavBarItem>>(builder.Configuration.GetSection("NavBarOptions"));
 
 builder.Services.AddHttpClient<ISubTaskProducerService, SubTaskProducerService>(client =>
 {

@@ -35,8 +35,8 @@ namespace ProjectManagementSystem.Persistance
 
             //Database
             services.AddDbContext<AppDbContext>(options =>
-            options.UseMySQL(mySql, opt =>
-                opt.MigrationsAssembly("ProjectManagementSystem")));
+            options.UseMySQL(mySql)); //opt =>
+                //opt.MigrationsAssembly("ProjectManagementSystem"))
 
 
             //Identity
@@ -72,6 +72,8 @@ namespace ProjectManagementSystem.Persistance
 
             //SubTask
             services.AddScoped<ISubTaskProducerService, SubTaskProducerService>();
+
+            services.AddMemoryCache();
         }
     }
 }

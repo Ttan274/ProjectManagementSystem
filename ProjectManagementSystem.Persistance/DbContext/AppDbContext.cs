@@ -18,6 +18,13 @@ namespace ProjectManagementSystem.Persistance.DbContext
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<AppUser>()
+                   .HasMany(x => x.Tasks)
+                   .WithOne(x => x.AppUser)
+                   .HasForeignKey(x => x.UserId)
+                   .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }

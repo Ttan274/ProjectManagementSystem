@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.Caching.Memory;
 using ProjectManagementSystem.Application.Abstractions.Project;
 using ProjectManagementSystem.Application.Abstractions.Project.Dto;
 using ProjectManagementSystem.Application.Abstractions.Sprint;
@@ -20,21 +21,28 @@ namespace ProjectManagementSystem.Controllers
         private readonly ITaskService _taskService;
         private readonly IUserService _userService;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IMemoryCache _cache;
 
         public ProjectController(IProjectService projectService, ISprintService sprintService, 
-            ITaskService taskService, IUserService userService, UserManager<AppUser> userManager)
+            ITaskService taskService, IUserService userService, UserManager<AppUser> userManager,
+            IMemoryCache cache)
         {
             _projectService = projectService;
             _sprintService = sprintService;
             _taskService = taskService;
             _userService = userService;
             _userManager = userManager;
+            _cache = cache;
         }
 
         [Authorize(Roles = "Employee")]
         public async Task<IActionResult> ProjectMain(Guid id)
         {
             var model = await GetProjectViewModel(id);
+
+            var user = await _userManager.GetUserAsync(User);
+            _cache.Set($"{user!.UserName}_MainTitle", model?.Project?.ProjectName, TimeSpan.FromMinutes(30));
+
             return View(model);
         }
 
@@ -112,8 +120,6 @@ namespace ProjectManagementSystem.Controllers
 
             var tasks = await _taskService.GetMyAllTasks(user.Id);
 
-            tasks.ForEach(x => { x.AppUser = user; });
-
             return View(tasks);
         }
 
@@ -132,16 +138,6 @@ namespace ProjectManagementSystem.Controllers
                 UserList = users.Select(x => new SelectListItem() { Text = x.UserName, Value = x.Id.ToString() }).ToList()
             };
 
-            
-
-            foreach (var sprint in project.Sprints)
-            {
-                foreach (var item in sprint.Tasks)
-                {
-                    var user = await _userService.FindById(item.UserId);
-                    item.AppUser = user;
-                }
-            }
             return projectModel;
         }
     }

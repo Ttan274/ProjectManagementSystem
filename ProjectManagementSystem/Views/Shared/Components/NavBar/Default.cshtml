@@ -1,0 +1,11 @@
+﻿@model Navbar
+
+<aside class="sidebar">
+    <h2>@Model.MainTitle</h2>
+    <ul>
+        @foreach(var item in Model.NavbarItems)
+        {
+            <li><a asp-action="@item.Action" asp-controller="@item.Controller">@item.Title</a></li>
+        }
+    </ul>
+</aside>
