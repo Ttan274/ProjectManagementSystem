@@ -1,0 +1,146 @@
+﻿@model ProjectManagementSystem.Models.Board.ProjectBoardViewModel
+
+<div class="project-board">
+    <!-- Board Header -->
+    <div class="board-header">
+        <div class="project-info">
+            <h2 class="project-title">@Model.ProjectName</h2>
+            <div class="project-meta">
+                <span class="badge bg-primary">@Model.ProjectCode</span>
+                <span class="text-muted">Son güncelleme: @DateTime.Now.ToString("dd MMM yyyy HH:mm")</span>
+            </div>
+        </div>
+        <div class="board-actions">
+            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createTaskModal">
+                <i class="bi bi-plus-lg"></i> Yeni Görev
+            </button>
+            <div class="btn-group">
+                <select asp-for="SprintId" asp-items="Model.SprintList" class="js-example-basic-single" id="sprintSelect">
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Board Columns -->
+    <div class="board-columns" id="boardColumns">
+        @foreach (var column in Model.Columns)
+        {
+            <div class="board-column" data-column-id="@column.StatusId">
+                <div class="column-header">
+                    <h5>@column.Title</h5>
+                    <span class="badge bg-light text-dark">@column.Tasks.Count</span>
+                </div>
+                <div class="column-body" id="column-@column.StatusId">
+                    @foreach (var task in column.Tasks)
+                    {
+                        <div class="task-card @(task.IsUrgent ? "urgent" : "")"
+                             data-task-id="@task.Id"
+                             draggable="true">
+                            <div class="task-header">
+                                <span class="task-id">@task.TaskCode</span>
+                                <div class="task-priority @GetPriorityClass(task.Priority)"></div>
+                            </div>
+                            <h6 class="task-title">@task.Title</h6>
+
+                            <!-- Subtask Progress -->
+                            @if (task.Subtasks.Any())
+                            {
+                                <div class="subtask-progress">
+                                    <div class="progress">
+                                        <div class="progress-bar"
+                                             role="progressbar"
+                                             style="width: @task.SubtaskCompletionPercentage%"
+                                             aria-valuenow="@task.SubtaskCompletionPercentage"
+                                             aria-valuemin="0"
+                                             aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">@task.CompletedSubtasks/@task.Subtasks.Count tamamlandı</small>
+                                </div>
+                            }
+
+                            <div class="task-footer">
+                                <div class="task-assignee">
+                                    @if (task.Assignees.Any())
+                                    {
+                                        <div class="avatar-group">
+                                            @foreach (var assignee in task.Assignees.Take(2))
+                                            {
+                                                <img src="@assignee.AvatarUrl" alt="@assignee.Name" title="@assignee.Name" class="avatar">
+                                            }
+                                            @if (task.Assignees.Count > 2)
+                                            {
+                                                <span class="avatar-more">+@(task.Assignees.Count - 2)</span>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                                <div class="task-actions">
+                                    <button class="btn btn-sm btn-link p-0 text-muted"
+                                            title="Subtask Ekle"
+                                            onclick="showAddSubtaskModal('@task.Id', '@task.Title')">
+                                        <i class="bi bi-list-check"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-link p-0 text-muted"
+                                            title="Detayları Görüntüle"
+                                            onclick="showTaskDetailModal('@task.Id')">
+                                        <i class="bi bi-three-dots"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="add-task">
+                        <button class="btn btn-sm btn-link" onclick="showAddTaskModal('@column.StatusId')">
+                            <i class="bi bi-plus-lg"></i> Yeni Görev Ekle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@functions {
+    string GetPriorityClass(int priority)
+    {
+        return priority switch
+        {
+            1 => "priority-high",
+            2 => "priority-medium",
+            3 => "priority-low",
+            _ => "priority-none"
+        };
+    }
+}
+
+<script>
+    $(document).ready(function() {
+        $('.js-example-basic-single').select2({
+            width: '100%'
+        });
+
+        doDragOperations()
+
+        $('#sprintSelect').on('change', function () {
+            var selectedSprintId = $(this).val();
+            var projectId = '@Model.ProjectId';
+
+            $.ajax({
+                url: '@Url.Action("BoardRefresh", "Board")',
+                type: 'GET',
+                data: {
+                    projectId: projectId,
+                    sprintId: selectedSprintId
+                },
+                success: function (result) {
+                    debugger;
+                    $('#board-content').html(result);
+                },
+                error: function () {
+                    $('#board-content').html('<p>Veri yüklenemedi.</p>');
+                }
+            });
+        });
+    });
+</script>

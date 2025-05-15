@@ -3,12 +3,13 @@
 @{
     Layout = "_MainLayout";
 }
-
+<link rel="stylesheet" href="~/css/modal.css">
 <main class="content">
     <div class="header">
         <div class="create-btn">
             <button onclick="openSprintModal('@Model.Project.Id')">Create New Sprint</button>
             <button onclick="openTaskModal('@Model.Project.Id', '@Model.Project.TeamId')">Create New Task</button>
+            <a class="button" asp-action="Index" asp-controller="Board" asp-route-projectId="@Model.Project.Id">Go To Board</a>
         </div>
         <div>
             <img src="https://i.pravatar.cc/40" alt="User" style="border-radius: 50%">
@@ -168,6 +169,22 @@
                 success: function (response) {
                     $("#taskActionContent").html(response);
                     document.getElementById('taskModal').style.display='block';
+                },
+                error: function (xhr, status, error) {
+                    $.notify("Error!", "error");
+                }
+        });
+    }
+
+    function GoToBoard(id){
+        $.ajax({
+                url: '/Board/Index',
+                method: 'Get',
+                contentType: 'application/json',
+                data: { projectId: id },
+                success: function (response) {
+                    $("#sprintActionContent").html(response);
+                    document.getElementById('sprintModal').style.display='block';
                 },
                 error: function (xhr, status, error) {
                     $.notify("Error!", "error");

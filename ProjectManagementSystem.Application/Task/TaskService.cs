@@ -5,6 +5,7 @@ using ProjectManagementSystem.Application.Abstractions.Repositories.Sprint;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Task;
 using ProjectManagementSystem.Application.Abstractions.Task;
 using ProjectManagementSystem.Application.Abstractions.Task.Dto;
+using ProjectManagementSystem.Common.Enums;
 
 namespace ProjectManagementSystem.Application.Task
 {
@@ -80,6 +81,28 @@ namespace ProjectManagementSystem.Application.Task
             var mappedResult = _mapper.Map<List<Domain.Entities.Task>, List<TaskDto>>(tasks);
 
             return mappedResult;
+        }
+
+        public async Task<bool> UpdateTaskStatus(string id, string status)
+        {
+            try
+            {
+                int stat = Convert.ToInt32(status);
+
+                var enumStat = (ProjecStatus)stat;
+
+                var task = await _taskReadRepository.GetFirstOrDefaultAsync(x => x.Id == Guid.Parse(id));
+
+                task.TaskEffort = enumStat;
+
+                var response = _taskWriteRepository.Update(task);
+
+                return response;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

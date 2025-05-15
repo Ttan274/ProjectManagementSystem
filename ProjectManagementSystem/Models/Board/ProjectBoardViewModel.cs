@@ -1,11 +1,16 @@
-﻿namespace ProjectManagementSystem.Models.Board
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+
+namespace ProjectManagementSystem.Models.Board
 {
     public class ProjectBoardViewModel
     {
+        public Guid ProjectId { get; set; }
         public string ProjectName { get; set; }
         public string ProjectCode { get; set; }
         public List<BoardColumn> Columns { get; set; }
         public string StatusId { get; set; }
+        public string SprintId { get; set; }
+        public List<SelectListItem> SprintList { get; set; }
 
         public ProjectBoardViewModel()
         {
@@ -78,7 +83,7 @@
                         }
                     }
                 }),
-                new BoardColumn("3", "Done", new List<BoardTask>())
+                new BoardColumn("3", "Done", new List<BoardTask>()),
             };
         }
     }

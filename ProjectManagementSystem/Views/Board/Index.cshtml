@@ -1,109 +1,17 @@
 ﻿@model ProjectManagementSystem.Models.Board.ProjectBoardViewModel
-
-<div class="project-board">
-    <!-- Board Header -->
-    <div class="board-header">
-        <div class="project-info">
-            <h2 class="project-title">@Model.ProjectName</h2>
-            <div class="project-meta">
-                <span class="badge bg-primary">@Model.ProjectCode</span>
-                <span class="text-muted">Son güncelleme: @DateTime.Now.ToString("dd MMM yyyy HH:mm")</span>
-            </div>
-        </div>
-        <div class="board-actions">
-            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createTaskModal">
-                <i class="bi bi-plus-lg"></i> Yeni Görev
-            </button>
-            <div class="btn-group">
-                <button class="btn btn-sm btn-outline-secondary">
-                    <i class="bi bi-filter"></i> Filtrele
-                </button>
-                <button class="btn btn-sm btn-outline-secondary">
-                    <i class="bi bi-columns-gap"></i> Görünüm
-                </button>
-            </div>
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+@Html.AntiForgeryToken()
+@{
+    Layout = "_MainLayout";
+}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<main class="content">
+    <div class="projects-section">
+        <div id="board-content">
+            <partial name="Board" model="Model"/>
         </div>
     </div>
-
-    <!-- Board Columns -->
-    <div class="board-columns" id="boardColumns">
-        @foreach (var column in Model.Columns)
-        {
-            <div class="board-column" data-column-id="@column.StatusId">
-                <div class="column-header">
-                    <h5>@column.Title</h5>
-                    <span class="badge bg-light text-dark">@column.Tasks.Count</span>
-                </div>
-                <div class="column-body" id="column-@column.StatusId">
-                    @foreach (var task in column.Tasks)
-                    {
-                        <div class="task-card @(task.IsUrgent ? "urgent" : "")"
-                             data-task-id="@task.Id"
-                             draggable="true">
-                            <div class="task-header">
-                                <span class="task-id">@task.TaskCode</span>
-                                <div class="task-priority @GetPriorityClass(task.Priority)"></div>
-                            </div>
-                            <h6 class="task-title">@task.Title</h6>
-
-                            <!-- Subtask Progress -->
-                            @if (task.Subtasks.Any())
-                            {
-                                <div class="subtask-progress">
-                                    <div class="progress">
-                                        <div class="progress-bar"
-                                             role="progressbar"
-                                             style="width: @task.SubtaskCompletionPercentage%"
-                                             aria-valuenow="@task.SubtaskCompletionPercentage"
-                                             aria-valuemin="0"
-                                             aria-valuemax="100">
-                                        </div>
-                                    </div>
-                                    <small class="text-muted">@task.CompletedSubtasks/@task.Subtasks.Count tamamlandı</small>
-                                </div>
-                            }
-
-                            <div class="task-footer">
-                                <div class="task-assignee">
-                                    @if (task.Assignees.Any())
-                                    {
-                                        <div class="avatar-group">
-                                            @foreach (var assignee in task.Assignees.Take(2))
-                                            {
-                                                <img src="@assignee.AvatarUrl" alt="@assignee.Name" title="@assignee.Name" class="avatar">
-                                            }
-                                            @if (task.Assignees.Count > 2)
-                                            {
-                                                <span class="avatar-more">+@(task.Assignees.Count - 2)</span>
-                                            }
-                                        </div>
-                                    }
-                                </div>
-                                <div class="task-actions">
-                                    <button class="btn btn-sm btn-link p-0 text-muted"
-                                            title="Subtask Ekle"
-                                            onclick="showAddSubtaskModal('@task.Id', '@task.Title')">
-                                        <i class="bi bi-list-check"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-link p-0 text-muted"
-                                            title="Detayları Görüntüle"
-                                            onclick="showTaskDetailModal('@task.Id')">
-                                        <i class="bi bi-three-dots"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                    <div class="add-task">
-                        <button class="btn btn-sm btn-link" onclick="showAddTaskModal('@column.StatusId')">
-                            <i class="bi bi-plus-lg"></i> Yeni Görev Ekle
-                        </button>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-</div>
+</main>
 
 <!-- Task Detail Modal -->
 <div class="modal fade" id="taskDetailModal" tabindex="-1" aria-hidden="true">
@@ -220,6 +128,10 @@
     <script>
         // Drag and Drop Functionality
         document.addEventListener('DOMContentLoaded', function() {
+            doDragOperations()
+        });
+
+        function doDragOperations(){
             const columns = document.querySelectorAll('.column-body');
 
             columns.forEach(column => {
@@ -250,11 +162,11 @@
 
                     // Update task status on server
                     try {
-                        const response = await fetch(`/Tasks/UpdateStatus?taskId=${taskId}&statusId=${newColumnId}`, {
+                        const response = await fetch(`/Board/UpdateTaskStatus?taskId=${taskId}&statusId=${newColumnId}`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                                '__RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
                             }
                         });
 
@@ -268,7 +180,7 @@
                     }
                 });
             });
-        });
+        }
 
         function getDragAfterElement(column, y) {
             const draggableElements = [...column.querySelectorAll('.task-card:not(.dragging)')];
@@ -434,16 +346,4 @@
             });
         }
     </script>
-}
-@functions {
-    string GetPriorityClass(int priority)
-    {
-        return priority switch
-        {
-            1 => "priority-high",
-            2 => "priority-medium",
-            3 => "priority-low",
-            _ => "priority-none"
-        };
-    }
 }

@@ -9,5 +9,6 @@ namespace ProjectManagementSystem.Application.Abstractions.Task
         Task<bool> CreateTask(TaskDto task);
         Task<List<TaskDto>> GetAllTasksBySprintId(Guid id);
         Task<List<TaskDto>> GetMyAllTasks(Guid userId);
+        Task<bool> UpdateTaskStatus(string id, string status);
     }
 }

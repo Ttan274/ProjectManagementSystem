@@ -1,29 +1,141 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using ProjectManagementSystem.Application.Abstractions.Project;
+using ProjectManagementSystem.Application.Abstractions.Sprint;
+using ProjectManagementSystem.Application.Abstractions.Task;
+using ProjectManagementSystem.Common.Enums;
 using ProjectManagementSystem.Models.Board;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ProjectManagementSystem.Controllers
 {
     public class BoardController : Controller
     {
-        public IActionResult Index(int projectId)
+        private readonly ITaskService _taskService;
+        private readonly IProjectService _projectService;
+        private readonly ISprintService _sprintService;
+
+        public BoardController(ITaskService taskService,
+            IProjectService projectService,
+            ISprintService sprintService)
         {
-            // In a real application, you would fetch this from your database/service
-            var model = new ProjectBoardViewModel(true);
+            _taskService = taskService;
+            _projectService = projectService;
+            _sprintService = sprintService;
+        }
+        public async Task<IActionResult> Index(Guid projectId)
+        {
+            var model = new ProjectBoardViewModel();
+            model.ProjectId = projectId;
+            var project = await _projectService.GetProjectById(projectId);
+            var sprints = await _sprintService.GetAllSprintsByProjectId(projectId);
+
+            var lastSprint = sprints.FirstOrDefault();
+
+            model.ProjectName = project.ProjectName!;
+
+            if (lastSprint is not null)
+            {
+                model.SprintId = lastSprint.Id.ToString();
+
+                var tasks = await _taskService.GetAllTasksBySprintId(lastSprint.Id);
+
+                var columns = Enum.GetValues(typeof(ProjecStatus))
+                          .Cast<ProjecStatus>()
+                          .Select(status => new BoardColumn(
+                              ((int)status).ToString(),
+                              status.ToString().Replace("InProgress", "In Progress"),
+                              tasks.Where(t => t.TaskEffort == status)
+                                   .Select(t => new BoardTask
+                                   {
+                                       Id = t.Id.ToString(),
+                                       TaskCode = "TSK",
+                                       Title = t.TaskName ?? string.Empty,
+                                       Description = t.TaskName ?? string.Empty,
+                                       Priority = t.Priority != null ? (int)t.Priority : 0,
+                                       IsUrgent = false,
+                                       Subtasks = new List<BoardSubtask>
+                                       {
+                                           new BoardSubtask("1", "Create wireframes", false),
+                                           new BoardSubtask("2", "Design color scheme", true)
+                                       },
+                                       //t.Subtasks?.Select(st => new BoardSubtask(
+                                       //    st.Id.ToString(),
+                                       //    st.Title,
+                                       //    st.IsCompleted)).ToList() ?? new List<BoardSubtask>(),
+                                       Assignees = new List<Assignee>
+                                       {
+                                           new Assignee(t.AppUser!.Id.ToString(), t.AppUser.Name, "/images/alice.png")
+                                       }
+                                   }).ToList()
+                          )).ToList();
+
+                model.Columns = columns;
+
+            }
+
+            model.SprintList = sprints.Select(x => new SelectListItem { Text = x.SprintName, Value = x.Id.ToString() }).ToList();
+
+
             return View(model);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult UpdateTaskStatus(string taskId, string statusId)
+        [HttpGet]
+        public async Task<IActionResult> BoardRefresh(Guid projectId, Guid sprintId)
         {
-            // In a real application:
-            // 1. Validate inputs
-            // 2. Update task status in database
-            // 3. Return appropriate response
+            var model = new ProjectBoardViewModel();
+            model.ProjectId = projectId;
+
+            var project = await _projectService.GetProjectById(projectId);
+            var sprints = await _sprintService.GetAllSprintsByProjectId(projectId);
+
+            model.ProjectName = project.ProjectName!;
+
+            model.SprintId = sprintId.ToString();
+
+            var tasks = await _taskService.GetAllTasksBySprintId(sprintId);
+
+            var columns = Enum.GetValues(typeof(ProjecStatus))
+                      .Cast<ProjecStatus>()
+                      .Select(status => new BoardColumn(
+                          ((int)status).ToString(),
+                          status.ToString().Replace("InProgress", "In Progress"),
+                          tasks.Where(t => t.TaskEffort == status)
+                               .Select(t => new BoardTask
+                               {
+                                   Id = t.Id.ToString(),
+                                   TaskCode = "TSK",
+                                   Title = t.TaskName ?? string.Empty,
+                                   Description = t.TaskName ?? string.Empty,
+                                   Priority = t.Priority != null ? (int)t.Priority : 0,
+                                   IsUrgent = false,
+                                   Subtasks = new List<BoardSubtask>
+                                   {
+                                       new BoardSubtask("1", "Create wireframes", false),
+                                       new BoardSubtask("2", "Design color scheme", true)
+                                   },
+                                   //t.Subtasks?.Select(st => new BoardSubtask(
+                                   //    st.Id.ToString(),
+                                   //    st.Title,
+                                   //    st.IsCompleted)).ToList() ?? new List<BoardSubtask>(),
+                                   Assignees = new List<Assignee>
+                                   {
+                                       new Assignee(t.AppUser!.Id.ToString(), t.AppUser.Name, "/images/alice.png")
+                                   }
+                               }).ToList()
+                      )).ToList();
+
+            model.Columns = columns;
+
+            model.SprintList = sprints.Select(x => new SelectListItem { Text = x.SprintName, Value = x.Id.ToString() }).ToList();
+
+            return PartialView("Board", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateTaskStatus(string taskId, string statusId)
+        {
+            await _taskService.UpdateTaskStatus(taskId, statusId);
 
             return Json(new { success = true, message = "Task status updated" });
         }

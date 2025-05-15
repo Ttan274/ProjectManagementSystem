@@ -3,9 +3,9 @@
     public enum ProjecStatus
     {
         New,
-        Pending,
-        Committed,
+        //Pending,
+        //Committed,
         InProgress,
-        Finished
+        Done
     }
 }

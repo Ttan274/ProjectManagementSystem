@@ -6,6 +6,7 @@ namespace ProjectManagementSystem.Application.Abstractions.Task.Dto
 {
     public class TaskDto
     {
+        public Guid Id { get; set; }
         public string? TaskName { get; set; }
         public string? TaskDesc { get; set; }
         public Priority? Priority { get; set; }

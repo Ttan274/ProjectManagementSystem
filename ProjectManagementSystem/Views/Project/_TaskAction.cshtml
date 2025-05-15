@@ -20,10 +20,10 @@
                 <div class="col-6 mb-3">
                     <select asp-for="TaskToCreate.TaskEffort" class="js-example-basic-single">
                         <option value="@ProjecStatus.New">New</option>
-                        <option value="@ProjecStatus.Pending">Pending</option>
-                        <option value="@ProjecStatus.Committed">Committed</option>
+                        @* <option value="@ProjecStatus.Pending">Pending</option>
+                        <option value="@ProjecStatus.Committed">Committed</option> *@
                         <option value="@ProjecStatus.InProgress">InProgress</option>
-                        <option value="@ProjecStatus.Finished">Finished</option>
+                        <option value="@ProjecStatus.Done">Done</option>
                     </select>
                 </div>
             </div>
