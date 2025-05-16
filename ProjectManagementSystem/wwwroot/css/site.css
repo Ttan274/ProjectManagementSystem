@@ -25,12 +25,12 @@
     box-sizing: border-box;
 }
 
-body {
+/*body {
     font-family: 'Poppins', sans-serif;
     background-color: #f5f7fb;
     color: #333;
     overflow-x: hidden;
-}
+}*/
 
 .wrapper {
     display: flex;
@@ -476,7 +476,7 @@ body {
 
 .project-board {
     padding: 20px;
-    background-color: #f5f7fb;
+    /*background-color: #f5f7fb;*/
     min-height: calc(100vh - var(--header-height));
 }
 
@@ -510,15 +510,16 @@ body {
     display: flex;
     gap: 15px;
     overflow-x: auto;
-    padding-bottom: 20px;
+    padding: 10px 10px 20px 10px;
 }
 
 .board-column {
     min-width: 300px;
-    width: 300px;
+    flex: 1;
+    /*width: 300px;*/
     background: white;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .column-header {
