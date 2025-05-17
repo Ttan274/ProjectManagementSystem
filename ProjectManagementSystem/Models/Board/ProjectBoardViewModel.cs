@@ -10,7 +10,10 @@ namespace ProjectManagementSystem.Models.Board
         public List<BoardColumn> Columns { get; set; }
         public string StatusId { get; set; }
         public string SprintId { get; set; }
-        public List<SelectListItem> SprintList { get; set; }
+        public List<SelectListItem> SprintList { get; set; } = [];
+        public List<SelectListItem> UserList { get; set; } = [];
+        public string SprintInterval { get; set; }
+        public Guid TeamId { get; set; }
 
         public ProjectBoardViewModel()
         {
@@ -40,10 +43,7 @@ namespace ProjectManagementSystem.Models.Board
                             new BoardSubtask("1", "Create wireframes", false),
                             new BoardSubtask("2", "Design color scheme", true)
                         },
-                        Assignees = new List<Assignee>
-                        {
-                            new Assignee("1", "Alice", "/images/alice.png")
-                        }
+                        Assigned = new Assignee("1", "Alice", "/images/alice.png")
                     },
                     new BoardTask
                     {
@@ -54,10 +54,7 @@ namespace ProjectManagementSystem.Models.Board
                         Priority = 2,
                         IsUrgent = false,
                         Subtasks = new List<BoardSubtask>(),
-                        Assignees = new List<Assignee>
-                        {
-                            new Assignee("2", "Bob", "/images/bob.png")
-                        }
+                        Assigned = new Assignee("2", "Bob", "/images/bob.png")
                     }
                 }),
                 new BoardColumn("2", "In Progress", new List<BoardTask>
@@ -76,11 +73,7 @@ namespace ProjectManagementSystem.Models.Board
                             new BoardSubtask("4", "Implement GET endpoints", true),
                             new BoardSubtask("5", "Implement POST endpoints", false)
                         },
-                        Assignees = new List<Assignee>
-                        {
-                            new Assignee("1", "Alice", "/images/alice.png"),
-                            new Assignee("3", "Charlie", "/images/charlie.png")
-                        }
+                        Assigned = new Assignee("3", "Charlie", "/images/charlie.png")
                     }
                 }),
                 new BoardColumn("3", "Done", new List<BoardTask>()),
@@ -116,7 +109,8 @@ namespace ProjectManagementSystem.Models.Board
         public int Priority { get; set; } // 1: High, 2: Medium, 3: Low
         public bool IsUrgent { get; set; }
         public List<BoardSubtask> Subtasks { get; set; }
-        public List<Assignee> Assignees { get; set; }
+        public string UserId { get; set; }
+        public Assignee Assigned { get; set; }
 
         public int SubtaskCount => Subtasks?.Count ?? 0;
         public int CompletedSubtasks => Subtasks?.Count(s => s.IsCompleted) ?? 0;
@@ -125,7 +119,7 @@ namespace ProjectManagementSystem.Models.Board
         public BoardTask()
         {
             Subtasks = new List<BoardSubtask>();
-            Assignees = new List<Assignee>();
+            Assigned = new Assignee();
         }
     }
 

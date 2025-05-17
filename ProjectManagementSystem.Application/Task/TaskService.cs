@@ -104,5 +104,23 @@ namespace ProjectManagementSystem.Application.Task
                 return false;
             }
         }
+
+        public async Task<bool> UpdateTaskUser(string id, string userId)
+        {
+            try
+            {
+                var task = await _taskReadRepository.GetFirstOrDefaultAsync(x => x.Id == Guid.Parse(id));
+
+                task.UserId = Guid.Parse(userId);
+
+                var response = _taskWriteRepository.Update(task);
+
+                return response;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 }

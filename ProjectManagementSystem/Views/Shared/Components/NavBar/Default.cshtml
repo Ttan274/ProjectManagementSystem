@@ -1,8 +1,9 @@
 ﻿@model Navbar
 
 <aside class="sidebar">
-    <h2>@Model.MainTitle</h2>
-    <ul>
+    <h2 class="txt-center">@Model.MainTitle</h2>
+    <hr style="border-top: 1px solid #ccc;" />
+    <ul class="custom-menu-elements">
         @foreach(var item in Model.NavbarItems)
         {
             <li><a asp-action="@item.Action" asp-controller="@item.Controller">@item.Title</a></li>

@@ -3,7 +3,6 @@
     Layout = null;
 }
 <div>      
-    <h2>Create Task</h2>
     <form method="post" asp-action="CreateTask" asp-controller="Project">
         <input type="hidden" asp-for="Project.Id" value="@Model.Project.Id">
         <input type="text" asp-for="TaskToCreate.TaskName" placeholder="Task Name">

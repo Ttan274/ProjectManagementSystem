@@ -9,7 +9,7 @@
         <div class="create-btn">
             <button onclick="openSprintModal('@Model.Project.Id')">Create New Sprint</button>
             <button onclick="openTaskModal('@Model.Project.Id', '@Model.Project.TeamId')">Create New Task</button>
-            <a class="button" asp-action="Index" asp-controller="Board" asp-route-projectId="@Model.Project.Id">Go To Board</a>
+            <a class="button" id="goToBoardBtn" asp-action="Index" asp-controller="Board" asp-route-projectId="@Model.Project.Id">Go To Board</a>
         </div>
         <div>
             <img src="https://i.pravatar.cc/40" alt="User" style="border-radius: 50%">
@@ -107,7 +107,8 @@
     <div id="sprintModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('sprintModal', 'sprintActionContent')">&times;</span>
-            <div id="sprintActionContent"> 
+            <h2>Create Sprint</h2>
+            <div id="sprintActionContent">
             </div>
         </div>
     </div>
@@ -115,7 +116,8 @@
     <div id="taskModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('taskModal', 'taskActionContent')">&times;</span>
-            <div id="taskActionContent"> 
+            <h2>Create Task</h2>
+            <div id="taskActionContent">
             </div>
         </div>
     </div>
@@ -134,13 +136,12 @@
     </div>
 </main>
 
-
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script>
     $(document).ready(function() {
         $('.js-example-basic-single').select2({
             width: '100%'
         });
-        debugger;
         $(`#sprintActionContent`).html('');
         $(`#taskActionContent`).html('');
     });

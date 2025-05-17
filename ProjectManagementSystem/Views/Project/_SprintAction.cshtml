@@ -3,7 +3,6 @@
     Layout = null;
 }
 <div>   
-    <h2>Create Sprint</h2>
     <form method="post" asp-action="CreateSprint" asp-controller="Project">
         <input type="hidden" asp-for="Project.Id" value="@Model.Project.Id">
         <input type="hidden" asp-for="SprintToCreate.ProjectId" value="@Model.Project.Id">
@@ -12,5 +11,4 @@
         <input type="date" asp-for="SprintToCreate.FinishDate" placeholder="Sprint Finish Date">
         <button type="submit">Create</button>
     </form>
-    @*  *@
 </div>

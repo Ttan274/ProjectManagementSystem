@@ -60,7 +60,8 @@ namespace ProjectManagementSystem.ViewComponents
             {
                 "Dept/DeptMain", 
                 "Dept/DeptCrew", 
-                "Project/GetMyTasks"
+                "Project/GetMyTasks",
+                "Board/Index"
             };
 
             return depTitleUsageList.Contains(path);

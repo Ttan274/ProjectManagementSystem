@@ -25,18 +25,29 @@ body {
 
     .sidebar ul {
         list-style: none;
+        margin-top: 15vh !important;
     }
 
         .sidebar ul li {
-            margin-bottom: 16px;
+            /*margin-bottom: 16px;
+            margin-top: 16px;*/
+            /*padding: 2vh;*/
             color: #a0aec0;
             cursor: pointer;
+            border-top: 1px solid #ccc;
+            border-radius: 2px;
         }
 
-        .sidebar ul li a {
-            text-decoration:none;
-            color:white;
-        }
+            .sidebar ul li a {
+                text-decoration: none;
+                color: white;
+            }
+
+            .sidebar ul li:hover {
+                background-color: #2d3748;
+                color: black;
+                padding-left: 14px;
+            }
 
 .content {
     flex: 1;
@@ -151,4 +162,38 @@ thead {
 
 .pad-0 {
     padding:0 !important;
+}
+
+.display-block {
+    display:block !important;
+}
+
+/*.task-assignee {
+    flex:4;
+}
+
+.task-actions {
+    flex:1;
+}*/
+
+.custom-menu-elements{
+    padding-left: 0;
+    text-align:left;
+    margin-top: 5vh;
+}
+
+    .custom-menu-elements li a {
+        display: block; /* ya da inline-block */
+        padding: 2vh; /* istediğin padding */
+        text-decoration: none; /* varsa alt çizgi kaldır */
+        color: inherit; /* renk ayarları */
+    }
+
+    .custom-menu-elements li {
+        /* Burada padding olmasın, boşluk a elementine gelsin */
+        margin: 0;
+    }
+
+.txt-center{
+    text-align:center;
 }

@@ -216,6 +216,7 @@
     right: 0;
     padding: 15px;
     border-top: 1px solid rgba(0, 0, 0, 0.05);
+    width:100%;
 }
 
 .user-profile {
@@ -613,6 +614,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 0.5vw;
 }
 
 .avatar-group {
@@ -685,7 +687,14 @@
 
 .task-actions {
     display: flex;
+    flex: 1;
     gap: 8px;
+    justify-content: flex-end;
+}
+
+.task-assignee {
+    flex: 6;
+    max-width: 100% !important;
 }
 
 .modal-body .card {
@@ -696,4 +705,17 @@
 #taskAssigneesList .avatar {
     width: 32px;
     height: 32px;
+}
+
+select option {
+    display: block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.max-100 {
+   max-width: 100% !important;
+   max-height: 100% !important;
 }

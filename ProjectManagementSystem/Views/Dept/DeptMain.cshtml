@@ -6,7 +6,7 @@
 <main class="content">
     <div class="header">
         <div class="create-btn">
-            <button onclick="document.getElementById('projectModal').style.display='block'">Create New Project</button>
+            <button type="button" data-bs-toggle="modal" data-bs-target="#projectModal">Create New Project</button>
         </div>
         <div>
             <img src="https://i.pravatar.cc/40" alt="User" style="border-radius: 50%">
@@ -77,22 +77,39 @@
     </div>
     
     <!--Project Modal-->
-    <div id="projectModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="document.getElementById('projectModal').style.display='none'">&times;</span>
-            <h2>Create New Project</h2>
-            <form method="post" asp-action="CreateProject" asp-controller="Dept">
-                <input type="hidden" asp-for="ProjectDto.TeamId" value="@Model.Id">
-                <input type="text" asp-for="ProjectDto.ProjectName" placeholder="Project Name" autocomplete="off" required>
-                <input type="text" asp-for="ProjectDto.ProjectDesc" placeholder="Project Description" autocomplete="off" required>
-                <input type="text" asp-for="ProjectDto.EstimatedHours" placeholder="Estimated Hours" autocomplete="off" required>
-                <select asp-for="ProjectDto.Priority">
-                    <option value="@Priority.Low">Low</option>
-                    <option value="@Priority.Medium">Medium</option>
-                    <option value="@Priority.High">High</option>
-                </select>
-                <button type="submit">Create</button>
-            </form>
+    <div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title fs-5" id="projectModalLabel">Create New Project</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" asp-action="CreateProject" asp-controller="Dept">
+                    <div class="modal-body">
+                        <input type="hidden" asp-for="ProjectDto.TeamId" value="@Model.Id">
+                        <div class="mb-3">
+                            <input type="text" class="form-control" asp-for="ProjectDto.ProjectName" placeholder="Project Name" autocomplete="off" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" asp-for="ProjectDto.ProjectDesc" placeholder="Project Description" autocomplete="off" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" asp-for="ProjectDto.EstimatedHours" placeholder="Estimated Hours" autocomplete="off" required>
+                        </div>
+                        <div class="mb-3">
+                            <select class="form-select" asp-for="ProjectDto.Priority">
+                                <option value="@Priority.Low">Low</option>
+                                <option value="@Priority.Medium">Medium</option>
+                                <option value="@Priority.High">High</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Create</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </main>

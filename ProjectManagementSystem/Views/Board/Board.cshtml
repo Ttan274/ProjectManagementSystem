@@ -1,5 +1,5 @@
 ﻿@model ProjectManagementSystem.Models.Board.ProjectBoardViewModel
-
+<link rel="stylesheet" href="~/css/customModelUi.css" asp-append-version="true" />
 <div class="project-board">
     <!-- Board Header -->
     <div class="board-header">
@@ -11,12 +11,14 @@
             </div>
         </div>
         <div class="board-actions">
-            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createTaskModal">
-                <i class="bi bi-plus-lg"></i> Yeni Görev
+            <button class="btn btn-sm btn-outline-primary" onclick="openTaskModal()">
+                <i class="bi bi-plus-lg"></i> Create Task
             </button>
-            <div class="btn-group">
+            <div class="btn-group display-block max-100">
                 <select asp-for="SprintId" asp-items="Model.SprintList" class="js-example-basic-single" id="sprintSelect">
                 </select>
+                <br/>
+                <span><i><small>@Model.SprintInterval</small></i></span>
             </div>
         </div>
     </div>
@@ -33,9 +35,9 @@
                 <div class="column-body" id="column-@column.StatusId">
                     @foreach (var task in column.Tasks)
                     {
-                        <div class="task-card @(task.IsUrgent ? "urgent" : "")"
-                             data-task-id="@task.Id"
-                             draggable="true">
+                        <div class="task-card urgent" @*  @(task.IsUrgent ? "urgent" : "") *@
+                        data-task-id="@task.Id"
+                        draggable="true">
                             <div class="task-header">
                                 <span class="task-id">@task.TaskCode</span>
                                 <div class="task-priority @GetPriorityClass(task.Priority)"></div>
@@ -48,11 +50,11 @@
                                 <div class="subtask-progress">
                                     <div class="progress">
                                         <div class="progress-bar"
-                                             role="progressbar"
-                                             style="width: @task.SubtaskCompletionPercentage%"
-                                             aria-valuenow="@task.SubtaskCompletionPercentage"
-                                             aria-valuemin="0"
-                                             aria-valuemax="100">
+                                        role="progressbar"
+                                        style="width: @task.SubtaskCompletionPercentage%"
+                                        aria-valuenow="@task.SubtaskCompletionPercentage"
+                                        aria-valuemin="0"
+                                        aria-valuemax="100">
                                         </div>
                                     </div>
                                     <small class="text-muted">@task.CompletedSubtasks/@task.Subtasks.Count tamamlandı</small>
@@ -61,19 +63,24 @@
 
                             <div class="task-footer">
                                 <div class="task-assignee">
-                                    @if (task.Assignees.Any())
-                                    {
-                                        <div class="avatar-group">
-                                            @foreach (var assignee in task.Assignees.Take(2))
-                                            {
-                                                <img src="@assignee.AvatarUrl" alt="@assignee.Name" title="@assignee.Name" class="avatar">
-                                            }
-                                            @if (task.Assignees.Count > 2)
-                                            {
-                                                <span class="avatar-more">+@(task.Assignees.Count - 2)</span>
-                                            }
-                                        </div>
-                                    }
+                                    <select class="userSelect form-control js-example-basic-single" data-task-id="@task.Id">
+                                        @foreach (var user in Model.UserList)
+                                        {
+                                            <option value="@user.Value" selected="@(user.Value == task.UserId?.ToString() ? "selected" : null)">
+                                                @user.Text
+                                            </option>
+                                        }
+                                    </select>
+                                    @* <div class="avatar-group">
+                                        @foreach (var assignee in task.Assignees.Take(2))
+                                        {
+                                            <img src="@assignee.AvatarUrl" alt="@assignee.Name" title="@assignee.Name" class="avatar">
+                                        }
+                                        @if (task.Assignees.Count > 2)s
+                                        {
+                                            <span class="avatar-more">+@(task.Assignees.Count - 2)</span>
+                                        }
+                                    </div> *@
                                 </div>
                                 <div class="task-actions">
                                     <button class="btn btn-sm btn-link p-0 text-muted"
@@ -129,7 +136,6 @@
                     sprintId: selectedSprintId
                 },
                 success: function (result) {
-                    debugger;
                     $('#board-content').html(result);
                 },
                 error: function () {
@@ -137,5 +143,43 @@
                 }
             });
         });
+
+        $('.userSelect').on('change', function () {
+                const taskId = $(this).data('task-id');
+                const userId = $(this).val();
+
+                $.ajax({
+                    url: "@Url.Action("AssignUser", "Board")",
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ taskId: taskId, userId: userId }),
+                    success: function (res) {
+                        console.log("Atama başarılı");
+                    },
+                    error: function (err) {
+                        console.error("Hata:", err);
+                    }
+                });
+            });
     });
+
+        @* function openTaskModal() {
+        var projectId = '@Model.ProjectId';
+        var teamId = '@Model.TeamId';
+
+        $.ajax({
+            url: '/Project/CreateTask',
+            method: 'GET',
+            contentType: 'application/json',
+            data: { projectId: projectId, teamId: teamId },
+            success: function (response) {
+                $("#taskActionContent").html(response);
+                var myModal = new bootstrap.Modal(document.getElementById('taskModal'));
+                myModal.show();
+            },
+            error: function (xhr, status, error) {
+                $.notify("Error!", "error");
+            }
+        });
+    } *@
 </script>
