@@ -19,6 +19,8 @@ namespace ProjectManagementSystem.Domain.Entities
         public Sprint? Sprint { get; set; }
         public Guid UserId { get; set; }
         public AppUser? AppUser { get; set; }
+        public Guid? DocumentationId { get; set; }
+        public Documentation? Documentation { get; set; }
         public ICollection<Task>? DependentTasks { get; set; }
     }
 }

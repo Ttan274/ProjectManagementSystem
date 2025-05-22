@@ -16,5 +16,6 @@ namespace ProjectManagementSystem.Application.Abstractions.Task.Dto
         public string? UserId { get; set; }
         public List<SelectListItem>? UserList { get; set; }
         public AppUser? AppUser { get; set; }
+        public Domain.Entities.Documentation? Documentation { get; set; }
     }
 }

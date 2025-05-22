@@ -6,5 +6,6 @@ namespace ProjectManagementSystem.Application.Abstractions.Documentation.Dto
     {
         public string? Header { get; set; }
         public string? Text { get; set; }
+        public Guid TaskId { get; set; }
     }
 }

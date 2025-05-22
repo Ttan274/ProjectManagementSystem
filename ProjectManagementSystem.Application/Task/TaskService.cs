@@ -73,6 +73,7 @@ namespace ProjectManagementSystem.Application.Task
             var tasks = await _taskReadRepository.GetQueryable()
                                                  .Where(x => x.UserId == userId && x.Status)
                                                  .Include(x => x.AppUser)
+                                                 .Include(x => x.Documentation)
                                                  .OrderByDescending(x => x.CreatedDatee)
                                                  .ToListAsync();
             if (tasks is null)

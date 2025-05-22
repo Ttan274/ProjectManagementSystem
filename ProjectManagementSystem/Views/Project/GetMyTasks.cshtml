@@ -41,7 +41,19 @@
                                 }
                             </td>
                             <td>@item.TaskEffort.ToString()</td>
-                            <td></td>
+                            <td>
+                                @if(item.Documentation == null)
+                                {
+                                    <form method="get" asp-action="CreateDocumentation" asp-controller="Documentation">
+                                        <input type="hidden" name="Id" value="@item.Id">
+                                        <button>Add Documentation</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <button>See Documentation</button>
+                                }
+                            </td>
                         </tr>
                     }
             </tbody>

@@ -25,6 +25,10 @@ namespace ProjectManagementSystem.Persistance.DbContext
                    .HasForeignKey(x => x.UserId)
                    .OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<Domain.Entities.Task>()
+                   .HasOne(x => x.Documentation)
+                   .WithOne(x => x.Task)
+                   .HasForeignKey<Documentation>(x => x.TaskId);
         }
     }
 }
