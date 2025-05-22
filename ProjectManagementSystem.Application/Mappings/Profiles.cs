@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ProjectManagementSystem.Application.Abstractions.Documentation.Dto;
 using ProjectManagementSystem.Application.Abstractions.Project.Dto;
 using ProjectManagementSystem.Application.Abstractions.Sprint.Dto;
 using ProjectManagementSystem.Application.Abstractions.Task.Dto;
@@ -16,6 +17,7 @@ namespace ProjectManagementSystem.Application.Mappings
             CreateMap<Domain.Entities.Project, ProjectDto>().ReverseMap();
             CreateMap<Domain.Entities.Sprint, SprintDto>().ReverseMap();
             CreateMap<Domain.Entities.Task, TaskDto>().ReverseMap();
+            CreateMap<Domain.Entities.Documentation, DocumentationDto>().ReverseMap();
         }
     }
 }

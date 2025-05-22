@@ -23,6 +23,10 @@ using ProjectManagementSystem.Application.Abstractions.Task;
 using ProjectManagementSystem.Application.Task;
 using ProjectManagementSystem.Application.Abstractions.SubTaskProducer;
 using ProjectManagementSystem.Application.SubTaskProducer;
+using ProjectManagementSystem.Application.Abstractions.Repositories.Documentation;
+using ProjectManagementSystem.Persistance.Repositories.Documentation;
+using ProjectManagementSystem.Application.Abstractions.Documentation;
+using ProjectManagementSystem.Application.Documentation;
 
 namespace ProjectManagementSystem.Persistance
 {
@@ -73,7 +77,14 @@ namespace ProjectManagementSystem.Persistance
             //SubTask
             services.AddScoped<ISubTaskProducerService, SubTaskProducerService>();
 
+            //Documentation
+            services.AddScoped<IDocumentationReadRepository, DocumentationReadRepository>();
+            services.AddScoped<IDocumentationWriteRepository, DocumentationWriteRepository>();
+            services.AddScoped<IDocumentationService, DocumentationService>();
+           
+
             services.AddMemoryCache();
+
         }
     }
 }

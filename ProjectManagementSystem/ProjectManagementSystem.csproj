@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Views\Dept\extra.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.15" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.14" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.14">
@@ -30,18 +26,6 @@
     <ProjectReference Include="..\ProjectManagementSystem.Common\ProjectManagementSystem.Common.csproj" />
     <ProjectReference Include="..\ProjectManagementSystem.Infrastructure\ProjectManagementSystem.Infrastructure.csproj" />
     <ProjectReference Include="..\ProjectManagementSystem.Persistance\ProjectManagementSystem.Persistance.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Views\Dept\extra.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Views\Dept\extra.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Views\Dept\extra.cshtml" />
   </ItemGroup>
 
 </Project>

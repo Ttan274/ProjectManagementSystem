@@ -15,9 +15,9 @@
                 <tr>
                     <th>Task Name</th>
                     <th>Task Description</th>
-                    <th>Assigned Employee</th>
                     <th>Task Priority</th>
                     <th>Task Status</th>
+                    <th>Documentation</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,7 +26,6 @@
                         <tr>
                             <td>@item.TaskName</td>
                             <td>@item.TaskDesc</td>
-                            <td>@item.AppUser?.UserName</td>
                             <td>
                                 @if (@item.Priority.ToString() == "Low")
                                 {
@@ -42,6 +41,7 @@
                                 }
                             </td>
                             <td>@item.TaskEffort.ToString()</td>
+                            <td></td>
                         </tr>
                     }
             </tbody>
