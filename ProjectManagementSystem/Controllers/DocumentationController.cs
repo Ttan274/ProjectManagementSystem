@@ -33,5 +33,12 @@ namespace ProjectManagementSystem.Controllers
 
             return View();
         }
+
+        public async Task<IActionResult> GetDocuments()
+        {
+            var documentations = await _documentationService.GetAllDocumentations();
+
+            return View(documentations);
+        }
     }
 }

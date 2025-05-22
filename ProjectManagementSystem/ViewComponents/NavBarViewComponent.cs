@@ -61,6 +61,7 @@ namespace ProjectManagementSystem.ViewComponents
                 "Dept/DeptMain", 
                 "Dept/DeptCrew", 
                 "Project/GetMyTasks",
+                "Documentation/GetDocuments",
                 "Board/Index"
             };
 

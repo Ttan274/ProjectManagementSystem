@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Sprint;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Task;
@@ -68,6 +67,7 @@ namespace ProjectManagementSystem.Application.Task
                 return [];
             }
         }
+
         public async Task<List<TaskDto>> GetMyAllTasks(Guid userId)
         {
             var tasks = await _taskReadRepository.GetQueryable()

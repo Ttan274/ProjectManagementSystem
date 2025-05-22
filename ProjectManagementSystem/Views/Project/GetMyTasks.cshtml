@@ -17,7 +17,7 @@
                     <th>Task Description</th>
                     <th>Task Priority</th>
                     <th>Task Status</th>
-                    <th>Documentation</th>
+                    <th colspan="2">Documentation</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,19 +41,25 @@
                                 }
                             </td>
                             <td>@item.TaskEffort.ToString()</td>
-                            <td>
-                                @if(item.Documentation == null)
-                                {
+                            @if (item.Documentation == null)
+                            {
+                                <td colspan="2">
                                     <form method="get" asp-action="CreateDocumentation" asp-controller="Documentation">
                                         <input type="hidden" name="Id" value="@item.Id">
                                         <button>Add Documentation</button>
                                     </form>
-                                }
-                                else
-                                {
-                                    <button>See Documentation</button>
-                                }
-                            </td>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    @item.Documentation.Header
+                                </td>
+                                <td>
+                                    @item.Documentation.Text
+                                </td>
+                            }
+                            
                         </tr>
                     }
             </tbody>

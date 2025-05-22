@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Application.Abstractions.Documentation;
 using ProjectManagementSystem.Application.Abstractions.Documentation.Dto;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Documentation;
@@ -44,9 +45,28 @@ namespace ProjectManagementSystem.Application.Documentation
             }
         }
 
-        public Task<Domain.Entities.Documentation> GetDocumentationByTaskId(Guid id)
+
+        //Buradki sıkıntı bütün dökümasyonlar dönüyo sadece aynı departman içindekiler dönmesi lazım
+        public async Task<List<DocumentationDto>> GetAllDocumentations()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var documentations = await _documentationReadRepository.GetQueryable()
+                                                                       .Where(x => x.Status)
+                                                                       .Include(x => x.Task)
+                                                                       .Include(x => x.Task.AppUser)
+                                                                       .OrderByDescending(x => x.CreatedDatee).ToListAsync();
+                if (documentations is null)
+                    return [];
+
+                var mappedResult = _mapper.Map<List<Domain.Entities.Documentation>, List<DocumentationDto>>(documentations);
+
+                return mappedResult;
+            }
+            catch (Exception)
+            {
+                return [];
+            }
         }
     }
 }

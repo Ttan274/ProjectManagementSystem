@@ -1,0 +1,42 @@
+﻿@model IEnumerable<DocumentationDto>
+@{
+    Layout = "_MainLayout";
+}
+
+
+<main class="content">
+    <div class="header">
+        <div class="create-btn">
+            <button>Create New Nothing</button>
+        </div>
+        <div>
+            <img src="https://i.pravatar.cc/40" alt="User" style="border-radius: 50%">
+        </div>
+    </div>
+    <div class="projects-section">
+        <h3>Sprints</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Heade</th>
+                    <th>Text</th>
+                    <th>Creation Date</th>
+                    <th>Task Name</th>
+                    <th>Author</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Header</td>
+                        <td>@item.Text</td>
+                        <td>@item.CreatedDate</td>
+                        <td>@item.Task.TaskName</td>
+                        <td>@item.Task.AppUser.Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</main>
