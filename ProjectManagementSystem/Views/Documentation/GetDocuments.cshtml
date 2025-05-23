@@ -3,6 +3,80 @@
     Layout = "_MainLayout";
 }
 
+<style>
+    .card-container {
+        margin-top:20px;
+        display: flex;
+        flex-direction: column;
+        gap: 30px; /* space between stacked cards */
+        align-items: center; /* optional: center cards horizontally */
+    }
+
+    .card {
+        background-color: #ffffff;
+        width: 700px;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .left-meta, .right-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .field {
+        background-color: #f0f2f5;
+        border: 1px solid #d0d6dd;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 14px;
+        color: #333;
+        min-width: 160px;
+        text-align: center;
+    }
+
+    .card-content {
+        border-radius: 12px;
+        background-color: #fdfdfd;
+        border: 1px solid #e0e6ed;
+        padding: 20px;
+        min-height: 180px;
+        color: #444;
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    .card-footer {
+        text-align: center;
+    }
+
+    .delete-button {
+        background-color: #ff4d4f;
+        border: none;
+        color: white;
+        padding: 10px 24px;
+        border-radius: 25px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .delete-button:hover {
+            background-color: #d9363e;
+        }
+
+</style>
+
 
 <main class="content">
     <div class="header">
@@ -13,30 +87,29 @@
             <img src="https://i.pravatar.cc/40" alt="User" style="border-radius: 50%">
         </div>
     </div>
-    <div class="projects-section">
-        <h3>Sprints</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Heade</th>
-                    <th>Text</th>
-                    <th>Creation Date</th>
-                    <th>Task Name</th>
-                    <th>Author</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@item.Header</td>
-                        <td>@item.Text</td>
-                        <td>@item.CreatedDate</td>
-                        <td>@item.Task.TaskName</td>
-                        <td>@item.Task.AppUser.Name</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+    <div class="card-container">
+        @foreach (var document in Model)
+        {
+            <div class="card">
+                <div class="card-header">
+                    <div class="left-meta">
+                        <div class="field">@document.Header</div>
+                        <div class="field">@document.CreatedDate</div>
+                    </div>
+                    <div class="right-meta">
+                        <div class="field">@document.Task.AppUser.Name</div>
+                        <div class="field">@document.Task.TaskName</div>
+                    </div>
+                </div>
+
+                <div class="card-content">
+                    @document.Text
+                </div>
+
+                <div class="card-footer">
+                    <button class="delete-button">delete</button>
+                </div>
+            </div>
+        }
     </div>
 </main>
