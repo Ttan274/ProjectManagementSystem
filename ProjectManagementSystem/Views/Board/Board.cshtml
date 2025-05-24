@@ -1,5 +1,6 @@
 ﻿@model ProjectManagementSystem.Models.Board.ProjectBoardViewModel
 <link rel="stylesheet" href="~/css/customModelUi.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/taskModal.css" asp-append-version="true" />
 <div class="project-board">
     <!-- Board Header -->
     <div class="board-header">
@@ -163,7 +164,7 @@
             });
     });
 
-        @* function openTaskModal() {
+    function openTaskModal() {
         var projectId = '@Model.ProjectId';
         var teamId = '@Model.TeamId';
 
@@ -181,5 +182,5 @@
                 $.notify("Error!", "error");
             }
         });
-    } *@
+    }
 </script>

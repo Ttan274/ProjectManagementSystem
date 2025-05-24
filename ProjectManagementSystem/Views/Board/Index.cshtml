@@ -4,6 +4,8 @@
     Layout = "_MainLayout";
 }
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="~/js/subTasks.js" asp-append-version="true"></script>
+
 <main class="content">
     <div class="projects-section">
         <div id="board-content">
@@ -123,15 +125,17 @@
     </div>
 </div>
 
-<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="taskModalLabel">Yeni Task</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+<div class="modal fade" id="taskModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content border-0">
+            <div class="modal-header bg-sidebar text-white px-4 py-3">
+                <h5 class="modal-title fs-5 fw-semibold">
+                    <i class="bi bi-plus-circle me-2"></i>Yeni Görev Ekle
+                </h5>
+                <button type="button" class="btn-close bg-info text-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
             </div>
-            <div class="modal-body" id="taskActionContent">
-                
+
+            <div class="modal-body p-0" id="taskActionContent">
             </div>
         </div>
     </div>
