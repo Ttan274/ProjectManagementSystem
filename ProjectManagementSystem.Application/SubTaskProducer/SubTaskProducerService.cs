@@ -22,7 +22,8 @@ namespace ProjectManagementSystem.Application.SubTaskProducer
                 var payload = new
                 {
                     model = subTaskModel,
-                    prompt = $"Bir yazılım görevi için en fazla 3 adet alt görev listesi üret. Görev: \"{taskDescription}\". Sadece şu JSON formatında dön: [{{\"title\": \"...\", \"description\": \"...\"}}]",
+                    prompt = $"Bir yazılım görevi için en fazla 3 adet alt görev listesi üret. Görev: \"{taskDescription}\". Lütfen yanıtını **sadece** ve **tam olarak** aşağıdaki JSON dizisi formatında, sıralama numarası veya madde işareti olmadan, ekstra açıklama yapmadan ver:\n" +
+                    "[{{\"title\": \"...\", \"description\": \"...\"}}]",
                     stream = false
                 };
 

@@ -17,6 +17,12 @@
     --btn-bg: #4a90e2;
     --btn-text: #fff;
     --btn-hover: #3a78c2;
+    --main-color: bisque;
+    --sidebar-bg: #1a202c;
+}
+
+.bg-sidebar {
+    background-color: #1a202c;
 }
 
 * {
@@ -25,16 +31,13 @@
     box-sizing: border-box;
 }
 
-/*body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #f5f7fb;
-    color: #333;
-    overflow-x: hidden;
-}*/
-
 .wrapper {
     display: flex;
     min-height: 100vh;
+}
+
+.bg-bisque {
+    background-color: var(--main-color);
 }
 
 #sidebar {

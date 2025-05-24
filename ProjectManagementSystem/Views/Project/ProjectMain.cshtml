@@ -206,49 +206,5 @@
         $(`#${resetId}`).html('');
     }
 
-    async function fetchSubTasks() {
-        const desc = document.getElementById("taskDescInput").value;
-        const btnSection = document.getElementById("aiRequestSection");
-        const spinner = document.getElementById("spinnerSection");
-        const results = document.getElementById("subtaskResults");
-        const error = document.getElementById("aiError");
-
-        results.innerHTML = "";
-        error.classList.add("d-none");
-
-        btnSection.classList.add("d-none");
-        spinner.classList.remove("d-none");
-
-        try {
-            const response = await fetch("/SubTask/CreateByOllama", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ Description: desc })
-            });
-
-            const data = await response.json();
-            spinner.classList.add("d-none");
-            btnSection.classList.remove("d-none");
-
-            if (!Array.isArray(data)) throw new Error("Invalid format");
-
-            results.innerHTML = `<h5>AI Önerileri</h5>`;
-            data.forEach(item => {
-                results.innerHTML += `
-                    <div class="card w-100 mb-3">
-                        <div class="card-body">
-                            <h6 class="card-title fw-bold">${item.title}</h6>
-                            <p class="card-text">${item.description}</p>
-                        </div>
-                    </div>
-                `;
-            });
-        } catch (err) {
-            spinner.classList.add("d-none");
-            btnSection.classList.remove("d-none");
-            error.classList.remove("d-none");
-        }
-    }
+    
 </script>
