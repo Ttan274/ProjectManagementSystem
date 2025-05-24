@@ -6,7 +6,14 @@
     <ul class="custom-menu-elements">
         @foreach(var item in Model.NavbarItems)
         {
-            <li><a asp-action="@item.Action" asp-controller="@item.Controller">@item.Title</a></li>
+            if (string.IsNullOrEmpty(item.ElementId)) 
+            {
+                <li><a asp-action="@item.Action" asp-controller="@item.Controller">@item.Title</a></li>
+            }
+            else
+            {
+                <li><a class="button" id="@item.ElementId">Go To Board</a></li>
+            }
         }
     </ul>
 </aside>

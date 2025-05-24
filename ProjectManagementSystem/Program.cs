@@ -9,6 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/User/Login";
+});
+
 builder.Services.AddRequiredServices(builder.Configuration);
 
 builder.Services.Configure<List<NavBarItem>>(builder.Configuration.GetSection("NavBarOptions"));
@@ -37,6 +42,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=User}/{action=Login}/{id?}");
+    pattern: "{controller=Dept}/{action=DeptMain}/{id?}");
 
 app.Run();

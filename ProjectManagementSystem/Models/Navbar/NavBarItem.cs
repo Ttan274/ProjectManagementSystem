@@ -7,5 +7,6 @@
         public string? Action { get; set; }
         public string? Controller { get; set; }
         public List<string>? VisibleFor { get; set; }
+        public string? ElementId { get; set; }
     }
 }

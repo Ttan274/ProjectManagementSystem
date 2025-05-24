@@ -140,12 +140,12 @@
         </div>
     </div>
 </div>
-
+@Html.Hidden("ProjectId", Model.ProjectId)
 @section Scripts {
     <script>
         // Drag and Drop Functionality
         document.addEventListener('DOMContentLoaded', function() {
-            doDragOperations()
+            doDragOperations();
         });
 
         function doDragOperations(){
