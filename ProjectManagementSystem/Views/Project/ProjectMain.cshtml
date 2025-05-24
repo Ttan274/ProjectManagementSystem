@@ -9,19 +9,18 @@
         <div class="create-btn">
             <button onclick="openSprintModal('@Model.Project.Id')">Create New Sprint</button>
             <button onclick="openTaskModal('@Model.Project.Id', '@Model.Project.TeamId')">Create New Task</button>
-            <a class="button" id="goToBoardBtn" asp-action="Index" asp-controller="Board" asp-route-projectId="@Model.Project.Id">Go To Board</a>
         </div>
         <div>
             <img src="https://i.pravatar.cc/40" alt="User" style="border-radius: 50%">
         </div>
     </div>
     <div class="overview">
-        <div class="card">
+        <div class="card" onclick="setSprintsVisibility()">
             <h3>Sprints</h3>
             <p><strong>@Model.Project.Sprints.Count</strong></p>
             <small>0 Completed</small>
         </div>
-        <div class="card">
+        <div class="card" onclick="setTasksVisibility()">
             <h3>Tasks</h3>
             <p><strong>0</strong></p>
             <small>0 Completed</small>
@@ -32,7 +31,7 @@
             <small>Test</small>
         </div>
     </div>
-    <div class="projects-section">
+    <div class="projects-section" id="sprintsSection">
         <h3>Sprints</h3>
         <table>
             <thead>
@@ -59,7 +58,7 @@
         </table>
     </div>
 
-    <div class="projects-section">
+    <div class="projects-section" id="tasksSection">
         <h3>Tasks</h3>
         <table>
             <thead>
@@ -135,7 +134,7 @@
         </div>
     </div>
 </main>
-
+@Html.Hidden("ProjectId", Model.Project.Id)
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script>
     $(document).ready(function() {
@@ -250,5 +249,15 @@
             btnSection.classList.remove("d-none");
             error.classList.remove("d-none");
         }
+    }
+
+    function setSprintsVisibility() {
+        const section = document.getElementById("sprintsSection");
+        section.classList.toggle("hidden");
+    }
+
+    function setTasksVisibility() {
+        const section = document.getElementById("tasksSection");
+        section.classList.toggle("hidden");
     }
 </script>

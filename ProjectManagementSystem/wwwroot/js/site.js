@@ -37,4 +37,8 @@
     if ($(window).width() < 992) {
         $('#sidebar').removeClass('active');
     }
+
+    var projectId = document.querySelector('input[name="ProjectId"]').value;
+    var link = document.getElementById("goToBoardBtn");
+    link.href = "/Board/Index?projectId=" + encodeURIComponent(projectId);
 });
