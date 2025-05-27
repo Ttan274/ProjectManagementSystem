@@ -15,5 +15,6 @@ namespace ProjectManagementSystem.Domain.Entities
         public Guid? TeamId { get; set; }
         public Team? Team { get; set; }
         public List<Domain.Entities.Task>? Tasks { get; set; }
+        public bool MustChangePassword { get; set; }
     }
 }

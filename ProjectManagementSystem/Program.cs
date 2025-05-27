@@ -2,11 +2,16 @@ using ProjectManagementSystem.Application.Abstractions.SubTaskProducer;
 using ProjectManagementSystem.Application.SubTaskProducer;
 using ProjectManagementSystem.Models;
 using ProjectManagementSystem.Persistance;
+using ProjectManagementSystem.Services.Mail;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews()
+                .AddViewOptions(options =>
+                {
+                    options.HtmlHelperOptions.ClientValidationEnabled = true;
+                })
                 .AddRazorRuntimeCompilation();
 
 builder.Services.ConfigureApplicationCookie(options =>
@@ -15,7 +20,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 builder.Services.AddRequiredServices(builder.Configuration);
-
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.Configure<List<NavBarItem>>(builder.Configuration.GetSection("NavBarOptions"));
 
 builder.Services.AddHttpClient<ISubTaskProducerService, SubTaskProducerService>(client =>

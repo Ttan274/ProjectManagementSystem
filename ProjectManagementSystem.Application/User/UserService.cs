@@ -19,26 +19,31 @@ namespace ProjectManagementSystem.Application.User
             _mapper = mapper;
         }
 
-        public async Task<bool> AddUser(UserDto userDto)
+        public async Task<AppUser?> AddUser(UserDto userDto)
         {
-            if (userDto is null)
-                return false;
-
             try
             {
+                if (userDto is null)
+                    throw new Exception();
+
                 userDto.UserName = userDto.Name + userDto.Surname;
 
                 var mappedResult = _mapper.Map<UserDto, AppUser>(userDto);
+
+                mappedResult.MustChangePassword = true;
 
                 var response = await _userManager.CreateAsync(mappedResult, userDto.Password);
 
                 var result = await _userManager.AddToRoleAsync(mappedResult, "Employee");
 
-                return response.Succeeded && result.Succeeded;
+                if (!(response.Succeeded && result.Succeeded))
+                    throw new Exception();
+
+                return mappedResult;
             }
             catch (Exception)
             {
-                return false;
+               return null;
             }
         }
 

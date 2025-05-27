@@ -38,7 +38,12 @@
         $('#sidebar').removeClass('active');
     }
 
-    var projectId = document.querySelector('input[name="ProjectId"]').value;
-    var link = document.getElementById("goToBoardBtn");
-    link.href = "/Board/Index?projectId=" + encodeURIComponent(projectId);
+    var projectInput = document.querySelector('input[name="ProjectId"]');
+    if (projectInput) {
+        var projectId = projectInput.value;
+        var link = document.getElementById("goToBoardBtn");
+        if (link) {
+            link.href = "/Board/Index?projectId=" + encodeURIComponent(projectId);
+        }
+    }
 });

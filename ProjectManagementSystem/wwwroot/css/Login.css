@@ -57,10 +57,10 @@ body {
 
     .form-outer form .page .field {
         width: 330px;
-        height: 45px;
         margin: 45px 0;
         display: flex;
         position: relative;
+        flex-direction: column;
     }
 
 form .page .field .label {
@@ -76,6 +76,8 @@ form .page .field input {
     border-radius: 5px;
     padding-left: 15px;
     font-size: 18px;
+    height: 45px; /* sabit yükseklik olarak ekle */
+    box-sizing: border-box; /* ekle */
 }
 
 form .page .field select {
@@ -87,10 +89,8 @@ form .page .field select {
 
 form .page .field button {
     width: 100%;
-    height: calc(100% + 5px);
     border: none;
     background: #17a2b8;
-    margin-top: -20px;
     border-radius: 5px;
     color: #fff;
     cursor: pointer;
@@ -99,6 +99,8 @@ form .page .field button {
     letter-spacing: 1px;
     text-transform: uppercase;
     transition: 0.5s ease;
+    height: 45px;
+    /*margin: 1vw !important;*/
 }
 
     form .page .field button:hover {
@@ -212,3 +214,19 @@ form .page .btns button {
         display: block;
         color: #fff;
     }
+
+/*.text-danger {
+    color: #dc3545 !important;
+}
+
+.field {
+    flex-direction:column;
+}*/
+
+form .page .field span.text-danger {
+    display: block; /* ekle */
+    margin-top: 5px; /* ekle */
+    color: #dc3545; /* ekle (Bootstrap kırmızısı) */
+    font-size: 0.875rem; /* ekle */
+    line-height: 1.2; /* ekle */
+}

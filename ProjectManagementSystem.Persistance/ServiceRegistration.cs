@@ -44,7 +44,16 @@ namespace ProjectManagementSystem.Persistance
 
 
             //Identity
-            services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<AppDbContext>();
+            services.AddIdentity<AppUser, AppRole>(options => //braya göre bi validasyon gösterelim ekranda
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 4;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequiredUniqueChars = 0;
+            })
+            .AddEntityFrameworkStores<AppDbContext>();
 
             //Mappings
             services.AddAutoMapper(typeof(Application.Mappings.Profiles));

@@ -97,7 +97,6 @@
             <input type="text" asp-for="UserToCreate.Name" placeholder="Name" autocomplete="off" required>
             <input type="text" asp-for="UserToCreate.Surname" placeholder="Surname" autocomplete="off" required>
             <input type="email" asp-for="UserToCreate.Email" placeholder="Email" autocomplete="off" required>
-            <input type="password" asp-for="UserToCreate.Password" placeholder="Password" required>
             <select asp-for="UserToCreate.TeamId" asp-items="@Model.UserToCreate.TeamList" required>
                 <option value="">Select Dept</option>
             </select>
