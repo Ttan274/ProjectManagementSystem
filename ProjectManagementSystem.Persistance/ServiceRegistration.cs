@@ -39,7 +39,7 @@ namespace ProjectManagementSystem.Persistance
 
             //Database
             services.AddDbContext<AppDbContext>(options =>
-            options.UseMySQL(mySql)); //opt =>
+            options.UseMySQL(mySql, opt => opt.MigrationsAssembly("ProjectManagementSystem"))); //opt =>
                 //opt.MigrationsAssembly("ProjectManagementSystem"))
 
 

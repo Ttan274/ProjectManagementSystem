@@ -167,8 +167,8 @@ namespace ProjectManagementSystem.Controllers
 
         private List<BoardColumn> CreateBoardColumns(IEnumerable<TaskDto> tasks)
         {
-            return Enum.GetValues(typeof(ProjecStatus))
-                .Cast<ProjecStatus>()
+            return Enum.GetValues(typeof(ProjectStatus))
+                .Cast<ProjectStatus>()
                 .Select(status => new BoardColumn(
                     ((int)status).ToString(),
                     status.ToString().Replace("InProgress", "In Progress"),

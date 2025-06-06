@@ -8,7 +8,7 @@ namespace ProjectManagementSystem.Application.Abstractions.Task.Dto
         public string? TaskDesc { get; set; }
         public string? TaskNumber { get; set; }
         public Priority? Priority { get; set; }
-        public ProjecStatus? TaskEffort { get; set; }
+        public ProjectStatus? TaskEffort { get; set; }
         public bool? IsUrgent { get; set; }
         public bool? Completed { get; set; }
     }

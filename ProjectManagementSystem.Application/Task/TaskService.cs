@@ -90,11 +90,11 @@ namespace ProjectManagementSystem.Application.Task
             {
                 int stat = Convert.ToInt32(status);
 
-                var enumStat = (ProjecStatus)stat;
+                var enumStat = (ProjectStatus)stat;
 
                 var task = await _taskReadRepository.GetFirstOrDefaultAsync(x => x.Id == Guid.Parse(id));
 
-                task.TaskEffort = enumStat;
+                task.State = enumStat;
 
                 var response = _taskWriteRepository.Update(task);
 

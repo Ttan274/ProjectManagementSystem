@@ -5,6 +5,10 @@ namespace ProjectManagementSystem.Domain.Entities
 {
     public class Project : BaseEntity
     {
+        public Project()
+        {
+            Sprints = new HashSet<Sprint>();
+        }
         public string? ProjectName { get; set; }
         public string? ProjectDesc { get; set; }
         public string? ProjectNumber { get; set; }

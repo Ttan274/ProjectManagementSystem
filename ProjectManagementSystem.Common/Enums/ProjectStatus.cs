@@ -1,6 +1,6 @@
 ﻿namespace ProjectManagementSystem.Common.Enums
 {
-    public enum ProjecStatus
+    public enum ProjectStatus
     {
         New,
         //Pending,
