@@ -204,8 +204,6 @@ namespace ProjectManagementSystem.Application.Team
             {
                 return serviceResponseHelper.SetError(new List<TeamMemberPerformanceDto>(), "Internal server error");
             }
-
-            throw new NotImplementedException();
         }
         private static string GetStatusBadge(int taskCompletionRate, int onTimeDeliveryRate)
         {
