@@ -5,72 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <link rel="stylesheet" href="~/css/UserView.css">
-<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
 
+    <link rel="stylesheet" href="~/css/UserView.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/dataTable.css" asp-append-version="true" />
+
+    <!-- JQUERY VERSİYONUNU DEĞİŞTİRMEYİN !!! SADECE 3.7.1 KULLANICAZ-->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 </head>
 <body>
-	@await Component.InvokeAsync("NavBar")
+    @await Component.InvokeAsync("NavBar")
 
     @RenderBody()
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/initDataTable.js" asp-append-version="true"></script>
+
     <script>
         $(function () {
-        toastr.options = {
-            "closeButton": true,
-            "debug": false,
-            "newestOnTop": true,
-            "progressBar": true,
-            "positionClass": "toast-bottom-right",
-            "preventDuplicates": true,
-            "showDuration": "300",
-            "hideDuration": "1000",
-            "timeOut": "4000",
-            "extendedTimeOut": "1000",
-            "showEasing": "swing",
-            "hideEasing": "linear",
-            "showMethod": "fadeIn",
-            "hideMethod": "fadeOut"
-        };
-        @if (TempData["Success"] != null)
-        {
-            <text>toastr.success("@TempData["Success"]");</text>
-        }
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-bottom-right",
+                "preventDuplicates": true,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "4000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
 
-        @if (TempData["Error"] != null)
-        {
-            <text>toastr.error("@TempData["Error"]");</text>
-        }
+            // Toast mesajları
+            @if (TempData["Success"] != null)
+            {
+                <text>toastr.success("@Html.Raw(TempData["Success"])");</text>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <text>toastr.error("@Html.Raw(TempData["Error"])");</text>
+            }
+            @if (TempData["Warning"] != null)
+            {
+                <text>toastr.warning("@Html.Raw(TempData["Warning"])");</text>
+            }
+            @if (TempData["Info"] != null)
+            {
+                <text>toastr.info("@Html.Raw(TempData["Info"])");</text>
+            }
 
-        @if (TempData["Warning"] != null)
-        {
-            <text>toastr.warning("@TempData["Warning"]");</text>
-        }
-
-        @if (TempData["Info"] != null)
-        {
-            <text>toastr.info("@TempData["Info"]");</text>
-        }
+            // Select2 başlatma
+            $('.select2').select2({
+                theme: 'bootstrap-5'
+            });
         });
     </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

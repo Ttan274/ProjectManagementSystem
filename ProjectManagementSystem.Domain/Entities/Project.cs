@@ -8,6 +8,7 @@ namespace ProjectManagementSystem.Domain.Entities
         public Project()
         {
             Sprints = new HashSet<Sprint>();
+            Applications = new HashSet<AppInfo>();
         }
         public string? ProjectName { get; set; }
         public string? ProjectDesc { get; set; }
@@ -21,5 +22,6 @@ namespace ProjectManagementSystem.Domain.Entities
         public Guid TeamId { get; set; }
         public Team? Team { get; set; }
         public ICollection<Sprint>? Sprints { get; set; }
+        public ICollection<AppInfo>? Applications { get; set; }
     }
 }

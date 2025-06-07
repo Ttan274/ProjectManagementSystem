@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ProjectManagementSystem.Application.Abstractions.AppInfo.Dto;
 using ProjectManagementSystem.Application.Abstractions.Documentation.Dto;
 using ProjectManagementSystem.Application.Abstractions.Project.Dto;
 using ProjectManagementSystem.Application.Abstractions.Sprint.Dto;
@@ -18,6 +19,11 @@ namespace ProjectManagementSystem.Application.Mappings
             CreateMap<Domain.Entities.Sprint, SprintDto>().ReverseMap();
             CreateMap<Domain.Entities.Task, TaskDto>().ReverseMap();
             CreateMap<Domain.Entities.Documentation, DocumentationDto>().ReverseMap();
+            CreateMap<Domain.Entities.AppInfo, AppGitCredentialDto>()
+                .ForMember(dest => dest.PatToken, opt => opt.MapFrom(src => src.GitHubPatToken))
+                .ForMember(dest => dest.Owner, opt => opt.MapFrom(src => src.GitHubOwner))
+                .ForMember(dest => dest.RepoName, opt => opt.MapFrom(src => src.GitHubRepo));
+            CreateMap<Domain.Entities.AppInfo, AppInfoDto>().ReverseMap();
         }
     }
 }
