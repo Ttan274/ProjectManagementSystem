@@ -1,32 +1,36 @@
-﻿using ProjectManagementSystem.Persistance.DbContext;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
-using ProjectManagementSystem.Domain.Entities;
-using ProjectManagementSystem.Application.Abstractions.User;
-using ProjectManagementSystem.Application.User;
-using ProjectManagementSystem.Application.Abstractions.Team;
-using ProjectManagementSystem.Application.Team;
-using ProjectManagementSystem.Application.Abstractions.Repositories.Team;
-using ProjectManagementSystem.Persistance.Repositories.Team;
-using ProjectManagementSystem.Application.Abstractions.Repositories.Project;
-using ProjectManagementSystem.Persistance.Repositories.Project;
-using ProjectManagementSystem.Application.Abstractions.Project;
-using ProjectManagementSystem.Application.Project;
-using ProjectManagementSystem.Application.Abstractions.Repositories.Sprint;
-using ProjectManagementSystem.Persistance.Repositories.Sprint;
-using ProjectManagementSystem.Application.Abstractions.Repositories.Task;
-using ProjectManagementSystem.Persistance.Repositories.Task;
-using ProjectManagementSystem.Application.Abstractions.Sprint;
-using ProjectManagementSystem.Application.Sprint;
-using ProjectManagementSystem.Application.Abstractions.Task;
-using ProjectManagementSystem.Application.Task;
-using ProjectManagementSystem.Application.Abstractions.SubTaskProducer;
-using ProjectManagementSystem.Application.SubTaskProducer;
-using ProjectManagementSystem.Application.Abstractions.Repositories.Documentation;
-using ProjectManagementSystem.Persistance.Repositories.Documentation;
+using Microsoft.Extensions.DependencyInjection;
+using ProjectManagementSystem.Application.Abstractions.AppInfo;
 using ProjectManagementSystem.Application.Abstractions.Documentation;
+using ProjectManagementSystem.Application.Abstractions.Project;
+using ProjectManagementSystem.Application.Abstractions.Repositories.AppInfo;
+using ProjectManagementSystem.Application.Abstractions.Repositories.Documentation;
+using ProjectManagementSystem.Application.Abstractions.Repositories.Project;
+using ProjectManagementSystem.Application.Abstractions.Repositories.Sprint;
+using ProjectManagementSystem.Application.Abstractions.Repositories.Task;
+using ProjectManagementSystem.Application.Abstractions.Repositories.Team;
+using ProjectManagementSystem.Application.Abstractions.Sprint;
+using ProjectManagementSystem.Application.Abstractions.SubTaskProducer;
+using ProjectManagementSystem.Application.Abstractions.Task;
+using ProjectManagementSystem.Application.Abstractions.Team;
+using ProjectManagementSystem.Application.Abstractions.User;
+using ProjectManagementSystem.Application.AppInfo;
 using ProjectManagementSystem.Application.Documentation;
+using ProjectManagementSystem.Application.Project;
+using ProjectManagementSystem.Application.Sprint;
+using ProjectManagementSystem.Application.SubTaskProducer;
+using ProjectManagementSystem.Application.Task;
+using ProjectManagementSystem.Application.Team;
+using ProjectManagementSystem.Application.User;
+using ProjectManagementSystem.Domain.Entities;
+using ProjectManagementSystem.Persistance.DbContext;
+using ProjectManagementSystem.Persistance.Repositories.AppInfo;
+using ProjectManagementSystem.Persistance.Repositories.Documentation;
+using ProjectManagementSystem.Persistance.Repositories.Project;
+using ProjectManagementSystem.Persistance.Repositories.Sprint;
+using ProjectManagementSystem.Persistance.Repositories.Task;
+using ProjectManagementSystem.Persistance.Repositories.Team;
 
 namespace ProjectManagementSystem.Persistance
 {
@@ -39,8 +43,8 @@ namespace ProjectManagementSystem.Persistance
 
             //Database
             services.AddDbContext<AppDbContext>(options =>
-            options.UseMySQL(mySql)); //opt =>
-                //opt.MigrationsAssembly("ProjectManagementSystem"))
+            options.UseMySQL(mySql, opt => opt.MigrationsAssembly("ProjectManagementSystem"))); //opt =>
+                                                                                                //opt.MigrationsAssembly("ProjectManagementSystem"))
 
 
             //Identity
@@ -90,7 +94,11 @@ namespace ProjectManagementSystem.Persistance
             services.AddScoped<IDocumentationReadRepository, DocumentationReadRepository>();
             services.AddScoped<IDocumentationWriteRepository, DocumentationWriteRepository>();
             services.AddScoped<IDocumentationService, DocumentationService>();
-           
+
+            //Task
+            services.AddScoped<IAppInfoService, AppInfoService>();
+            services.AddScoped<IAppInfoReadRepository, AppInfoReadRepository>();
+            services.AddScoped<IAppInfoWriteRepository, AppInfoWriteRepository>();
 
             services.AddMemoryCache();
 

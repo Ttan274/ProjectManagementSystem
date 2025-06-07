@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -7,7 +6,6 @@ using ProjectManagementSystem.Application.Abstractions.Team;
 using ProjectManagementSystem.Application.Abstractions.User;
 using ProjectManagementSystem.Application.Abstractions.User.Dtos;
 using ProjectManagementSystem.Domain.Entities;
-using ProjectManagementSystem.Models;
 using ProjectManagementSystem.Services.Mail;
 using ProjectManagementSystem.ViewModel;
 
@@ -47,7 +45,7 @@ namespace ProjectManagementSystem.Controllers
         public async Task<IActionResult> Login(UserDto userDto)
         {
             if (!ModelState.IsValid) return View(userDto);
-            
+
             var user = await _userManager.FindByEmailAsync(userDto.Email);
 
             if (user is not null && user.MustChangePassword)
@@ -154,7 +152,7 @@ namespace ProjectManagementSystem.Controllers
         #endregion
 
         #region AdminRegion
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> AdminPage()
         {
             var users = await _userService.GetAllUsers();
@@ -178,7 +176,7 @@ namespace ProjectManagementSystem.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateUser(AdminViewModel viewModel)
         {
             if (ModelState.IsValid)
@@ -213,7 +211,7 @@ namespace ProjectManagementSystem.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
             await _userService.DeleteUser(id);
@@ -235,7 +233,7 @@ namespace ProjectManagementSystem.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteDept(Guid id)
         {
             await _teamService.DeleteTeam(id);

@@ -6,11 +6,16 @@ namespace ProjectManagementSystem.Application.Abstractions.Task.Dto
 {
     public class TaskDto
     {
+        public TaskDto()
+        {
+            SprintList = [];
+            UserList = [];
+        }
         public Guid Id { get; set; }
         public string? TaskName { get; set; }
         public string? TaskDesc { get; set; }
         public Priority? Priority { get; set; }
-        public ProjecStatus? TaskEffort { get; set; }
+        public ProjectStatus? TaskEffort { get; set; }
         public string? SprintId { get; set; }
         public List<SelectListItem>? SprintList { get; set; }
         public string? UserId { get; set; }

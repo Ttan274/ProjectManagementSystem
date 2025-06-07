@@ -7,6 +7,10 @@ namespace ProjectManagementSystem.Application.Abstractions.Project.Dto
 {
     public class ProjectDto : BaseDto
     {
+        public ProjectDto()
+        {
+            Sprints = [];
+        }
         public string? ProjectName { get; set; }
         public string? ProjectDesc { get; set; }
         public int? EstimatedHours { get; set; }

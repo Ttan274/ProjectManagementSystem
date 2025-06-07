@@ -5,28 +5,20 @@ using ProjectManagementSystem.Application.Abstractions.Repositories.Team;
 using ProjectManagementSystem.Application.Abstractions.Team;
 using ProjectManagementSystem.Application.Abstractions.Team.Dto;
 using ProjectManagementSystem.Application.Abstractions.User;
+using ProjectManagementSystem.Common.Consts;
+using ProjectManagementSystem.Common.ServiceResponse;
 using System.Security.Claims;
 
 namespace ProjectManagementSystem.Application.Team
 {
-    public class TeamService : ITeamService
+    public class TeamService(
+        IServiceResponseHelper serviceResponseHelper,
+        ITeamReadRepository teamReadRepository,
+        ITeamWriteRepository teamWriteRepository,
+        IProjectService projectService,
+        IUserService userService,
+        IMapper mapper) : ITeamService
     {
-        private readonly ITeamReadRepository _teamReadRepository;
-        private readonly ITeamWriteRepository _teamWriteRepository;
-        private readonly IProjectService _projectService;
-        private readonly IUserService _userService;
-        private readonly IMapper _mapper;
-
-        public TeamService(ITeamReadRepository teamReadRepository, ITeamWriteRepository teamWriteRepository, 
-            IProjectService projectService, IUserService userService, IMapper mapper)
-        {
-            _teamReadRepository = teamReadRepository;
-            _teamWriteRepository = teamWriteRepository;
-            _projectService = projectService;
-            _userService = userService;
-            _mapper = mapper;
-        }
-
         public async Task<bool> CreateTeam(TeamDto team)
         {
             if (team is null)
@@ -34,9 +26,9 @@ namespace ProjectManagementSystem.Application.Team
 
             try
             {
-                var mappedResult = _mapper.Map<TeamDto, Domain.Entities.Team>(team);
+                var mappedResult = mapper.Map<TeamDto, Domain.Entities.Team>(team);
 
-                var response = await _teamWriteRepository.AddAsync(mappedResult);
+                var response = await teamWriteRepository.AddAsync(mappedResult);
 
                 return response;
             }
@@ -53,7 +45,7 @@ namespace ProjectManagementSystem.Application.Team
 
             try
             {
-                var response = await _teamWriteRepository.RemoveAsync(id);
+                var response = await teamWriteRepository.RemoveAsync(id);
 
                 return response;
             }
@@ -67,12 +59,12 @@ namespace ProjectManagementSystem.Application.Team
         {
             try
             {
-                var teams = await _teamReadRepository.GetQueryable().Include(x => x.Projects).Where(x => x.Status).ToListAsync();
+                var teams = await teamReadRepository.GetQueryable().Include(x => x.Projects).Where(x => x.Status).ToListAsync();
 
                 if (teams is null)
                     return [];
 
-                var mappedResult = _mapper.Map<List<Domain.Entities.Team>,  List<TeamDto>>(teams);
+                var mappedResult = mapper.Map<List<Domain.Entities.Team>, List<TeamDto>>(teams);
 
                 return mappedResult;
             }
@@ -86,8 +78,8 @@ namespace ProjectManagementSystem.Application.Team
         {
             try
             {
-                var teamId = await _userService.GetTeamId(principal);
-                
+                var teamId = await userService.GetTeamId(principal);
+
                 var result = await GetTeam(Guid.Parse(teamId));
 
                 return result;
@@ -115,15 +107,110 @@ namespace ProjectManagementSystem.Application.Team
         //Utility method
         private async Task<TeamDto> GetTeam(Guid id)
         {
-            var team = await _teamReadRepository.GetByIdAsync(id);
+            var team = await teamReadRepository.GetByIdAsync(id);
 
-            var mappedResult = _mapper.Map<Domain.Entities.Team, TeamDto>(team);
+            var mappedResult = mapper.Map<Domain.Entities.Team, TeamDto>(team);
 
-            mappedResult.Projects = await _projectService.GetAllProjectsByTeamId(id);
+            mappedResult.Projects = await projectService.GetAllProjectsByTeamId(id);
 
-            mappedResult.Users = await _userService.GetAllUsersByTeamId(id);
+            mappedResult.Users = await userService.GetAllUsersByTeamId(id);
 
             return mappedResult;
+        }
+
+        public async Task<ServiceResponse<List<TeamMemberPerformanceDto>>> GetTeamMemberPerformancesAsync(FilterTeamMemberPerformanceDto filterDto)
+        {
+            if (filterDto == null)
+            {
+                return serviceResponseHelper.SetError<List<TeamMemberPerformanceDto>>("Invalid Request");
+            }
+
+            filterDto.Validate(out var validationResult);
+
+            if (!string.IsNullOrWhiteSpace(validationResult))
+            {
+                return serviceResponseHelper.SetError<List<TeamMemberPerformanceDto>>(validationResult);
+            }
+
+            try
+            {
+                var startDate = filterDto.StartDate;
+                var endDate = filterDto.EndDate;
+
+                var teamMemberPerformances = await teamReadRepository
+                    .GetQueryable(tracking: false)
+                    .Where(team => team.Id == filterDto.TeamId)
+                    .SelectMany(team => team.Users)
+                    .Select(member => new
+                    {
+                        member.Id,
+                        member.Name,
+                        member.Tasks,
+                        CompletedTasks = member.Tasks
+                            .Where(task => task.Completed == true)
+                            .Select(task => new
+                            {
+                                task.CompletedAt,
+                                task.Sprint.CreatedDatee,
+                                task.Sprint.FinishDate
+                            })
+                            .ToList(),
+                        BugsResolved = member.Tasks.Count(task =>
+                            task.Type == Common.Enums.TaskType.BugFix && task.Completed == true),
+                        StoryPointsCompleted = member.Tasks
+                            .Where(task => task.Completed == true)
+                            .Select(task => task.EffortScore)
+                            .Sum()
+                    })
+                    .ToListAsync();
+
+                var result = teamMemberPerformances
+                    .Select(member =>
+                    {
+                        int totalTasks = member.Tasks.Count;
+                        int completedTasks = member.CompletedTasks.Count;
+
+                        int taskCompletionRate = totalTasks > 0
+                            ? (int)(100.0 * completedTasks / totalTasks)
+                            : 0;
+
+                        int onTimeDelivered = member.CompletedTasks.Count(task =>
+                            task.CompletedAt.HasValue &&
+                            task.CreatedDatee >= startDate &&
+                            task.CreatedDatee <= endDate &&
+                            task.CompletedAt <= task.FinishDate);
+
+                        int onTimeDeliveryRate = completedTasks > 0
+                            ? (int)(100.0 * onTimeDelivered / completedTasks)
+                            : 0;
+
+                        return new TeamMemberPerformanceDto
+                        {
+                            Id = member.Id,
+                            Name = member.Name,
+                            Role = Defaults.TEAM_MEMBER,
+                            BugsResolved = member.BugsResolved,
+                            StoryPointsCompleted = member.StoryPointsCompleted,
+                            TaskCompletionRate = taskCompletionRate,
+                            OnTimeDeliveryRate = onTimeDeliveryRate,
+                            StatusBadge = GetStatusBadge(taskCompletionRate, onTimeDeliveryRate)
+                        };
+                    })
+                    .ToList();
+
+                return serviceResponseHelper.SetSuccess(result);
+            }
+            catch (Exception)
+            {
+                return serviceResponseHelper.SetError(new List<TeamMemberPerformanceDto>(), "Internal server error");
+            }
+        }
+        private static string GetStatusBadge(int taskCompletionRate, int onTimeDeliveryRate)
+        {
+            if (taskCompletionRate >= 90 && onTimeDeliveryRate >= 90) return "Excellent";
+            if (taskCompletionRate >= 75 && onTimeDeliveryRate >= 75) return "Good";
+            if (taskCompletionRate >= 50) return "Fair";
+            return "Needs Improvement";
         }
     }
 }

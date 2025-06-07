@@ -1,0 +1,89 @@
+﻿@model ProjectManagementSystem.Application.Abstractions.AppInfo.Dto.AppProjectInfoDto
+
+@{
+    Layout = "_MainLayout";
+    ViewData["Title"] = "Project Applications";
+}
+
+<link rel="stylesheet" href="~/css/modal.css">
+
+<main class="content">
+    <div class="header">
+        <div class="create-btn">
+            <button onclick="location.href='@Url.Action("Edit", "Project", new { id = Model.Project.Id })'">Projeyi Düzenle</button>
+        </div>
+        <div>
+            <img src="https://i.pravatar.cc/40" alt="User" style="border-radius: 50%">
+        </div>
+    </div>
+
+    <div class="overview">
+        <div class="card">
+            <h3>Project Details</h3>
+            <p><strong>@Model.Project.ProjectName</strong></p>
+            <small>@(Model.Project.Team?.TeamName ?? "Team is not found")</small>
+        </div>
+        <div class="card">
+            <h3>Applications</h3>
+            <p><strong>@Model.AppInfos.Count</strong></p>
+            <small>Number of Applications</small>
+        </div>
+    </div>
+
+    <div class="projects-section">
+        <h3>Project Details</h3>
+        <div class="project-info">
+            <p><strong>Description:</strong> @Model.Project.ProjectDesc</p>
+            <p><strong>Priority:</strong> @(Model.Project.Priority?.ToString() ?? "Not specified")</p>
+            <p><strong>Created At:</strong> @Model.Project.CreatedDate.ToString("dd MMMM yyyy")</p>
+        </div>
+    </div>
+
+    <div class="projects-section">
+        <h3>Applications</h3>
+        <div class="table-responsive">
+            <table id="appsTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>AppCode</th>
+                        <th>Repo</th>
+                        <th>Decom. Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var app in Model.AppInfos)
+                    {
+                        <tr>
+                            <td>@app.Name</td>
+                            <td>@app.Description</td>
+                            <td>@app.AppCode</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(app.GitHubOwner) && !string.IsNullOrEmpty(app.GitHubRepo))
+                                {
+                                    <a href="https://github.com/@app.GitHubOwner/@app.GitHubRepo" target="_blank" class="repo-link">
+                                        @app.GitHubOwner/@app.GitHubRepo
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span>-</span>
+                                }
+                            </td>
+                            <td>@(app.DecommissionDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            initializeDataTables("#appsTable");
+        });
+    </script>
+}

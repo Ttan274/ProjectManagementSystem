@@ -4,6 +4,10 @@ namespace ProjectManagementSystem.Domain.Entities
 {
     public class Documentation : BaseEntity
     {
+        public Documentation()
+        {
+            Comments = new HashSet<Comment>();
+        }
         public string? Header { get; set; }
         public string? Text { get; set; }
         public int? View { get; set; }

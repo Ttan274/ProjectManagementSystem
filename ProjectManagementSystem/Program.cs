@@ -1,5 +1,6 @@
 using ProjectManagementSystem.Application.Abstractions.SubTaskProducer;
 using ProjectManagementSystem.Application.SubTaskProducer;
+using ProjectManagementSystem.Common.ServiceResponse;
 using ProjectManagementSystem.Models;
 using ProjectManagementSystem.Persistance;
 using ProjectManagementSystem.Services.Mail;
@@ -21,6 +22,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddRequiredServices(builder.Configuration);
 builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddTransient<IServiceResponseHelper, ServiceResponseHelper>();
+
 builder.Services.Configure<List<NavBarItem>>(builder.Configuration.GetSection("NavBarOptions"));
 
 builder.Services.AddHttpClient<ISubTaskProducerService, SubTaskProducerService>(client =>

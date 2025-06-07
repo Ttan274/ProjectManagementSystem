@@ -1,0 +1,54 @@
+﻿
+.datatable-header {
+    background-color: #f1f9ff; /* Arka plan rengi */
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.dataTables_filter {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+    .dataTables_filter label {
+        width: 100%;
+    }
+
+.datatable-footer {
+    gap: 10px;
+}
+
+.dataTables_info {
+    order: 1;
+}
+
+.dataTables_paginate {
+    order: 2;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.dataTables_length {
+    order: 3;
+    display: flex;
+    justify-content: flex-end;
+    flex-grow: 1;
+}
+
+
+.dataTables_wrapper .dataTables_filter {
+    float: left !important;
+    text-align: left !important;
+}
+
+.dataTables_filter label {
+    display: flex;
+    width: 100%;
+}
+
+    .dataTables_filter label::before {
+        content: "";
+        display: none;
+    }
