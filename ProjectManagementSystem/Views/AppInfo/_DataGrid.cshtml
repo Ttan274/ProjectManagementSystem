@@ -1,1 +1,59 @@
-﻿
+﻿@model IEnumerable<ProjectManagementSystem.Application.Abstractions.AppInfo.Dto.AppInfoDto>
+
+@{
+    var projectId = ViewBag.ProjectId ?? Guid.Empty;
+}
+
+<div class="projects-section">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Applications</h3>
+        <button class="btn btn-primary" id="btnAddApp">Ekle</button>
+    </div>
+
+    <div class="table-responsive">
+        <table id="appsTable" class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>AppCode</th>
+                    <th>Repo</th>
+                    <th>Decom. Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var app in Model)
+                {
+                    <tr>
+                        <td>@app.Name</td>
+                        <td>@app.Description</td>
+                        <td>@app.AppCode</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(app.GitHubOwner) && !string.IsNullOrEmpty(app.GitHubRepo))
+                            {
+                                <a href="https://github.com/@app.GitHubOwner/@app.GitHubRepo" target="_blank" class="repo-link">
+                                    @app.GitHubOwner/@app.GitHubRepo
+                                </a>
+                            }
+                            else
+                            {
+                                <span>-</span>
+                            }
+                        </td>
+                        <td>@(app.DecommissionDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        initializeDataTables("#appsTable");
+
+        $('#btnAddApp').on('click', function () {
+            openAppInfoModal('@Html.Raw(projectId)');
+        });
+    });
+</script>

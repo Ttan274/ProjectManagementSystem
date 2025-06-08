@@ -8,7 +8,7 @@ namespace ProjectManagementSystem.Application.Abstractions.AppInfo
         Task<ServiceResponse<AppGitCredentialDto>> GetAppGitCredentialAsync(Guid id);
         Task<ServiceResponse<AppInfoDto>> GetByIdAsync(Guid id);
         Task<ServiceResponse<AppInfoDto>> CreateAsync(CreateAppInfoDto createDto);
-        Task<ServiceResponse<AppInfoDto>> UpdateAsync(Guid id, UpdateAppInfoDto updateDto);
+        Task<ServiceResponse<AppInfoDto>> UpdateAsync(UpdateAppInfoDto updateDto);
         Task<ServiceResponse<bool>> DeleteAsync(Guid id);
     }
 }
