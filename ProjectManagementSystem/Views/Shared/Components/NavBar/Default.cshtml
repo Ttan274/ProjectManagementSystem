@@ -16,4 +16,12 @@
             }
         }
     </ul>
+
+    <ul class="custom-menu-elements mt-5">
+        <h5>Applications</h5>
+        @foreach(var project in Model.Projects)
+        {
+            <li><a asp-action="Index" asp-controller="AppInfo" asp-route-projectId="@project.Id">@project.ProjectName</a></li>
+        }
+    </ul>
 </aside>

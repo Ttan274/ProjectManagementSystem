@@ -26,7 +26,7 @@ namespace ProjectManagementSystem.ViewComponents
             var controller = RouteData.Values["controller"]?.ToString();
             var action = RouteData.Values["action"]?.ToString();
             var currentPath = $"{controller}/{action}";
-            
+
             var visibleItems = _navItems
                 .Where(item => item.VisibleFor == null ||
                                item.VisibleFor.Contains(currentPath, StringComparer.OrdinalIgnoreCase))
@@ -45,11 +45,11 @@ namespace ProjectManagementSystem.ViewComponents
                 if (!string.IsNullOrEmpty(userName) && _cache.TryGetValue($"{userName}_MainTitle", out string mainTitle))
                     title = mainTitle;
             }
-            
+
             if (string.IsNullOrEmpty(title))
                 title = team.TeamName ?? string.Empty;
 
-            var model = new Navbar { MainTitle = title, NavbarItems = visibleItems };
+            var model = new Navbar { MainTitle = title, Projects = team.Projects?.ToList() ?? [], NavbarItems = visibleItems };
 
             return View(model);
         }
@@ -58,8 +58,8 @@ namespace ProjectManagementSystem.ViewComponents
         {
             var depTitleUsageList = new List<string>
             {
-                "Dept/DeptMain", 
-                "Dept/DeptCrew", 
+                "Dept/DeptMain",
+                "Dept/DeptCrew",
                 "Project/GetMyTasks",
                 "Documentation/GetDocuments",
                 "Board/Index"

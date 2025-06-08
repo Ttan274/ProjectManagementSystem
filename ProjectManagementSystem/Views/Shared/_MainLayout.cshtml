@@ -58,22 +58,22 @@
             };
 
             // Toast mesajları
-            @if (TempData["Success"] != null)
-            {
-                <text>toastr.success("@Html.Raw(TempData["Success"])");</text>
-            }
-            @if (TempData["Error"] != null)
-            {
-                <text>toastr.error("@Html.Raw(TempData["Error"])");</text>
-            }
-            @if (TempData["Warning"] != null)
-            {
-                <text>toastr.warning("@Html.Raw(TempData["Warning"])");</text>
-            }
-            @if (TempData["Info"] != null)
-            {
-                <text>toastr.info("@Html.Raw(TempData["Info"])");</text>
-            }
+        @if (TempData["Success"] != null)
+        {
+            <text>toastr.success("@Html.Raw(TempData["Success"])");</text>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <text>toastr.error("@Html.Raw(TempData["Error"])");</text>
+        }
+        @if (TempData["Warning"] != null)
+        {
+            <text>toastr.warning("@Html.Raw(TempData["Warning"])");</text>
+        }
+        @if (TempData["Info"] != null)
+        {
+            <text>toastr.info("@Html.Raw(TempData["Info"])");</text>
+        }
 
             $('.js-example-basic-single').select2({
                 width: '100%'
@@ -82,5 +82,11 @@
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)
+
+    <div id="globalLoader">
+        <div class="loader-container">
+            <div class="loader-ring"></div>
+        </div>
+    </div>
 </body>
 </html>

@@ -47,3 +47,11 @@
         }
     }
 });
+
+$(document).ajaxStart(function () {
+    $("#globalLoader").fadeIn(200);
+});
+
+$(document).ajaxStop(function () {
+    $("#globalLoader").fadeOut(200);
+});
