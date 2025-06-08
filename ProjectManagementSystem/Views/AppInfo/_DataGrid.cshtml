@@ -14,6 +14,7 @@
         <table id="appsTable" class="table">
             <thead>
                 <tr>
+                    <th>Processes</th>
                     <th>Name</th>
                     <th>Description</th>
                     <th>AppCode</th>
@@ -25,6 +26,18 @@
                 @foreach (var app in Model)
                 {
                     <tr>
+                        <td>
+                            <button class="btn btn-sm btn-link text-primary p-0 me-2"
+                                    onclick="displayAppInfo('@app.Id', '@projectId')"
+                                    title="See details">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-link text-danger p-0"
+                                    onclick="deleteAppInfo('@app.Id')"
+                                    title="Delete">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
                         <td>@app.Name</td>
                         <td>@app.Description</td>
                         <td>@app.AppCode</td>
@@ -53,7 +66,8 @@
         initializeDataTables("#appsTable");
 
         $('#btnAddApp').on('click', function () {
-            openAppInfoModal('@Html.Raw(projectId)');
+            const queryParams = { ProjectId: '@Html.Raw(projectId)' };
+            openAppInfoModal(queryParams);
         });
     });
 </script>

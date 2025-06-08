@@ -121,7 +121,7 @@ namespace ProjectManagementSystem.Application.AppInfo
 
             try
             {
-                var appInfo = await appInfoReadRepository.GetFirstOrDefaultAsync(method: q => q.Id == id);
+                var appInfo = await appInfoReadRepository.GetFirstOrDefaultAsync(method: q => q.Id == id && q.IsDeleted == 0);
 
                 if (appInfo == null)
                 {

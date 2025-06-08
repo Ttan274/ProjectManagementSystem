@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystem.Application.Abstractions.AppInfo;
 using ProjectManagementSystem.Application.Abstractions.AppInfo.Dto;
 using ProjectManagementSystem.Application.Abstractions.Project;
@@ -8,10 +10,12 @@ using ProjectManagementSystem.Controllers.Base;
 namespace ProjectManagementSystem.Controllers
 {
     public class AppInfoController(
+        IMapper mapper,
         IProjectService projectService,
         IAppInfoService appInfoService)
         : BaseController
     {
+        [Authorize]
         public async Task<IActionResult> Index(Guid projectId)
         {
             if (projectId == Guid.Empty)
@@ -40,6 +44,7 @@ namespace ProjectManagementSystem.Controllers
             }
         }
 
+        [Authorize]
         public async Task<IActionResult> Action(AppInfoDto appInfoDto)
         {
             if (!ModelState.IsValid || appInfoDto == null || appInfoDto.ProjectId == null || appInfoDto.ProjectId == Guid.Empty)
@@ -63,7 +68,7 @@ namespace ProjectManagementSystem.Controllers
                     return BadRequest(Error(appInfoResponse?.ErrorMessage ?? "App info not found."));
                 }
 
-                return PartialView("_Action", appInfoResponse.Data);
+                return PartialView("_Action", mapper.Map<CreateAppInfoDto>(appInfoResponse.Data));
             }
             catch (Exception)
             {
@@ -72,6 +77,8 @@ namespace ProjectManagementSystem.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Action([FromBody] CreateAppInfoDto createDto)
         {
             if (!ModelState.IsValid || createDto == null)
@@ -86,7 +93,7 @@ namespace ProjectManagementSystem.Controllers
                 if (createDto.Id != Guid.Empty)
                 {
                     appInfoResponse = await appInfoService
-                        .UpdateAsync((UpdateAppInfoDto)createDto)
+                        .UpdateAsync(mapper.Map<UpdateAppInfoDto>(createDto))
                         .ConfigureAwait(false);
                 }
                 else
@@ -106,6 +113,35 @@ namespace ProjectManagementSystem.Controllers
             catch (Exception)
             {
                 return PartialView(new CreateAppInfoDto());
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> Delete([FromBody] AppInfoDto appInfo)
+        {
+            if (!ModelState.IsValid || appInfo == null)
+            {
+                return BadRequest(Error("Invalid request."));
+            }
+
+            try
+            {
+                var deleteResponse = await appInfoService
+                    .DeleteAsync(appInfo.Id)
+                    .ConfigureAwait(false);
+
+                if (!deleteResponse.Success)
+                {
+                    return BadRequest(deleteResponse);
+                }
+
+                return Ok(deleteResponse);
+            }
+            catch (Exception)
+            {
+                return BadRequest(Error("Internal server error occured."));
             }
         }
     }

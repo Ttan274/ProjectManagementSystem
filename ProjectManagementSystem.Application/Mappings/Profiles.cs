@@ -24,6 +24,9 @@ namespace ProjectManagementSystem.Application.Mappings
                 .ForMember(dest => dest.Owner, opt => opt.MapFrom(src => src.GitHubOwner))
                 .ForMember(dest => dest.RepoName, opt => opt.MapFrom(src => src.GitHubRepo));
             CreateMap<Domain.Entities.AppInfo, AppInfoDto>().ReverseMap();
+            CreateMap<Domain.Entities.AppInfo, CreateAppInfoDto>().ReverseMap();
+            CreateMap<AppInfoDto, CreateAppInfoDto>().ReverseMap();
+            CreateMap<CreateAppInfoDto, UpdateAppInfoDto>().ReverseMap();
         }
     }
 }
