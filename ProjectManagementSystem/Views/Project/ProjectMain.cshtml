@@ -95,7 +95,7 @@
                                         <span class="badge high">@item.Priority.ToString()</span>
                                     }
                                 </td>
-                                <td>@item.TaskEffort.ToString()</td>
+                            <td>@item.State.ToString()</td>
                             </tr>
                         }
                     }                
@@ -162,7 +162,7 @@
 
     function openTaskModal(id, teamId){
         $.ajax({
-                url: '/Project/CreateTask',
+                url: '/Project/TaskAction',
                 method: 'Get',   
                 contentType: 'application/json',
                 data: { projectId: id, teamId: teamId},

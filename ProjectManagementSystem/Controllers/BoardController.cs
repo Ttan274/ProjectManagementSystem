@@ -172,7 +172,7 @@ namespace ProjectManagementSystem.Controllers
                 .Select(status => new BoardColumn(
                     ((int)status).ToString(),
                     status.ToString().Replace("InProgress", "In Progress"),
-                    tasks.Where(t => t.TaskEffort == status)
+                    tasks.Where(t => t.State == status && (t.TaskId == null || t.TaskId == Guid.Empty))
                          .Select(t => new BoardTask
                          {
                              Id = t.Id.ToString(),

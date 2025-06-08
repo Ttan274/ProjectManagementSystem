@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectManagementSystem.Application.Abstractions.AppInfo;
@@ -43,8 +44,7 @@ namespace ProjectManagementSystem.Persistance
 
             //Database
             services.AddDbContext<AppDbContext>(options =>
-            options.UseMySQL(mySql, opt => opt.MigrationsAssembly("ProjectManagementSystem"))); //opt =>
-                                                                                                //opt.MigrationsAssembly("ProjectManagementSystem"))
+            options.UseMySQL(mySql)); //opt => opt.MigrationsAssembly("ProjectManagementSystem"))
 
 
             //Identity
@@ -57,7 +57,8 @@ namespace ProjectManagementSystem.Persistance
                 options.Password.RequireLowercase = false;
                 options.Password.RequiredUniqueChars = 0;
             })
-            .AddEntityFrameworkStores<AppDbContext>();
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
 
             //Mappings
             services.AddAutoMapper(typeof(Application.Mappings.Profiles));

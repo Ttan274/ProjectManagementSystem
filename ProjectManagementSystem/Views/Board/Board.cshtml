@@ -90,8 +90,8 @@
                                         <i class="bi bi-list-check"></i>
                                     </button>
                                     <button class="btn btn-sm btn-link p-0 text-muted"
-                                            title="Detayları Görüntüle"
-                                            onclick="showTaskDetailModal('@task.Id')">
+                                            title="Show Details"
+                                            onclick="openTaskModal('@task.Id')">
                                         <i class="bi bi-three-dots"></i>
                                     </button>
                                 </div>
@@ -164,15 +164,15 @@
             });
     });
 
-    function openTaskModal() {
+    function openTaskModal(taskId) {
         var projectId = '@Model.ProjectId';
         var teamId = '@Model.TeamId';
 
         $.ajax({
-            url: '/Project/CreateTask',
+            url: '/Project/TaskAction',
             method: 'GET',
             contentType: 'application/json',
-            data: { projectId: projectId, teamId: teamId },
+            data: { projectId: projectId, teamId: teamId, taskId: taskId },
             success: function (response) {
                 $("#taskActionContent").html(response);
                 var myModal = new bootstrap.Modal(document.getElementById('taskModal'));

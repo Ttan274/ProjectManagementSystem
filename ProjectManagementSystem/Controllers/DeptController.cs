@@ -18,6 +18,12 @@ namespace ProjectManagementSystem.Controllers
         }
 
         [Authorize(Roles = "Employee")]
+        public IActionResult Index()
+        {
+            return RedirectToAction("DeptMain");
+        }
+
+        [Authorize(Roles = "Employee")]
         public async Task<IActionResult> DeptMain()
         {
             var team = await _teamService.GetTeamByUser(User);

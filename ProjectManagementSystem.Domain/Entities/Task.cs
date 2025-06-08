@@ -27,6 +27,8 @@ namespace ProjectManagementSystem.Domain.Entities
         public AppUser? AppUser { get; set; }
         public Guid? DocumentationId { get; set; }
         public Documentation? Documentation { get; set; }
+        public Guid? TaskId { get; set; }
+        public Task? ParentTask { get; set; }
         public ICollection<Task>? DependentTasks { get; set; }
     }
 }

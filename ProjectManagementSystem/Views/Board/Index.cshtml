@@ -3,7 +3,6 @@
 @{
     Layout = "_MainLayout";
 }
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script src="~/js/subTasks.js" asp-append-version="true"></script>
 
 <main class="content">
@@ -214,47 +213,6 @@
             }, { offset: Number.NEGATIVE_INFINITY }).element;
         }
 
-        // Modal Functions
-        function showTaskDetailModal(taskId) {
-            // Fetch task details from server
-            fetch(`/Tasks/Details/${taskId}`)
-                .then(response => response.json())
-                .then(task => {
-                    document.getElementById('taskDetailModalTitle').textContent = task.title;
-                    document.getElementById('taskDetailDescription').textContent = task.description;
-                    document.getElementById('taskStatusSelect').value = task.statusId;
-                    document.getElementById('taskPrioritySelect').value = task.priority;
-
-                    // Populate subtasks
-                    const subtasksList = document.getElementById('taskSubtasksList');
-                    subtasksList.innerHTML = '';
-
-                    task.subtasks.forEach(subtask => {
-                        const subtaskItem = document.createElement('li');
-                        subtaskItem.className = 'list-group-item d-flex justify-content-between align-items-center';
-                        subtaskItem.innerHTML = `
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="subtask-${subtask.id}"
-                                    ${subtask.isCompleted ? 'checked' : ''}
-                                    onchange="toggleSubtaskCompletion('${subtask.id}', this.checked)">
-                                <label class="form-check-label" for="subtask-${subtask.id}">${subtask.title}</label>
-                            </div>
-                            <button class="btn btn-sm btn-link text-danger" onclick="deleteSubtask('${subtask.id}')">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        `;
-                        subtasksList.appendChild(subtaskItem);
-                    });
-
-                    const modal = new bootstrap.Modal(document.getElementById('taskDetailModal'));
-                    modal.show();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Görev detayları yüklenirken bir hata oluştu.');
-                });
-        }
-
         function showAddSubtaskModal(taskId, taskTitle) {
             document.getElementById('parentTaskId').value = taskId;
             document.querySelector('#addSubtaskModal .modal-title').textContent = `"${taskTitle}" için Subtask Ekle`;
@@ -265,59 +223,6 @@
 
             const modal = new bootstrap.Modal(document.getElementById('addSubtaskModal'));
             modal.show();
-        }
-
-        function addSubtask() {
-            const taskId = document.getElementById('parentTaskId').value;
-            const title = document.getElementById('subtaskTitle').value;
-            const description = document.getElementById('subtaskDescription').value;
-
-            if (!title.trim()) {
-                alert('Subtask başlığı boş olamaz!');
-                return;
-            }
-
-            // Send to server
-            fetch('/Tasks/AddSubtask', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                },
-                body: JSON.stringify({
-                    taskId: taskId,
-                    title: title,
-                    description: description
-                })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Subtask eklenemedi');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Add to UI
-                const subtaskItem = document.createElement('li');
-                subtaskItem.className = 'list-group-item d-flex justify-content-between align-items-center';
-                subtaskItem.innerHTML = `
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="subtask-${data.id}">
-                        <label class="form-check-label" for="subtask-${data.id}">${data.title}</label>
-                    </div>
-                    <button class="btn btn-sm btn-link text-danger" onclick="deleteSubtask('${data.id}')">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                `;
-                document.getElementById('taskSubtasksList').appendChild(subtaskItem);
-
-                // Close modal
-                bootstrap.Modal.getInstance(document.getElementById('addSubtaskModal')).hide();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Subtask eklenirken bir hata oluştu.');
-            });
         }
 
         function toggleSubtaskCompletion(subtaskId, isCompleted) {
@@ -339,28 +244,6 @@
             });
         }
 
-        function deleteSubtask(subtaskId) {
-            if (!confirm('Bu subtaskı silmek istediğinize emin misiniz?')) {
-                return;
-            }
-
-            fetch(`/Tasks/DeleteSubtask/${subtaskId}`, {
-                method: 'POST',
-                headers: {
-                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Subtask silinemedi');
-                }
-                // Remove from UI
-                document.querySelector(`#taskSubtasksList li input[id="subtask-${subtaskId}"]`).closest('li').remove();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Subtask silinirken bir hata oluştu.');
-            });
-        }
+        
     </script>
 }

@@ -29,7 +29,14 @@ namespace ProjectManagementSystem.Persistance.DbContext
             builder.Entity<Domain.Entities.Task>()
                    .HasOne(x => x.Documentation)
                    .WithOne(x => x.Task)
-                   .HasForeignKey<Documentation>(x => x.TaskId);
+                   .HasForeignKey<Documentation>(x => x.TaskId)
+                   .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Domain.Entities.Task>()
+                .HasMany(t => t.DependentTasks)
+                .WithOne(t => t.ParentTask)
+                .HasForeignKey(t => t.TaskId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Project>()
                 .HasMany(x => x.Applications)

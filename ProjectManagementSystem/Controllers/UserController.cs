@@ -6,6 +6,7 @@ using ProjectManagementSystem.Application.Abstractions.Team;
 using ProjectManagementSystem.Application.Abstractions.User;
 using ProjectManagementSystem.Application.Abstractions.User.Dtos;
 using ProjectManagementSystem.Domain.Entities;
+using ProjectManagementSystem.Models;
 using ProjectManagementSystem.Services.Mail;
 using ProjectManagementSystem.ViewModel;
 
@@ -112,47 +113,90 @@ namespace ProjectManagementSystem.Controllers
             return View(model);
         }
 
-        //public async Task<IActionResult> ResetPasswordRequest()
-        //{
-        //    var model = new ResetPasswordRequestModel();
+        public IActionResult ResetPasswordRequest()
+        {
+            var model = new ResetPasswordRequestModel();
 
-        //    return View(model);
-        //}
+            return View(model);
+        }
 
-        //[HttpPost]
-        //public async Task<IActionResult> ResetPasswordRequest(ResetPasswordRequestModel model)
-        //{
-        //    if (model is null)
-        //        return View(model);
+        [HttpPost]
+        public async Task<IActionResult> ResetPasswordRequest(ResetPasswordRequestModel model)
+        {
+            if (model is null)
+                return View(model);
 
-        //    var user = await _userManager.FindByEmailAsync(model.Email);
+            var user = await _userManager.FindByEmailAsync(model.Email);
 
-        //    if (user is null) //toast mesaj 
-        //        return View(model);
+            if (user is null) //toast mesaj 
+                return View(model);
 
-        //    var token = _userManager.GeneratePasswordResetTokenAsync(user);
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-        //    var resetLink = Url.Action("ResetPassword", "User", new
-        //    {
-        //        userId = user.Id.ToString(),
-        //        token
-        //    }, protocol: Request.Scheme);
+            var resetLink = Url.Action("ResetPassword", "User", new
+            {
+                userId = user.Id.ToString(),
+                token
+            }, protocol: Request.Scheme);
 
-        //    await _emailSender.SendEmailAsync(user.Email!, "Set Your Password",
-        //        "Hello,<br/><br/>" +
-        //        $"To access the system with {user.Email}, you need to change your password first. Please click the link below to set your password:<br/><br/>" +
-        //        $"Your temporary password: {randomPassword}<br/><br/>" +
-        //        $"<a href='{resetLink}'>Set Password</a><br/><br/>" +
-        //        "If you did not request this, please ignore this email."
-        //    );
-        //    return RedirectToAction("AdminPage", "User");
+            await _emailSender.SendEmailAsync(user.Email!, "Reset Password",
+                "Hello,<br/><br/>" +
+                $"To access the system with {user.Email}, you can use the connection to reset your password<br/><br/>" +
+                $"<a href='{resetLink}'>Reset Password</a><br/><br/>" +
+                "If you did not request this, please ignore this email."
+            );
 
-        //    return View(model);
-        //}
+            return View(model);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword(string userId, string token)
+        {
+            var model = new ResetPasswordModel();
+
+            if (string.IsNullOrEmpty(userId))
+                return View(model);
+
+            var user = await _userService.FindById(userId);
+
+            model.Email = user.Email!;
+            model.Token = token;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
+        {
+            if (model.Email is null || model.Token is null)
+                return View(model);
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null) return RedirectToAction("Error");
+
+            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+            if (result.Succeeded)
+            {
+                user.MustChangePassword = false;
+
+                await _userManager.UpdateAsync(user);
+
+                return RedirectToAction("Login");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+
+            return View(model);
+        }
         #endregion
 
         #region AdminRegion
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AdminPage()
         {
             var users = await _userService.GetAllUsers();
@@ -176,7 +220,7 @@ namespace ProjectManagementSystem.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateUser(AdminViewModel viewModel)
         {
             if (ModelState.IsValid)
@@ -211,7 +255,7 @@ namespace ProjectManagementSystem.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
             await _userService.DeleteUser(id);

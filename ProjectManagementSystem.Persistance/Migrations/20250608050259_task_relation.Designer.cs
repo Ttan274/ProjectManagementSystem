@@ -8,11 +8,11 @@ using ProjectManagementSystem.Persistance.DbContext;
 
 #nullable disable
 
-namespace ProjectManagementSystem.Migrations
+namespace ProjectManagementSystem.Persistance.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250607153552_AppInfo")]
-    partial class AppInfo
+    [Migration("20250608050259_task_relation")]
+    partial class task_relation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -622,7 +622,8 @@ namespace ProjectManagementSystem.Migrations
                 {
                     b.HasOne("ProjectManagementSystem.Domain.Entities.Task", "Task")
                         .WithOne("Documentation")
-                        .HasForeignKey("ProjectManagementSystem.Domain.Entities.Documentation", "TaskId");
+                        .HasForeignKey("ProjectManagementSystem.Domain.Entities.Documentation", "TaskId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Task");
                 });
@@ -657,9 +658,10 @@ namespace ProjectManagementSystem.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ProjectManagementSystem.Domain.Entities.Task", null)
+                    b.HasOne("ProjectManagementSystem.Domain.Entities.Task", "ParentTask")
                         .WithMany("DependentTasks")
-                        .HasForeignKey("TaskId");
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ProjectManagementSystem.Domain.Entities.AppUser", "AppUser")
                         .WithMany("Tasks")
@@ -668,6 +670,8 @@ namespace ProjectManagementSystem.Migrations
                         .IsRequired();
 
                     b.Navigation("AppUser");
+
+                    b.Navigation("ParentTask");
 
                     b.Navigation("Sprint");
                 });

@@ -75,41 +75,51 @@ namespace ProjectManagementSystem.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Employee")]
-        public async Task<IActionResult> CreateTask(Guid projectId, Guid teamId)
+        public async Task<IActionResult> TaskAction(Guid projectId, Guid teamId, Guid taskId)
         {
+            var model = new ProjectViewModel();
+
             var project = await _projectService.GetProjectById(projectId);
 
             var users = await _userService.GetAllUsersByTeamId(project.TeamId);
 
-            var model = new ProjectViewModel()
-            {
-                Project = project,
-                TaskToCreate = new()
-                {
-                    SprintList = project?.Sprints?.Select(x => new SelectListItem() { Text = x.SprintName, Value = x.Id.ToString() }).ToList(),
-                    UserList = users.Select(x => new SelectListItem() { Text = x.UserName, Value = x.Id.ToString() }).ToList()
-                }
-            };
+            if (taskId != Guid.Empty)
+               model.TaskToCreate = await _taskService.GetById(taskId);
+
+            model.Project = project;
+            model.TaskToCreate ??= new();
+
+            model.TaskToCreate.SprintList = project?.Sprints?.Select(x => new SelectListItem() { Text = x.SprintName, Value = x.Id.ToString() }).ToList();
+            model.TaskToCreate.UserList = users.Select(x => new SelectListItem() { Text = x.UserName, Value = x.Id.ToString() }).ToList();
 
             return View("_TaskAction", model);
         }
 
         [HttpPost]
         [Authorize(Roles = "Employee")]
-        public async Task<IActionResult> CreateTask(ProjectViewModel projectModel)
+        public async Task<IActionResult> TaskAction(ProjectViewModel projectModel)
         {
             if (ModelState.IsValid)
             {
                 var response = await _taskService.CreateTask(projectModel.TaskToCreate);
-
+                
                 if (response)
                 {
                     var model = await GetProjectViewModel(projectModel.Project.Id);
-                    return RedirectToAction("ProjectMain", new { id = projectModel.Project.Id });
+                    return RedirectToAction("Index", "Board", new { projectId = projectModel.Project.Id });
                 }
             }
 
             return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Employee")]
+        public async Task<IActionResult> DeleteTask(Guid id)
+        {
+            var response = await _taskService.Delete(id);
+
+            return Json(new { isSuccess = response });
         }
 
         [HttpGet]

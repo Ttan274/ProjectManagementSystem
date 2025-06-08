@@ -15,12 +15,14 @@ builder.Services.AddControllersWithViews()
                 })
                 .AddRazorRuntimeCompilation();
 
+builder.Services.AddRequiredServices(builder.Configuration);
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/User/Login";
+    options.AccessDeniedPath = "/Home/AccessDenied";
 });
 
-builder.Services.AddRequiredServices(builder.Configuration);
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddTransient<IServiceResponseHelper, ServiceResponseHelper>();
 
@@ -46,10 +48,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Dept}/{action=DeptMain}/{id?}");
+    pattern: "{controller=Dept}/{action=Index}/{id?}");
 
 app.Run();

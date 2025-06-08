@@ -31,7 +31,7 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script> 
 
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
@@ -75,9 +75,8 @@
                 <text>toastr.info("@Html.Raw(TempData["Info"])");</text>
             }
 
-            // Select2 başlatma
-            $('.select2').select2({
-                theme: 'bootstrap-5'
+            $('.js-example-basic-single').select2({
+                width: '100%'
             });
         });
     </script>

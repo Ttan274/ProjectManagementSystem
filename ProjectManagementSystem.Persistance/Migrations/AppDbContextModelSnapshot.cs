@@ -118,6 +118,55 @@ namespace ProjectManagementSystem.Persistance.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ProjectManagementSystem.Domain.Entities.AppInfo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("AppCode")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDatee")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("DecommissionDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("GitHubOwner")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("GitHubPatToken")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("GitHubRepo")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("IsDeleted")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid?>("ProjectId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Tag")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("AppInfos");
+                });
+
             modelBuilder.Entity("ProjectManagementSystem.Domain.Entities.AppRole", b =>
                 {
                     b.Property<Guid>("Id")
@@ -400,11 +449,17 @@ namespace ProjectManagementSystem.Persistance.Migrations
                     b.Property<bool?>("Completed")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<DateTime>("CreatedDatee")
                         .HasColumnType("datetime(6)");
 
                     b.Property<Guid?>("DocumentationId")
                         .HasColumnType("char(36)");
+
+                    b.Property<int>("EffortScore")
+                        .HasColumnType("int");
 
                     b.Property<bool?>("IsUrgent")
                         .HasColumnType("tinyint(1)");
@@ -415,6 +470,9 @@ namespace ProjectManagementSystem.Persistance.Migrations
                     b.Property<Guid>("SprintId")
                         .HasColumnType("char(36)");
 
+                    b.Property<int?>("State")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Status")
                         .HasColumnType("tinyint(1)");
 
@@ -424,9 +482,6 @@ namespace ProjectManagementSystem.Persistance.Migrations
                     b.Property<string>("TaskDesc")
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("TaskEffort")
-                        .HasColumnType("int");
-
                     b.Property<Guid?>("TaskId")
                         .HasColumnType("char(36)");
 
@@ -435,6 +490,9 @@ namespace ProjectManagementSystem.Persistance.Migrations
 
                     b.Property<string>("TaskNumber")
                         .HasColumnType("longtext");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("char(36)");
@@ -527,6 +585,16 @@ namespace ProjectManagementSystem.Persistance.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ProjectManagementSystem.Domain.Entities.AppInfo", b =>
+                {
+                    b.HasOne("ProjectManagementSystem.Domain.Entities.Project", "Project")
+                        .WithMany("Applications")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Project");
+                });
+
             modelBuilder.Entity("ProjectManagementSystem.Domain.Entities.AppUser", b =>
                 {
                     b.HasOne("ProjectManagementSystem.Domain.Entities.Team", "Team")
@@ -551,7 +619,8 @@ namespace ProjectManagementSystem.Persistance.Migrations
                 {
                     b.HasOne("ProjectManagementSystem.Domain.Entities.Task", "Task")
                         .WithOne("Documentation")
-                        .HasForeignKey("ProjectManagementSystem.Domain.Entities.Documentation", "TaskId");
+                        .HasForeignKey("ProjectManagementSystem.Domain.Entities.Documentation", "TaskId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Task");
                 });
@@ -586,9 +655,10 @@ namespace ProjectManagementSystem.Persistance.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ProjectManagementSystem.Domain.Entities.Task", null)
+                    b.HasOne("ProjectManagementSystem.Domain.Entities.Task", "ParentTask")
                         .WithMany("DependentTasks")
-                        .HasForeignKey("TaskId");
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ProjectManagementSystem.Domain.Entities.AppUser", "AppUser")
                         .WithMany("Tasks")
@@ -597,6 +667,8 @@ namespace ProjectManagementSystem.Persistance.Migrations
                         .IsRequired();
 
                     b.Navigation("AppUser");
+
+                    b.Navigation("ParentTask");
 
                     b.Navigation("Sprint");
                 });
@@ -613,6 +685,8 @@ namespace ProjectManagementSystem.Persistance.Migrations
 
             modelBuilder.Entity("ProjectManagementSystem.Domain.Entities.Project", b =>
                 {
+                    b.Navigation("Applications");
+
                     b.Navigation("Sprints");
                 });
 

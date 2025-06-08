@@ -1,5 +1,6 @@
 ﻿const finalSubtasks = [];
-
+var globalTaskId;
+var globalDependentId;
 $(document).ready(function () {
     $('.form-select').select2({
         width: '100%',
@@ -40,7 +41,7 @@ async function fetchAiSuggestedSubTasks(taskDescr) {
     }
 }
 
-async function getAiSuggestedSubTasks() {
+async function getAiSuggestedSubTasks(taskId) {
     const desc = $("#taskDescInput").val().trim();
 
     if (!desc) {
@@ -77,7 +78,7 @@ async function getAiSuggestedSubTasks() {
                                 <p class="card-text small text-muted mb-0">${escapeHtml(item.description || 'Açıklama yok')}</p>
                             </div>
                             <a class="btn btn-md btn-success" 
-                                    onclick="addAiSubtaskFromCard(this)">
+                                    onclick="addAiSubtaskFromCard(this, '${taskId}')">
                                 <i class="bi bi-plus"></i>
                             </a>
                         </div>
@@ -94,11 +95,12 @@ async function getAiSuggestedSubTasks() {
         $aiBtn.prop('disabled', false);
     }
 }
-function addAiSubtaskFromCard(button) {
+function addAiSubtaskFromCard(button, taskId) {
     const $card = $(button).closest('.ai-suggestion-card');
     const title = $card.attr('data-title');
     const description = $card.attr('data-description');
 
+    saveSubTask(title, description, taskId);
     addAiSubtask(title, description);
 
     $card.attr('data-ai-suggested', 'true');
@@ -109,6 +111,7 @@ function addAiSubtask(title, description) {
     if (!title) return;
 
     finalSubtasks.push({
+        dependentId: globalDependentId,
         title: title.trim(),
         description: description ? description.trim() : '',
         aiSuggested: true
@@ -117,7 +120,7 @@ function addAiSubtask(title, description) {
     toastr.success('Alt görev eklendi');
 }
 
-function addManualSubtask() {
+function addManualSubtask(taskId) {
     const title = $("#subtaskTitleInput").val().trim();
     const description = $("#subtaskDescInput").val().trim();
 
@@ -125,8 +128,8 @@ function addManualSubtask() {
         toastr.warning("Lütfen başlık giriniz");
         return;
     }
-
-    finalSubtasks.push({ title, description, aiSuggested: false });
+    saveSubTask(title, description, taskId);
+    finalSubtasks.push({ dependentId: globalDependentId, title, description, aiSuggested: false });
     $("#subtaskTitleInput, #subtaskDescInput").val('');
     renderSubtaskList();
     toastr.success('Alt görev eklendi');
@@ -155,19 +158,19 @@ function renderSubtaskList() {
                             <p class="mb-0 text-muted small">${escapeHtml(task.description)}</p>
                         </div>
                         <div class="subtask-edit ${task.isEditing ? '' : 'd-none'}">
-                            <input type="text" class="form-control border-0 shadow-none bg-transparent form-control-sm subtask-title-input" 
+                            <input type="text" id="editTitleText" class="form-control border-0 shadow-none bg-transparent form-control-sm subtask-title-input" 
                                    value="${escapeHtml(task.title)}" />
-                            <textarea class="form-control border-0 shadow-none bg-transparent form-control-sm subtask-desc-input mt-1" rows="2">${escapeHtml(task.description)}</textarea>
+                            <textarea id="editDescText" class="form-control border-0 shadow-none bg-transparent form-control-sm subtask-desc-input mt-1" rows="2">${escapeHtml(task.description)}</textarea>
                         </div>
                     </div>
                     <div class="btn-group flex-shrink-0" role="group">
                         <button class="btn btn-sm btn-primary edit-btn ${task.isEditing ? 'd-none' : ''}" title="Düzenle" type="button">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <button class="btn btn-sm btn-success save-btn ${task.isEditing ? '' : 'd-none'}" title="Kaydet" type="button">
+                        <button class="btn btn-sm btn-success save-btn ${task.isEditing ? '' : 'd-none'}" title="Kaydet" type="button" onclick="updateSubTask('${task.dependentId}')">
                             <i class="bi bi-check-lg"></i>
                         </button>
-                        <button class="btn btn-sm btn-danger delete-btn" title="Sil" type="button">
+                        <button class="btn btn-sm btn-danger delete-btn" title="Sil" type="button" onclick="deleteSubTask('${task.dependentId}')">
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
@@ -235,7 +238,7 @@ function renderSubtaskList() {
                                 <h6 class="card-title fw-semibold mb-1">${escapeHtml(removed.title)}</h6>
                                 <p class="card-text small text-muted mb-0">${escapeHtml(removed.description || 'Açıklama yok')}</p>
                             </div>
-                            <a class="btn btn-md btn-success" onclick="addAiSubtaskFromCard(this)">
+                            <a class="btn btn-md btn-success" onclick="addAiSubtaskFromCard(this, '${globalTaskId}')"> 
                                 <i class="bi bi-plus"></i>
                             </a>
                         </div>
@@ -244,7 +247,6 @@ function renderSubtaskList() {
             `);
         }
         toastr.info('Alt görev kaldırıldı');
-
         const $results = $('#subtaskResults');
         const aiSuggestionCount = $results.find('.ai-suggestion-card').length;
         if (aiSuggestionCount === 0) {
@@ -282,7 +284,7 @@ function removeSubtask(index) {
                                 <h6 class="card-title fw-semibold mb-1">${escapeHtml(removed.title)}</h6>
                                 <p class="card-text small text-muted mb-0">${escapeHtml(removed.description || 'Açıklama yok')}</p>
                             </div>
-                            <a class="btn btn-md btn-success" onclick="addAiSubtaskFromCard(this)">
+                            <a class="btn btn-md btn-success" onclick="addAiSubtaskFromCard(this, '${globalTaskId}')">
                                 <i class="bi bi-plus"></i>
                             </a>
                         </div>
@@ -291,7 +293,6 @@ function removeSubtask(index) {
             `);
         }
         toastr.info('Alt görev kaldırıldı');
-
         const $results = $('#subtaskResults');
         const aiSuggestionCount = $results.find('.ai-suggestion-card').length;
         if (aiSuggestionCount === 0) {
@@ -330,4 +331,64 @@ function getTaskFormAsJson() {
     });
 
     return taskData;
+}
+
+function saveSubTask(title, desc, taskId) { /*userId, sprintId*/
+    $.ajax({
+        url: '/SubTask/Create',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            title: title,
+            description: desc,
+            //userId: userId,
+            //sprintId: sprintId,
+            parentTaskId: taskId
+        }),
+        success: function (result) {
+            globalDependentId = result.depId;
+        },
+        error: function () {
+            return;
+        }
+    });
+}
+
+function deleteSubTask(taskId) {
+    $.ajax({
+        url: '/SubTask/Delete',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            Id: taskId
+        }),
+        success: function (result) {
+            return;
+        },
+        error: function () {
+            return;
+        }
+    });
+}
+
+function updateSubTask(taskId) {
+    const title = $("#editTitleText").val().trim();
+    const desc = $("#editDescText").val().trim();
+
+    $.ajax({
+        url: '/SubTask/Update',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            title: title,
+            description: desc,
+            taskId: taskId
+        }),
+        success: function (result) {
+            return;
+        },
+        error: function () {
+            return;
+        }
+    });
 }

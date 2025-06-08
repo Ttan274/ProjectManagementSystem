@@ -1,15 +1,38 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ProjectManagementSystem.Migrations
+namespace ProjectManagementSystem.Persistance.Migrations
 {
     /// <inheritdoc />
-    public partial class AppInfo : Migration
+    public partial class teamMetricsAndAppInfo : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql("ALTER TABLE `Tasks` CHANGE COLUMN `TaskEffort` `State` int NULL;");
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "CompletedAt",
+                table: "Tasks",
+                type: "datetime(6)",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "EffortScore",
+                table: "Tasks",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "Type",
+                table: "Tasks",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
+
             migrationBuilder.CreateTable(
                 name: "AppInfos",
                 columns: table => new
@@ -50,6 +73,23 @@ namespace ProjectManagementSystem.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AppInfos");
+
+            migrationBuilder.DropColumn(
+                name: "CompletedAt",
+                table: "Tasks");
+
+            migrationBuilder.DropColumn(
+                name: "EffortScore",
+                table: "Tasks");
+
+            migrationBuilder.DropColumn(
+                name: "Type",
+                table: "Tasks");
+
+            migrationBuilder.RenameColumn(
+                name: "State",
+                table: "Tasks",
+                newName: "TaskEffort");
         }
     }
 }
