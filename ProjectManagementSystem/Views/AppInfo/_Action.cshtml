@@ -1,5 +1,54 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model ProjectManagementSystem.Application.Abstractions.AppInfo.Dto.CreateAppInfoDto
+
 @{
+    Layout = null;
 }
+
+<form id="appInfoForm">
+    <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" class="form-control" id="name" name="Name">
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" name="Description"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="appCode" class="form-label">App Code</label>
+        <input type="number" class="form-control" id="appCode" name="AppCode">
+    </div>
+    <div class="mb-3">
+        <label for="gitHubPatToken" class="form-label">GitHub PAT Token</label>
+        <input type="text" class="form-control" id="gitHubPatToken" name="GitHubPatToken">
+    </div>
+    <div class="mb-3">
+        <label for="gitHubOwner" class="form-label">GitHub Owner</label>
+        <input type="text" class="form-control" id="gitHubOwner" name="GitHubOwner">
+    </div>
+    <div class="mb-3">
+        <label for="gitHubRepo" class="form-label">GitHub Repo</label>
+        <input type="text" class="form-control" id="gitHubRepo" name="GitHubRepo">
+    </div>
+    <div class="mb-3">
+        <label for="decommissionDate" class="form-label">Decommission Date</label>
+        <input type="date" class="form-control" id="decommissionDate" name="DecommissionDate">
+    </div>
+    <div class="mb-3 d-none">
+        <label for="projectId" class="form-label">Project ID</label>
+        <input type="text" class="form-control" id="projectId" value="@Model.ProjectId" name="ProjectId">
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="submitAppInfoForm()">@(Model.Id == Guid.Empty ? "Create" : "Update")</button>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function(){
+        $('#appInfoForm').on('submit', function (e) {
+          e.preventDefault();
+          submitAppInfoForm();
+        });
+    });
+</script>

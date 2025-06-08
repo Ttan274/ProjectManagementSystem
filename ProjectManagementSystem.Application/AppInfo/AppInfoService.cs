@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Application.Abstractions.AppInfo;
 using ProjectManagementSystem.Application.Abstractions.AppInfo.Dto;
 using ProjectManagementSystem.Application.Abstractions.Repositories.AppInfo;
@@ -29,6 +30,15 @@ namespace ProjectManagementSystem.Application.AppInfo
 
             try
             {
+                var appCodeExists = await appInfoReadRepository
+                    .GetQueryable()
+                    .AnyAsync(x => x.AppCode == createDto.AppCode);
+
+                if (appCodeExists)
+                {
+                    return serviceResponseHelper.SetError<AppInfoDto>("This app code already exists.");
+                }
+
                 var mappedAppInfo = mapper.Map<Domain.Entities.AppInfo>(createDto);
 
                 await appInfoWriteRepository.AddAsync(mappedAppInfo);
@@ -128,9 +138,9 @@ namespace ProjectManagementSystem.Application.AppInfo
             }
         }
 
-        public async Task<ServiceResponse<AppInfoDto>> UpdateAsync(Guid id, UpdateAppInfoDto updateDto)
+        public async Task<ServiceResponse<AppInfoDto>> UpdateAsync(UpdateAppInfoDto updateDto)
         {
-            if (id == Guid.Empty)
+            if (updateDto == null || updateDto.Id == Guid.Empty)
             {
                 return serviceResponseHelper.SetError<AppInfoDto>("Invalid request.");
             }
@@ -144,7 +154,7 @@ namespace ProjectManagementSystem.Application.AppInfo
 
             try
             {
-                var appInfo = await appInfoReadRepository.GetFirstOrDefaultAsync(method: q => q.Id == id);
+                var appInfo = await appInfoReadRepository.GetFirstOrDefaultAsync(method: q => q.Id == updateDto.Id);
 
                 if (appInfo == null)
                 {

@@ -23,7 +23,7 @@ namespace ProjectManagementSystem.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly IMemoryCache _cache;
 
-        public ProjectController(IProjectService projectService, ISprintService sprintService, 
+        public ProjectController(IProjectService projectService, ISprintService sprintService,
             ITaskService taskService, IUserService userService, UserManager<AppUser> userManager,
             IMemoryCache cache)
         {
@@ -59,7 +59,7 @@ namespace ProjectManagementSystem.Controllers
         [Authorize(Roles = "Employee")]
         public async Task<IActionResult> CreateSprint(ProjectViewModel projectModel)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var response = await _sprintService.CreateSprint(projectModel.SprintToCreate);
 
