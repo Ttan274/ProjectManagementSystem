@@ -40,9 +40,13 @@ namespace ProjectManagementSystem.Controllers
                     .WithOpenBugCount()
                     .WithAvgCycleTime()
                     .WithDocumentationStatus()
+                    .WithCompletionRate()
+                    .WithVelocity()
+                    .WithOnTimeDeliveryRate()
+                    .WithTotalTaskCount()
                     .Build();
 
-                return Ok(overviewMetrics);
+                return Ok(Success(overviewMetrics));
             }
             catch (Exception)
             {

@@ -172,5 +172,29 @@ namespace ProjectManagementSystem.Application.AppInfo
                 return serviceResponseHelper.SetError<AppInfoDto>("Internal server error occured.");
             }
         }
+
+        public async Task<ServiceResponse<List<AppInfoDto>>> GetListAsync()
+        {
+            try
+            {
+                var appInfos = await appInfoReadRepository
+                    .GetQueryable()
+                    .Where(q => q.IsDeleted == 0)
+                    .ToListAsync();
+
+                if (appInfos == null)
+                {
+                    return serviceResponseHelper.SetError<List<AppInfoDto>>("App info not found.");
+                }
+
+                var mappedAppInfo = mapper.Map<List<AppInfoDto>>(appInfos);
+
+                return serviceResponseHelper.SetSuccess(mappedAppInfo);
+            }
+            catch (Exception)
+            {
+                return serviceResponseHelper.SetError<List<AppInfoDto>>("Internal server error occured.");
+            }
+        }
     }
 }

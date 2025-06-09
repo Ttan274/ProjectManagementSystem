@@ -5,9 +5,11 @@
         public UserPullRequestTimeStatsDto()
         {
             PullRequestTimes = [];
+            PullRequests = [];
         }
         public string? UserId { get; set; }
         public string? Username { get; set; }
+        public List<PullRequestRecord> PullRequests { get; set; }
         public List<TimeSpan> PullRequestTimes { get; set; }
 
         public TimeSpan AverageTimeOpen =>

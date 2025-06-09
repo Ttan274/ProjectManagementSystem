@@ -9,5 +9,7 @@ namespace ProjectManagementSystem.Application.Abstractions.GitHubRepoAnalytics
         Task<ServiceResponse<List<UserCommitStatsDto>>> GetCommitCountsByUserAsync(AppGitCredentialDto appGitCredential);
         Task<ServiceResponse<List<UserPullRequestStatsDto>>> GetPullRequestCountsByUserAsync(AppGitCredentialDto appGitCredential);
         Task<ServiceResponse<List<UserPullRequestTimeStatsDto>>> GetPullRequestTimesAsync(AppGitCredentialDto appGitCredential);
+        Task<ServiceResponse<List<GitCommitDto>>> GetCommitsAsync(AppGitCredentialDto appGitCredential);
+        Task<ServiceResponse<List<PullRequestRecord>>> GetPullRequestsAsync(AppGitCredentialDto appGitCredential);
     }
 }

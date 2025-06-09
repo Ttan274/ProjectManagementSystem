@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Application.Abstractions.Project;
 using ProjectManagementSystem.Application.Abstractions.Sprint;
 using ProjectManagementSystem.Application.Abstractions.Sprint.Dto;
@@ -124,7 +123,7 @@ namespace ProjectManagementSystem.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> AssignUser([FromBody]AssignUserModel request)
+        public async Task<IActionResult> AssignUser([FromBody] AssignUserModel request)
         {
             var task = await _taskService.UpdateTaskUser(request.TaskId, request.UserId);
 

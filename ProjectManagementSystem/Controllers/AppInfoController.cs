@@ -6,6 +6,7 @@ using ProjectManagementSystem.Application.Abstractions.AppInfo.Dto;
 using ProjectManagementSystem.Application.Abstractions.Project;
 using ProjectManagementSystem.Common.ServiceResponse;
 using ProjectManagementSystem.Controllers.Base;
+using ProjectManagementSystem.ViewModel;
 
 namespace ProjectManagementSystem.Controllers
 {
@@ -138,6 +139,36 @@ namespace ProjectManagementSystem.Controllers
                 }
 
                 return Ok(deleteResponse);
+            }
+            catch (Exception)
+            {
+                return BadRequest(Error("Internal server error occured."));
+            }
+        }
+
+        [Authorize]
+        public async Task<IActionResult> GetAppInfoSelects()
+        {
+            try
+            {
+                var appInfoResponse = await appInfoService
+                    .GetListAsync()
+                    .ConfigureAwait(false);
+
+                if (!appInfoResponse.Success)
+                {
+                    return BadRequest(Error(appInfoResponse?.ErrorMessage ?? "Internal server error occured."));
+                }
+
+                var appInfoSelect = appInfoResponse
+                    .Data?
+                    .Select(x => new AppInfoSelectModel()
+                    {
+                        Id = x.Id,
+                        Name = x.Name
+                    }).ToList();
+
+                return Ok(Success(appInfoSelect));
             }
             catch (Exception)
             {

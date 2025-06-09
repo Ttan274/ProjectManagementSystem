@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectManagementSystem.Application.Abstractions.AppInfo;
 using ProjectManagementSystem.Application.Abstractions.Documentation;
+using ProjectManagementSystem.Application.Abstractions.GitHubRepoAnalytics;
 using ProjectManagementSystem.Application.Abstractions.Project;
 using ProjectManagementSystem.Application.Abstractions.Repositories.AppInfo;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Documentation;
@@ -18,6 +19,7 @@ using ProjectManagementSystem.Application.Abstractions.Team;
 using ProjectManagementSystem.Application.Abstractions.User;
 using ProjectManagementSystem.Application.AppInfo;
 using ProjectManagementSystem.Application.Documentation;
+using ProjectManagementSystem.Application.GitHubRepoAnalytics;
 using ProjectManagementSystem.Application.Project;
 using ProjectManagementSystem.Application.Sprint;
 using ProjectManagementSystem.Application.SubTaskProducer;
@@ -100,6 +102,9 @@ namespace ProjectManagementSystem.Persistance
             services.AddScoped<IAppInfoService, AppInfoService>();
             services.AddScoped<IAppInfoReadRepository, AppInfoReadRepository>();
             services.AddScoped<IAppInfoWriteRepository, AppInfoWriteRepository>();
+
+            //GithubAnalytics
+            services.AddScoped<IGitHubRepoAnalyticsService, GitHubRepoAnalyticsService>();
 
             services.AddMemoryCache();
 
