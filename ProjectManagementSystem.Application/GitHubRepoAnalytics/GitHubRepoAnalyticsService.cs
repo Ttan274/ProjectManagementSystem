@@ -107,7 +107,7 @@ namespace ProjectManagementSystem.Application.GitHubRepoAnalytics
 
                     var gitCommit = new GitCommitDto
                     {
-                        Committer = commit.Committer?.Login ?? "Serhat",
+                        Committer = commit.Committer?.Login ?? "Unknown",
                         Additions = commitDetails.Stats?.Additions ?? 0,
                         Deletions = commitDetails.Stats?.Deletions ?? 0,
                         Message = commitDetails.Commit.Message,

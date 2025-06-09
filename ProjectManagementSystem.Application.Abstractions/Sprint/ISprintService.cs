@@ -7,6 +7,7 @@ namespace ProjectManagementSystem.Application.Abstractions.Sprint
     {
         Task<bool> CreateSprint(SprintDto sprint);
         Task<List<SprintDto>> GetAllSprintsByProjectId(Guid id);
-        Task<ServiceResponse<SprintDetailsDto>> GetSprintDetailsAsync(Guid sprintId);
+        Task<ServiceResponse<List<SprintDetailsDto>>> GetSprintDetailListAsync(Guid projectId);
+        Task<ServiceResponse<List<SprintDto>>> GetListAsync(Guid? projectId = null);
     }
 }

@@ -41,9 +41,19 @@
     var projectInput = document.querySelector('input[name="ProjectId"]');
     if (projectInput) {
         var projectId = projectInput.value;
-        var link = document.getElementById("goToBoardBtn");
-        if (link) {
-            link.href = "/Board/Index?projectId=" + encodeURIComponent(projectId);
+        var goToBoardLink = document.getElementById("goToBoardBtn");
+        if (goToBoardLink) {
+            goToBoardLink.href = "/Board/Index?projectId=" + encodeURIComponent(projectId);
+        }
+
+        var goToProjectMonitorLink = document.getElementById("goToProjectHealthMonitorBtn");
+        if (goToProjectMonitorLink) {
+            goToProjectMonitorLink.href = "/ProjectPerformance/Index?projectId=" + encodeURIComponent(projectId);
+        }
+
+        var appInfosLink = document.getElementById("goToAppInfosBtn");
+        if (appInfosLink) {
+            appInfosLink.href = "/AppInfo/Index?projectId=" + encodeURIComponent(projectId);
         }
     }
 });
@@ -55,3 +65,13 @@ $(document).ajaxStart(function () {
 $(document).ajaxStop(function () {
     $("#globalLoader").fadeOut(200);
 });
+
+function escapeHtml(unsafe) {
+    if (!unsafe) return '';
+    return unsafe.toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
