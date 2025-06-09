@@ -44,4 +44,8 @@
     <None Include="Views\Documentation\GetDocuments.cshtml" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\GithubAnalytics\" />
+  </ItemGroup>
+
 </Project>

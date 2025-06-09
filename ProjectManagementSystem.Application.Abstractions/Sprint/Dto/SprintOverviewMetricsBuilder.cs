@@ -80,6 +80,82 @@ namespace ProjectManagementSystem.Application.Abstractions.Sprint.Dto
             return this;
         }
 
+        public SprintOverviewMetricsBuilder WithCompletionRate()
+        {
+            var totalTasks = sprintDetails.Tasks.Count;
+            var completedTasks = sprintDetails.Tasks.Count(t => t.IsCompleted == true);
+
+            sprintOverviewMetrics.CompletionRate = totalTasks == 0
+                ? 0
+                : (int)((double)completedTasks / totalTasks * 100);
+
+            return this;
+        }
+
+        public SprintOverviewMetricsBuilder WithVelocity()
+        {
+            sprintOverviewMetrics.Velocity = sprintDetails
+                .Tasks
+                .Where(task => task.IsCompleted == true)
+                .Select(task => task.EffortScore ?? 0)
+                .Sum();
+
+            return this;
+        }
+
+        public SprintOverviewMetricsBuilder WithAverageSprintVelocity()
+        {
+            var totalCompletedTasks = sprintDetails.Tasks.Count(task => task.IsCompleted == true);
+            if (totalCompletedTasks == 0)
+            {
+                sprintOverviewMetrics.AverageSprintVelocity = 0;
+            }
+            else
+            {
+                sprintOverviewMetrics.AverageSprintVelocity = sprintDetails.Tasks
+                    .Where(task => task.IsCompleted == true)
+                    .Select(task => task.EffortScore ?? 0)
+                    .Average();
+            }
+
+            return this;
+        }
+
+        public SprintOverviewMetricsBuilder WithTotalStoryPoints()
+        {
+            sprintOverviewMetrics.TotalStoryPoints = sprintDetails
+                .Tasks
+                .Select(task => task.EffortScore ?? 0)
+                .Sum();
+
+            return this;
+        }
+
+        public SprintOverviewMetricsBuilder WithOnTimeDeliveryRate()
+        {
+            var completedTasks = sprintDetails.Tasks
+                .Where(t => t.IsCompleted == true && t.CompletedAt.HasValue && t.CompletedAt.HasValue)
+                .ToList();
+
+            if (completedTasks.Count == 0)
+            {
+                sprintOverviewMetrics.OnTimeDeliveryRate = 0;
+                return this;
+            }
+
+            var onTimeTasks = completedTasks.Count(t => t.CompletedAt <= sprintDetails.FinishDate);
+
+            sprintOverviewMetrics.OnTimeDeliveryRate = (int)((double)onTimeTasks / completedTasks.Count * 100);
+
+            return this;
+        }
+
+        public SprintOverviewMetricsBuilder WithTotalTaskCount()
+        {
+            sprintOverviewMetrics.TotalTaskCount = sprintDetails.Tasks.Count;
+            return this;
+        }
+
         public SprintOverviewMetricsDto Build()
         {
             return sprintOverviewMetrics;

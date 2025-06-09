@@ -1,0 +1,171 @@
+﻿<div class="sprint-metrics mt-3">
+    <div class="metric-card">
+        <div class="metric-header">
+            <i class="bi bi-check-circle-fill icon-success"></i>
+            <h5>Completion Rate <i class="bi bi-question-circle-fill text-secondary fs-6" data-bs-toggle="tooltip" data-bs-original-title="Completion rate shows the percentage of completed tasks compared to the sprint goal."></i></h5>
+        </div>
+        <div class="metric-value metric-value-completion">--%</div>
+        <div class="metric-description">Target: 90%</div>
+        <div class="progress metric-progress">
+            <div class="progress-bar bg-success progress-bar-completion" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-header">
+            <i class="bi bi-lightning-charge-fill icon-info"></i>
+            <h5>Velocity <i class="bi bi-question-circle-fill text-secondary fs-6" data-bs-toggle="tooltip" data-bs-original-title="Velocity measures the team's ability to complete story points within a sprint."></i></h5>
+        </div>
+        <div class="metric-value metric-value-velocity">--</div>
+        <div class="metric-description">Average: <span class="average-velocity-value">--</span> Points</div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-header">
+            <i class="bi bi-calendar-check-fill icon-primary"></i>
+            <h5>On-time Delivery <i class="bi bi-question-circle-fill text-secondary fs-6" data-bs-toggle="tooltip" data-bs-original-title="On-time delivery shows the percentage of tasks completed by their deadlines."></i></h5>
+        </div>
+        <div class="metric-value metric-value-on-time">--%</div>
+        <div class="metric-description">Last sprint: <span class="last-sprint-delivery-rate">--%</span></div>
+        <div class="progress metric-progress">
+            <div class="progress-bar progress-bar-on-time" role="progressbar" style="width: 0%; background-color: var(--primary-color);" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-header">
+            <i class="bi bi-bar-chart-steps icon-accent"></i>
+            <h5>Planned Tasks <i class="bi bi-question-circle-fill text-secondary fs-6" data-bs-toggle="tooltip" data-bs-original-title="Planned tasks show the total number of tasks defined in the sprint."></i></h5>
+        </div>
+        <div class="metric-value metric-value-task-count">--</div>
+        <div class="metric-sub-value">Count</div>
+        <div class="metric-description">Total number of tasks in the sprint.</div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-header">
+            <i class="bi bi-bug-fill icon-danger"></i>
+            <h5>Open Bugs <i class="bi bi-question-circle-fill text-secondary fs-6" data-bs-toggle="tooltip" data-bs-original-title="Open bugs show the number of bugs that have not been fixed yet."></i></h5>
+        </div>
+        <div class="metric-value metric-value-open-bugs">--</div>
+        <div class="metric-sub-value">Count</div>
+        <div class="metric-description">Number of bugs waiting to be fixed.</div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-header">
+            <i class="bi bi-clock-history icon-warning"></i>
+            <h5>Average Cycle Time <i class="bi bi-question-circle-fill text-secondary fs-6" data-bs-toggle="tooltip" data-bs-original-title="Cycle time measures how long it takes for a task to be completed from start to finish."></i></h5>
+        </div>
+        <div class="metric-value metric-value-cycle-time">--</div>
+        <div class="metric-sub-value">Days</div>
+        <div class="metric-description">Average time to complete a task.</div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-header">
+            <i class="bi bi-file-earmark-text icon-secondary"></i>
+            <h5>Documentation <i class="bi bi-question-circle-fill text-secondary fs-6" data-bs-toggle="tooltip" data-bs-original-title="Documentation shows the percentage of tasks that have proper documentation."></i></h5>
+        </div>
+        <div class="metric-value metric-value-doc-status">--%</div>
+        <div class="metric-description">Task documentation rate.</div>
+        <div class="progress metric-progress">
+            <div class="progress-bar bg-secondary progress-bar-doc-status" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-header">
+            <i class="bi bi-graph-up-arrow icon-success"></i>
+            <h5>Total Story Points <i class="bi bi-question-circle-fill text-secondary fs-6" data-bs-toggle="tooltip" data-bs-original-title="Total story points represent the overall effort required to complete all tasks in the sprint."></i></h5>
+        </div>
+        <div class="metric-value metric-value-story-point">--</div>
+        <div class="metric-sub-value">Points</div>
+        <div class="metric-description">Total story points for all tasks in the sprint.</div>
+    </div>
+</div>
+
+<script>
+    function loadSprintMetrics(sprintId) {
+        resetSprintMetricsUI();
+        $.ajax({
+            url: `/SprintMetrics/GetOverviewMetrics?sprintId=${encodeURIComponent(sprintId)}`,
+            type: 'GET',
+            success: function (response) {
+                if (response.success) {
+                    updateSprintMetricsUI(response.data);
+                } else {
+                    setSprintMetricsErrorState();
+                    toastr.error(response.errorMessage || "An error occurred.");
+                }
+            },
+            error: function () {
+                setSprintMetricsErrorState();
+                console.error("Sprint metrics could not be retrieved.");
+            }
+        });
+    }
+
+    function resetSprintMetricsUI() {
+        $(".metric-value-completion").text("--%");
+        $(".progress-bar-completion").css("width", "0%");
+
+        $(".metric-value-velocity").text("--");
+        $(".metric-value-on-time").text("--%");
+        $(".progress-bar-on-time").css("width", "0%");
+
+        $(".metric-value-task-count").text("--");
+        $(".metric-value-open-bugs").text("--");
+        $(".metric-value-cycle-time").text("--");
+        $(".metric-value-doc-status").text("--%");
+        $(".progress-bar-doc-status").css("width", "0%");
+
+        $(".metric-value-story-point").text("--");
+        $(".average-velocity-value").text("--");
+        $(".last-sprint-delivery-rate").text("--%");
+    }
+
+    function setSprintMetricsErrorState() {
+        $(".metric-value-completion").text("Error");
+        $(".progress-bar-completion").css("width", "0%");
+
+        $(".metric-value-velocity").text("Error");
+        $(".metric-value-on-time").text("Error");
+        $(".progress-bar-on-time").css("width", "0%");
+
+        $(".metric-value-task-count").text("Error");
+        $(".metric-value-open-bugs").text("Error");
+        $(".metric-value-cycle-time").text("Error");
+        $(".metric-value-doc-status").text("Error");
+        $(".progress-bar-doc-status").css("width", "0%");
+
+        $(".metric-value-story-point").text("Error");
+        $(".average-velocity-value").text("Error");
+        $(".last-sprint-delivery-rate").text("Error");
+    }
+
+    function updateSprintMetricsUI(data) {
+        $(".metric-value-completion").text(`${data.completionRate}%`);
+        $(".progress-bar-completion").css("width", `${data.completionRate}%`);
+
+        $(".metric-value-velocity").text(data.velocity);
+        $(".metric-value-on-time").text(`${data.onTimeDeliveryRate}%`);
+        $(".progress-bar-on-time").css("width", `${data.onTimeDeliveryRate}%`);
+
+        $(".metric-value-task-count").text(data.totalTaskCount);
+        $(".metric-value-open-bugs").text(data.openBugCount);
+        $(".metric-value-cycle-time").text(data.avgCycleTime);
+        $(".metric-value-doc-status").text(`${data.documentationStatus}%`);
+        $(".progress-bar-doc-status").css("width", `${data.documentationStatus}%`);
+        $(".metric-value-story-point").text(data.totalStoryPoints);
+
+        $(".average-velocity-value").text(data.averageSprintVelocity.toFixed(2));
+
+        $(".last-sprint-delivery-rate").text(`${data.lastSprintOnTimeDeliveryRate}%`);
+    }
+
+    $(document).ready(function () {
+        const sprintId = "b279d07a-2e2b-4572-b1c4-f78cd318e86b";
+        loadSprintMetrics(sprintId);
+    });
+</script>

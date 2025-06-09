@@ -1,0 +1,94 @@
+﻿<div class="team-performance">
+    <h5 class="section-title mt-4 mb-3"><i class="bi bi-award-fill" style="color: var(--warning-color);"></i> Ekip Genel Başarı Puanı</h5>
+    <div class="sprint-metrics" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+        <div class="metric-card animate__animated animate__fadeIn">
+            <div class="metric-header">
+                <i class="bi bi-star-fill icon-warning"></i>
+                <h5>Genel Başarı Puanı</h5>
+            </div>
+            <div class="metric-value" id="teamOverallScore">Yükleniyor...</div>
+            <div class="metric-description">Tüm metriklerin ortalamasına göre ekip performansı.</div>
+        </div>
+        <div class="metric-card animate__animated animate__fadeIn">
+            <div class="metric-header">
+                <i class="bi bi-check-all icon-success"></i>
+                <h5>Ort. Görev Tamamlama</h5>
+            </div>
+            <div class="metric-value" id="teamAvgTaskCompletion">Yükleniyor...</div>
+            <div class="metric-description">Ekip üyelerinin ortalama görev tamamlama oranı.</div>
+        </div>
+        <div class="metric-card animate__animated animate__fadeIn">
+            <div class="metric-header">
+                <i class="bi bi-clock-fill icon-primary"></i>
+                <h5>Ort. Zamanında Teslim</h5>
+            </div>
+            <div class="metric-value" id="teamAvgOnTimeDelivery">Yükleniyor...</div>
+            <div class="metric-description">Ekip üyelerinin ortalama zamanında teslimat oranı.</div>
+        </div>
+        <div class="metric-card animate__animated animate__fadeIn">
+            <div class="metric-header">
+                <i class="bi bi-bullseye icon-info"></i>
+                <h5>Ort. Hedef Yakınlığı</h5>
+            </div>
+            <div class="metric-value" id="teamAvgTargetProximity">Yükleniyor...</div>
+            <div class="metric-description">Sprint hedeflerine ortalama yakınlık.</div>
+        </div>
+    </div>
+    <h4 class="section-title mt-4"><i class="bi bi-person-lines-fill"></i> Ekip Üyelerinin Detaylı Performansı</h4>
+    <div class="member-card">
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Team Member" class="member-avatar">
+        <div class="member-info">
+            <div class="member-name">Ayşe Kaya</div>
+            <div class="member-role">Frontend Developer</div>
+        </div>
+        <div class="performance-bars">
+            <div class="progress-label"><span>Görev Tamamlama</span><span>95%</span></div>
+            <div class="progress"><div class="progress-bar bg-success" role="progressbar" style="width: 95%" aria-valuenow="95"></div></div>
+            <div class="progress-label"><span>Zamanında Teslim</span><span>100%</span></div>
+            <div class="progress"><div class="progress-bar" role="progressbar" style="width: 100%; background-color: var(--primary-color);" aria-valuenow="100"></div></div>
+        </div>
+        <span class="badge badge-success ms-3">Lider</span>
+    </div>
+    <div class="member-card">
+        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Team Member" class="member-avatar">
+        <div class="member-info">
+            <div class="member-name">Mehmet Yılmaz</div>
+            <div class="member-role">Backend Developer</div>
+        </div>
+        <div class="performance-bars">
+            <div class="progress-label"><span>Görev Tamamlama</span><span>85%</span></div>
+            <div class="progress"><div class="progress-bar bg-success" role="progressbar" style="width: 85%" aria-valuenow="85"></div></div>
+            <div class="progress-label"><span>Zamanında Teslim</span><span>90%</span></div>
+            <div class="progress"><div class="progress-bar" role="progressbar" style="width: 90%; background-color: var(--primary-color);" aria-valuenow="90"></div></div>
+        </div>
+        <span class="badge badge-warning ms-3">İyi</span>
+    </div>
+    <div class="member-card">
+        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Team Member" class="member-avatar">
+        <div class="member-info">
+            <div class="member-name">Zeynep Demir</div>
+            <div class="member-role">QA Engineer</div>
+        </div>
+        <div class="performance-bars">
+            <div class="progress-label"><span>Görev Tamamlama</span><span>78%</span></div>
+            <div class="progress"><div class="progress-bar bg-success" role="progressbar" style="width: 78%" aria-valuenow="78"></div></div>
+            <div class="progress-label"><span>Zamanında Teslim</span><span>82%</span></div>
+            <div class="progress"><div class="progress-bar" role="progressbar" style="width: 82%; background-color: var(--primary-color);" aria-valuenow="82"></div></div>
+        </div>
+        <span class="badge badge-warning ms-3">Orta</span>
+    </div>
+    <div class="member-card">
+        <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Team Member" class="member-avatar">
+        <div class="member-info">
+            <div class="member-name">Can Akın</div>
+            <div class="member-role">UI/UX Designer</div>
+        </div>
+        <div class="performance-bars">
+            <div class="progress-label"><span>Görev Tamamlama</span><span>65%</span></div>
+            <div class="progress"><div class="progress-bar bg-warning" role="progressbar" style="width: 65%" aria-valuenow="65"></div></div>
+            <div class="progress-label"><span>Zamanında Teslim</span><span>70%</span></div>
+            <div class="progress"><div class="progress-bar" role="progressbar" style="width: 70%; background-color: var(--warning-color);" aria-valuenow="70"></div></div>
+        </div>
+        <span class="badge badge-danger ms-3">Gelişmeli</span>
+    </div>
+</div>

@@ -1,0 +1,49 @@
+﻿<div class="elastic-metrics-section">
+    <h4 class="section-title mt-3"><i class="bi bi-search-heart-fill"></i> Elastic Arama Verileri</h4>
+    <div class="elastic-grid" id="elasticDataContainer">
+        <div class="elastic-card animate__animated animate__fadeIn">
+            <i class="bi bi-activity icon"></i>
+            <div class="value" id="elasticTotalLogs">Yükleniyor...</div>
+            <div class="label">Toplam Log Sayısı</div>
+            <div class="description">Belirlenen zaman aralığındaki tüm logların adedi.</div>
+        </div>
+        <div class="elastic-card animate__animated animate__fadeIn">
+            <i class="bi bi-exclamation-triangle-fill icon" style="color: var(--danger-color);"></i>
+            <div class="value" id="elasticErrorLogs">Yükleniyor...</div>
+            <div class="label">Hata Logları</div>
+            <div class="description">Son 24 saatteki hata seviyesindeki log sayısı.</div>
+        </div>
+        <div class="elastic-card animate__animated animate__fadeIn">
+            <i class="bi bi-cpu-fill icon" style="color: var(--info-color);"></i>
+            <div class="value" id="elasticAvgCpu">Yükleniyor...</div>
+            <div class="label">Ort. CPU Kullanımı</div>
+            <div class="description">Uygulama sunucularının ortalama CPU yüzdesi.</div>
+        </div>
+        <div class="elastic-card animate__animated animate__fadeIn">
+            <i class="bi bi-memory icon" style="color: var(--warning-color);"></i>
+            <div class="value" id="elasticAvgMemory">Yükleniyor...</div>
+            <div class="label">Ort. Bellek Kullanımı</div>
+            <div class="description">Uygulama sunucularının ortalama bellek yüzdesi.</div>
+        </div>
+        <div class="elastic-card animate__animated animate__fadeIn">
+            <i class="bi bi-arrow-down-up icon" style="color: var(--success-color);"></i>
+            <div class="value" id="elasticRequestLatency">Yükleniyor...</div>
+            <div class="label">Ort. İstek Gecikmesi</div>
+            <div class="description">Son 1 saatteki web isteklerinin ortalama gecikme süresi (ms).</div>
+        </div>
+        <div class="elastic-card animate__animated animate__fadeIn">
+            <i class="bi bi-database-fill-slash icon" style="color: var(--secondary-color);"></i>
+            <div class="value" id="elasticDbConnections">Yükleniyor...</div>
+            <div class="label">Aktif DB Bağlantısı</div>
+            <div class="description">Veritabanındaki anlık aktif bağlantı sayısı.</div>
+        </div>
+    </div>
+    <div class="mt-4">
+        <h5 class="section-title"><i class="bi bi-bar-chart-fill"></i> Log Seviyelerine Göre Dağılım</h5>
+        <div class="completion-chart-container">
+            <div class="chart-container" style="height: 300px;">
+                <canvas id="logLevelChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
