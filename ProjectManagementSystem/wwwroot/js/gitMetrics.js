@@ -1,4 +1,5 @@
 ﻿let appSelector;
+const chartInstances = {};
 
 function fetchGitCommitStats(appId) {
     $.ajax({
@@ -105,9 +106,8 @@ function updateGitCommitAnalysisUI(data) {
         const commitsByHour = hours.map(h => data.workflow.commitsByHour[h] || 0);
         renderCommitTimeChart('commits-by-hour-chart', hours, commitsByHour, 'Commits by Hour', '#4361ee');
 
-        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-        const commitsByDay = days.map((_, i) => data.workflow.commitsByDay[i] || 0);
-        renderCommitTimeChart('commits-by-day-chart', days, commitsByDay, 'Commits by Day', '#f8961e');
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        renderCommitTimeChart('commits-by-day-chart', days, data.workflow.commitsByDay, 'Commits by Day', '#f8961e');
 
         const busyDays = data.workflow.busyPeriods.length;
         $('#busy-period-info').text(`${busyDays} busy days detected (5+ commits per day)`);
@@ -407,125 +407,6 @@ function populateTopDevelopersTable(commitStatAnalysis) {
             `;
             tableBody.append(row);
         });
-}
-
-
-const chartInstances = {};
-
-function renderCommitDistributionChart(canvasId, labels, data, label) {
-    const ctx = document.getElementById(canvasId).getContext('2d');
-
-    if (chartInstances[canvasId]) {
-        chartInstances[canvasId].destroy();
-    }
-
-    chartInstances[canvasId] = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: label,
-                data: data,
-                backgroundColor: [
-                    '#4361ee', '#3f37c9', '#4895ef', '#4cc9f0', '#f72585', '#f8961e', '#43aa8b'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'right',
-                    labels: {
-                        boxWidth: 12,
-                        padding: 10,
-                        font: {
-                            size: 10
-                        }
-                    }
-                }
-            }
-        }
-    });
-}
-
-function renderActivityTrendChart(canvasId, labels, data, label, color) {
-    const ctx = document.getElementById(canvasId).getContext('2d');
-
-    if (chartInstances[canvasId]) {
-        chartInstances[canvasId].destroy();
-    }
-
-    chartInstances[canvasId] = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: label,
-                data: data,
-                borderColor: color,
-                backgroundColor: color + '20',
-                borderWidth: 2,
-                tension: 0.3,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-}
-
-function renderCommitTimeChart(canvasId, labels, data, label, color) {
-    const ctx = document.getElementById(canvasId).getContext('2d');
-
-    if (chartInstances[canvasId]) {
-        chartInstances[canvasId].destroy();
-    }
-
-    chartInstances[canvasId] = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: label,
-                data: data,
-                backgroundColor: color + '80',
-                borderColor: color,
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        precision: 0
-                    }
-                }
-            }
-        }
-    });
 }
 
 function populateTopDevelopersTable(commitStatAnalysis) {

@@ -69,18 +69,41 @@ namespace ProjectManagementSystem.Application.Sprint
             }
         }
 
-        public async Task<ServiceResponse<SprintDetailsDto>> GetSprintDetailsAsync(Guid sprintId)
+        public async Task<ServiceResponse<List<SprintDto>>> GetListAsync(Guid? projectId = null)
         {
-            if (sprintId == Guid.Empty)
+            try
             {
-                return serviceResponseHelper.SetError<SprintDetailsDto>("Invalid Request");
+                var sprintQuery = sprintReadRepository.GetQueryable();
+
+                if (projectId != null)
+                {
+                    sprintQuery = sprintQuery.Where(x => x.ProjectId == projectId);
+                }
+
+                var sprints = await sprintQuery.ToListAsync();
+
+                var mappedSprints = mapper.Map<List<SprintDto>>(sprints);
+
+                return serviceResponseHelper.SetSuccess(mappedSprints);
+            }
+            catch (Exception ex)
+            {
+                return serviceResponseHelper.SetError<List<SprintDto>>("An unexpected error occured : " + ex.Message, true);
+            }
+        }
+
+        public async Task<ServiceResponse<List<SprintDetailsDto>>> GetSprintDetailListAsync(Guid projectId)
+        {
+            if (projectId == Guid.Empty)
+            {
+                return serviceResponseHelper.SetError<List<SprintDetailsDto>>("Invalid Request");
             }
 
             try
             {
                 var sprintDetails = await sprintReadRepository
                 .GetQueryable(tracking: false)
-                .Where(sprint => sprint.Id == sprintId)
+                .Where(sprint => sprint.ProjectId == projectId)
                 .Select(sprnt => new SprintDetailsDto
                 {
                     Id = sprnt.Id,
@@ -95,7 +118,7 @@ namespace ProjectManagementSystem.Application.Sprint
                             Id = task.Id,
                             Description = task.TaskDesc,
                             Name = task.TaskName,
-                            AssignedMember = task.AppUser == null ? Defaults.UNKNOWN_USER : task.AppUser.Name,
+                            AssignedMember = task.AppUser == null ? Defaults.UNKNOWN_USER : task.AppUser.UserName,
                             EffortScore = task.EffortScore,
                             Type = task.Type,
                             CreatedAt = task.CreatedDatee,
@@ -106,26 +129,26 @@ namespace ProjectManagementSystem.Application.Sprint
                             HasDocumentation = task.Documentation != null
                         }).ToList()
                 })
-                .FirstOrDefaultAsync();
+                .ToListAsync();
 
                 if (sprintDetails == null)
                 {
-                    return serviceResponseHelper.SetError<SprintDetailsDto>("Sprint does not exist");
+                    return serviceResponseHelper.SetError<List<SprintDetailsDto>>("Sprint does not exist");
                 }
 
                 return serviceResponseHelper.SetSuccess(sprintDetails);
             }
             catch (MySqlException)
             {
-                return serviceResponseHelper.SetError<SprintDetailsDto>("Database error occurred", true);
+                return serviceResponseHelper.SetError<List<SprintDetailsDto>>("Database error occurred", true);
             }
             catch (InvalidOperationException)
             {
-                return serviceResponseHelper.SetError<SprintDetailsDto>("Invalid operation error occured", true);
+                return serviceResponseHelper.SetError<List<SprintDetailsDto>>("Invalid operation error occured", true);
             }
             catch (Exception ex)
             {
-                return serviceResponseHelper.SetError<SprintDetailsDto>("An unexpected error occured : " + ex.Message, true);
+                return serviceResponseHelper.SetError<List<SprintDetailsDto>>("An unexpected error occured : " + ex.Message, true);
             }
         }
     }

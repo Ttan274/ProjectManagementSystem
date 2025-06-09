@@ -1,94 +1,141 @@
 ﻿<div class="team-performance">
-    <h5 class="section-title mt-4 mb-3"><i class="bi bi-award-fill" style="color: var(--warning-color);"></i> Ekip Genel Başarı Puanı</h5>
+    <h5 class="section-title mt-4 mb-3">
+        <i class="bi bi-award-fill" style="color: var(--warning-color);"></i> Team Overall Performance Score
+    </h5>
+
     <div class="sprint-metrics" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
         <div class="metric-card animate__animated animate__fadeIn">
             <div class="metric-header">
                 <i class="bi bi-star-fill icon-warning"></i>
-                <h5>Genel Başarı Puanı</h5>
+                <h5>Overall Score</h5>
             </div>
-            <div class="metric-value" id="teamOverallScore">Yükleniyor...</div>
-            <div class="metric-description">Tüm metriklerin ortalamasına göre ekip performansı.</div>
+            <div class="metric-value" id="teamOverallScore">Loading...</div>
+            <div class="metric-description">Average of all metrics as a performance indicator.</div>
         </div>
         <div class="metric-card animate__animated animate__fadeIn">
             <div class="metric-header">
                 <i class="bi bi-check-all icon-success"></i>
-                <h5>Ort. Görev Tamamlama</h5>
+                <h5>Avg. Task Completion</h5>
             </div>
-            <div class="metric-value" id="teamAvgTaskCompletion">Yükleniyor...</div>
-            <div class="metric-description">Ekip üyelerinin ortalama görev tamamlama oranı.</div>
+            <div class="metric-value" id="teamAvgTaskCompletion">Loading...</div>
+            <div class="metric-description">Average task completion rate of team members.</div>
         </div>
         <div class="metric-card animate__animated animate__fadeIn">
             <div class="metric-header">
                 <i class="bi bi-clock-fill icon-primary"></i>
-                <h5>Ort. Zamanında Teslim</h5>
+                <h5>Avg. On-Time Delivery</h5>
             </div>
-            <div class="metric-value" id="teamAvgOnTimeDelivery">Yükleniyor...</div>
-            <div class="metric-description">Ekip üyelerinin ortalama zamanında teslimat oranı.</div>
+            <div class="metric-value" id="teamAvgOnTimeDelivery">Loading...</div>
+            <div class="metric-description">Average on-time delivery rate of team members.</div>
         </div>
         <div class="metric-card animate__animated animate__fadeIn">
             <div class="metric-header">
                 <i class="bi bi-bullseye icon-info"></i>
-                <h5>Ort. Hedef Yakınlığı</h5>
+                <h5>Avg. Target Proximity</h5>
             </div>
-            <div class="metric-value" id="teamAvgTargetProximity">Yükleniyor...</div>
-            <div class="metric-description">Sprint hedeflerine ortalama yakınlık.</div>
+            <div class="metric-value" id="teamAvgTargetProximity">Loading...</div>
+            <div class="metric-description">Average proximity to sprint goals.</div>
         </div>
     </div>
-    <h4 class="section-title mt-4"><i class="bi bi-person-lines-fill"></i> Ekip Üyelerinin Detaylı Performansı</h4>
-    <div class="member-card">
-        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Team Member" class="member-avatar">
-        <div class="member-info">
-            <div class="member-name">Ayşe Kaya</div>
-            <div class="member-role">Frontend Developer</div>
-        </div>
-        <div class="performance-bars">
-            <div class="progress-label"><span>Görev Tamamlama</span><span>95%</span></div>
-            <div class="progress"><div class="progress-bar bg-success" role="progressbar" style="width: 95%" aria-valuenow="95"></div></div>
-            <div class="progress-label"><span>Zamanında Teslim</span><span>100%</span></div>
-            <div class="progress"><div class="progress-bar" role="progressbar" style="width: 100%; background-color: var(--primary-color);" aria-valuenow="100"></div></div>
-        </div>
-        <span class="badge badge-success ms-3">Lider</span>
-    </div>
-    <div class="member-card">
-        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Team Member" class="member-avatar">
-        <div class="member-info">
-            <div class="member-name">Mehmet Yılmaz</div>
-            <div class="member-role">Backend Developer</div>
-        </div>
-        <div class="performance-bars">
-            <div class="progress-label"><span>Görev Tamamlama</span><span>85%</span></div>
-            <div class="progress"><div class="progress-bar bg-success" role="progressbar" style="width: 85%" aria-valuenow="85"></div></div>
-            <div class="progress-label"><span>Zamanında Teslim</span><span>90%</span></div>
-            <div class="progress"><div class="progress-bar" role="progressbar" style="width: 90%; background-color: var(--primary-color);" aria-valuenow="90"></div></div>
-        </div>
-        <span class="badge badge-warning ms-3">İyi</span>
-    </div>
-    <div class="member-card">
-        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Team Member" class="member-avatar">
-        <div class="member-info">
-            <div class="member-name">Zeynep Demir</div>
-            <div class="member-role">QA Engineer</div>
-        </div>
-        <div class="performance-bars">
-            <div class="progress-label"><span>Görev Tamamlama</span><span>78%</span></div>
-            <div class="progress"><div class="progress-bar bg-success" role="progressbar" style="width: 78%" aria-valuenow="78"></div></div>
-            <div class="progress-label"><span>Zamanında Teslim</span><span>82%</span></div>
-            <div class="progress"><div class="progress-bar" role="progressbar" style="width: 82%; background-color: var(--primary-color);" aria-valuenow="82"></div></div>
-        </div>
-        <span class="badge badge-warning ms-3">Orta</span>
-    </div>
-    <div class="member-card">
-        <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Team Member" class="member-avatar">
-        <div class="member-info">
-            <div class="member-name">Can Akın</div>
-            <div class="member-role">UI/UX Designer</div>
-        </div>
-        <div class="performance-bars">
-            <div class="progress-label"><span>Görev Tamamlama</span><span>65%</span></div>
-            <div class="progress"><div class="progress-bar bg-warning" role="progressbar" style="width: 65%" aria-valuenow="65"></div></div>
-            <div class="progress-label"><span>Zamanında Teslim</span><span>70%</span></div>
-            <div class="progress"><div class="progress-bar" role="progressbar" style="width: 70%; background-color: var(--warning-color);" aria-valuenow="70"></div></div>
-        </div>
-        <span class="badge badge-danger ms-3">Gelişmeli</span>
-    </div>
+
+    <h4 class="section-title mt-4">
+        <i class="bi bi-person-lines-fill"></i> Detailed Member Performance
+    </h4>
+    <div id="memberCardsContainer"></div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sanitize-html@2.7.1/dist/sanitize-html.min.js"></script>
+<script>
+    $(document).ready(function () {
+        function labelClass(label) {
+            switch (label) {
+                case "Leader": return "badge-success";
+                case "Good": return "badge-warning";
+                case "Average": return "badge-warning";
+                case "Needs Improvement": return "badge-danger";
+                default: return "badge-secondary";
+            }
+        }
+
+        function loadTeamPerformance(data) {
+            $('#teamOverallScore').text('Loading...');
+            $('#teamAvgTaskCompletion').text('Loading...');
+            $('#teamAvgOnTimeDelivery').text('Loading...');
+            $('#teamAvgTargetProximity').text('Loading...');
+            $('#memberCardsContainer').empty();
+
+            try {
+                if (!data.success || !data.data) throw new Error("Data not received");
+
+                const metrics = data.data;
+
+                $('#teamOverallScore').text(`${escapeHtml(metrics.overallScore.toString())}%`);
+                $('#teamAvgTaskCompletion').text(`${escapeHtml(metrics.avgTaskCompletion.toString())}%`);
+                $('#teamAvgOnTimeDelivery').text(`${escapeHtml(metrics.avgOnTimeDelivery.toString())}%`);
+                $('#teamAvgTargetProximity').text(`${escapeHtml(metrics.avgTargetProximity.toString())}%`);
+
+                metrics.memberPerformances.forEach((member) => {
+                    const memberName = escapeHtml(member.memberName);
+                    const taskRate = escapeHtml(member.taskCompletionRate.toString());
+                    const onTimeRate = escapeHtml(member.onTimeDeliveryRate.toString());
+                    const performanceLabel = escapeHtml(member.performanceLabel);
+                    const badgeClass = labelClass(performanceLabel);
+
+                    const card = `
+                        <div class="member-card">
+                            <img src="/images/default_avatar.jpg" alt="Team Member" class="member-avatar">
+                            <div class="member-info">
+                                <div class="member-name">${memberName}</div>
+                                <div class="member-role">Software Developer</div>
+                            </div>
+                            <div class="performance-bars">
+                                <div class="progress-label"><span>Task Completion</span><span>${taskRate}%</span></div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: ${taskRate}%;" aria-valuenow="${taskRate}"></div>
+                                </div>
+                                <div class="progress-label"><span>On-Time Delivery</span><span>${onTimeRate}%</span></div>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: ${onTimeRate}%; background-color: var(--primary-color);" aria-valuenow="${onTimeRate}"></div>
+                                </div>
+                            </div>
+                            <span class="badge ${badgeClass} ms-3">${performanceLabel}</span>
+                        </div>
+                    `;
+                    $('#memberCardsContainer').append(card);
+                });
+            } catch (error) {
+                $('#teamOverallScore').text('Error');
+                $('#teamAvgTaskCompletion').text('Error');
+                $('#teamAvgOnTimeDelivery').text('Error');
+                $('#teamAvgTargetProximity').text('Error');
+                $('#memberCardsContainer').html('<p class="text-danger">Failed to load member performance.</p>');
+                console.error("Loading Error:", error.message);
+            }
+        }
+
+        $('#team-tab').on('shown.bs.tab', function () {
+            getTeamPerformanceMetrics(projectId);
+        });
+
+        function getTeamPerformanceMetrics(projectId) {
+            $.ajax({
+                url: '/Team/GetTeamPerformace',
+                method: 'GET',
+                data: {
+                    projectId: projectId
+                },
+                success: function (response) {
+                    loadTeamPerformance(response);
+                },
+                error: function (xhr, status, error) {
+                    $('#teamOverallScore').text('Error');
+                    $('#teamAvgTaskCompletion').text('Error');
+                    $('#teamAvgOnTimeDelivery').text('Error');
+                    $('#teamAvgTargetProximity').text('Error');
+                    $('#memberCardsContainer').html('<p class="text-danger">Data fetch failed: Server error.</p>');
+                    console.error("AJAX Error:", error);
+                }
+            });
+        }
+    });
+</script>

@@ -4,7 +4,7 @@
     {
         public SprintOverviewMetricsDto()
         {
-
+            SprintCompletions = [];
         }
 
         public int CompletedStoryPoints { get; set; }
@@ -19,5 +19,6 @@
         public int TotalStoryPoints { get; set; }
         public double AverageSprintVelocity { get; set; }
         public int PreviousSprintOnTimeDeliveryRate { get; set; }
+        public List<SprintCompletionChartDto> SprintCompletions { get; set; }
     }
 }

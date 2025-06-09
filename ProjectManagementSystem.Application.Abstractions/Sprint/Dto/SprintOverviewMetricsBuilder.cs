@@ -2,12 +2,12 @@
 
 namespace ProjectManagementSystem.Application.Abstractions.Sprint.Dto
 {
-    public class SprintOverviewMetricsBuilder(SprintDetailsDto sprintDetails)
+    public class SprintOverviewMetricsBuilder(List<SprintDetailsDto> sprintDetails, SprintDetailsDto selectedSprint)
     {
         private readonly SprintOverviewMetricsDto sprintOverviewMetrics = new();
         public SprintOverviewMetricsBuilder WithCompletedStoryPoints()
         {
-            sprintOverviewMetrics.CompletedStoryPoints = sprintDetails
+            sprintOverviewMetrics.CompletedStoryPoints = selectedSprint
                 .Tasks
                 .Where(task => task.IsCompleted == true)
                 .Select(x => x.EffortScore ?? 0)
@@ -19,7 +19,7 @@ namespace ProjectManagementSystem.Application.Abstractions.Sprint.Dto
         public SprintOverviewMetricsBuilder WithRemainingDays()
         {
             var today = DateTime.Today;
-            var deadLine = sprintDetails.FinishDate;
+            var deadLine = selectedSprint.FinishDate;
 
             int remainingDays = 0;
 
@@ -35,8 +35,7 @@ namespace ProjectManagementSystem.Application.Abstractions.Sprint.Dto
 
         public SprintOverviewMetricsBuilder WithOpenBugCount()
         {
-            sprintOverviewMetrics.OpenBugCount = sprintDetails
-                .Tasks
+            sprintOverviewMetrics.OpenBugCount = sprintDetails.SelectMany(x => x.Tasks)
                 .Count(task => task.IsCompleted != true && task.Type == TaskType.BugFix);
 
             return this;
@@ -44,7 +43,7 @@ namespace ProjectManagementSystem.Application.Abstractions.Sprint.Dto
 
         public SprintOverviewMetricsBuilder WithAvgCycleTime()
         {
-            var completedTasksWithDates = sprintDetails.Tasks
+            var completedTasksWithDates = sprintDetails.SelectMany(x => x.Tasks)
                 .Where(t => t.IsCompleted == true && t.CompletedAt.HasValue && t.CreatedAt.HasValue)
                 .ToList();
 
@@ -54,26 +53,30 @@ namespace ProjectManagementSystem.Application.Abstractions.Sprint.Dto
                 return this;
             }
 
-            sprintOverviewMetrics.AvgCycleTime = completedTasksWithDates
-                .Average(t =>
+            sprintOverviewMetrics.AvgCycleTime = Math.Round(
+                completedTasksWithDates.Average(t =>
                 {
                     var cycleTime = t.CompletedAt!.Value - t.CreatedAt!.Value;
                     return cycleTime.TotalDays;
-                });
+                }),
+                2
+            );
 
             return this;
         }
 
         public SprintOverviewMetricsBuilder WithDocumentationStatus()
         {
-            var totalTasks = sprintDetails.Tasks.Count;
+            var allTasks = sprintDetails.SelectMany(x => x.Tasks).ToList();
+
+            var totalTasks = allTasks.Count;
             if (totalTasks == 0)
             {
                 sprintOverviewMetrics.DocumentationStatus = 0;
                 return this;
             }
 
-            var documentedTasksCount = sprintDetails.Tasks.Count(t => t.HasDocumentation);
+            var documentedTasksCount = allTasks.Count(t => t.HasDocumentation);
 
             sprintOverviewMetrics.DocumentationStatus = (int)((double)documentedTasksCount / totalTasks * 100);
 
@@ -82,8 +85,8 @@ namespace ProjectManagementSystem.Application.Abstractions.Sprint.Dto
 
         public SprintOverviewMetricsBuilder WithCompletionRate()
         {
-            var totalTasks = sprintDetails.Tasks.Count;
-            var completedTasks = sprintDetails.Tasks.Count(t => t.IsCompleted == true);
+            var totalTasks = selectedSprint.Tasks.Count;
+            var completedTasks = selectedSprint.Tasks.Count(t => t.IsCompleted == true);
 
             sprintOverviewMetrics.CompletionRate = totalTasks == 0
                 ? 0
@@ -94,7 +97,7 @@ namespace ProjectManagementSystem.Application.Abstractions.Sprint.Dto
 
         public SprintOverviewMetricsBuilder WithVelocity()
         {
-            sprintOverviewMetrics.Velocity = sprintDetails
+            sprintOverviewMetrics.Velocity = selectedSprint
                 .Tasks
                 .Where(task => task.IsCompleted == true)
                 .Select(task => task.EffortScore ?? 0)
@@ -105,14 +108,16 @@ namespace ProjectManagementSystem.Application.Abstractions.Sprint.Dto
 
         public SprintOverviewMetricsBuilder WithAverageSprintVelocity()
         {
-            var totalCompletedTasks = sprintDetails.Tasks.Count(task => task.IsCompleted == true);
+            var allTasks = sprintDetails.SelectMany(x => x.Tasks).ToList();
+
+            var totalCompletedTasks = allTasks.Count(task => task.IsCompleted == true);
             if (totalCompletedTasks == 0)
             {
                 sprintOverviewMetrics.AverageSprintVelocity = 0;
             }
             else
             {
-                sprintOverviewMetrics.AverageSprintVelocity = sprintDetails.Tasks
+                sprintOverviewMetrics.AverageSprintVelocity = allTasks
                     .Where(task => task.IsCompleted == true)
                     .Select(task => task.EffortScore ?? 0)
                     .Average();
@@ -123,7 +128,7 @@ namespace ProjectManagementSystem.Application.Abstractions.Sprint.Dto
 
         public SprintOverviewMetricsBuilder WithTotalStoryPoints()
         {
-            sprintOverviewMetrics.TotalStoryPoints = sprintDetails
+            sprintOverviewMetrics.TotalStoryPoints = selectedSprint
                 .Tasks
                 .Select(task => task.EffortScore ?? 0)
                 .Sum();
@@ -133,7 +138,7 @@ namespace ProjectManagementSystem.Application.Abstractions.Sprint.Dto
 
         public SprintOverviewMetricsBuilder WithOnTimeDeliveryRate()
         {
-            var completedTasks = sprintDetails.Tasks
+            var completedTasks = sprintDetails.SelectMany(x => x.Tasks)
                 .Where(t => t.IsCompleted == true && t.CompletedAt.HasValue && t.CompletedAt.HasValue)
                 .ToList();
 
@@ -143,7 +148,7 @@ namespace ProjectManagementSystem.Application.Abstractions.Sprint.Dto
                 return this;
             }
 
-            var onTimeTasks = completedTasks.Count(t => t.CompletedAt <= sprintDetails.FinishDate);
+            var onTimeTasks = completedTasks.Count(t => t.CompletedAt <= selectedSprint.FinishDate);
 
             sprintOverviewMetrics.OnTimeDeliveryRate = (int)((double)onTimeTasks / completedTasks.Count * 100);
 
@@ -152,7 +157,19 @@ namespace ProjectManagementSystem.Application.Abstractions.Sprint.Dto
 
         public SprintOverviewMetricsBuilder WithTotalTaskCount()
         {
-            sprintOverviewMetrics.TotalTaskCount = sprintDetails.Tasks.Count;
+            sprintOverviewMetrics.TotalTaskCount = selectedSprint.Tasks.Count;
+            return this;
+        }
+
+        public SprintOverviewMetricsBuilder WithSprintCompletionChart()
+        {
+            sprintOverviewMetrics.SprintCompletions = sprintDetails.Select(sprint => new SprintCompletionChartDto
+            {
+                SprintName = sprint.Name ?? "Unknown",
+                PlannedTaskCount = sprint.Tasks.Count,
+                CompletedTaskCount = sprint.Tasks.Count(t => t.IsCompleted == true)
+            }).ToList();
+
             return this;
         }
 

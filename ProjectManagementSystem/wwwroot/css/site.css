@@ -762,3 +762,10 @@ select option {
         transform: rotate(360deg);
     }
 }
+.member-avatar-circle {
+    width: 3em;
+    height: 3em;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    object-fit: cover;
+}
