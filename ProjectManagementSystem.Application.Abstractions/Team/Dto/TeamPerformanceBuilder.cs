@@ -234,10 +234,10 @@ namespace ProjectManagementSystem.Application.Abstractions.Team.Dto
 
         private string GetPerformanceLabel(double overallScore)
         {
-            if (overallScore >= 90) return "Lider";
-            if (overallScore >= 75) return "İyi";
-            if (overallScore >= 60) return "Orta";
-            return "Gelişmeli";
+            if (overallScore >= 90) return "Leader";
+            if (overallScore >= 75) return "Good";
+            if (overallScore >= 60) return "Average";
+            return "Needs Improvement";
         }
 
         private List<TaskSummaryDto> GetAllTasks()
