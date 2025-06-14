@@ -1,6 +1,7 @@
 using ProjectManagementSystem.Application.Abstractions.SubTaskProducer;
 using ProjectManagementSystem.Application.SubTaskProducer;
 using ProjectManagementSystem.Common.ServiceResponse;
+using ProjectManagementSystem.Hubs;
 using ProjectManagementSystem.Models;
 using ProjectManagementSystem.Persistance;
 using ProjectManagementSystem.Services.Mail;
@@ -16,6 +17,7 @@ builder.Services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation();
 
 builder.Services.AddRequiredServices(builder.Configuration);
+builder.Services.AddSignalR();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -51,6 +53,8 @@ app.UseRouting();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.MapHub<ChatHub>("/ChatHub");
 
 app.MapControllerRoute(
     name: "default",

@@ -8,23 +8,20 @@ namespace ProjectManagementSystem.Controllers
     [Authorize]
     public class ChatController : Controller
     {
-        private readonly IChatService _chatService;
         private readonly IUserService _userService;
 
-        public ChatController(IChatService chatService, IUserService userService)
+        public ChatController(IUserService userService)
         {
-            _chatService = chatService;
             _userService = userService;
         }
 
         public async Task<IActionResult> Chat()
         {
-            var currentId = User.FindFirst("Id").Value;
-
+            var userId = await _userService.GetCurrentUserId(User);
             var teamId = await _userService.GetTeamId(User);
-            var users = await _userService.GetAllUsersByTeamId(Guid.Parse(teamId));
+            var users = await _userService.GetAllUsersExceptCurrent(User, teamId);
 
-
+            ViewBag.userId = userId;
             return View(users);
         }
     }

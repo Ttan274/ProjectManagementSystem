@@ -10,7 +10,9 @@ namespace ProjectManagementSystem.Application.Abstractions.User
         Task<bool> DeleteUser(Guid id);
         Task<List<UserDto>> GetAllUsers();
         Task<List<UserDto>> GetAllUsersByTeamId(Guid id);
+        Task<List<UserDto>> GetAllUsersExceptCurrent(ClaimsPrincipal principal, string teamId);
         Task<string> GetTeamId(ClaimsPrincipal principal);
         Task<AppUser> FindById(string userId);
+        Task<Guid> GetCurrentUserId(ClaimsPrincipal principal);
     }
 }

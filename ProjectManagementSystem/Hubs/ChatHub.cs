@@ -21,5 +21,11 @@ namespace ProjectManagementSystem.Hubs
 
             await Clients.User(chatMessage.ReceiverId.ToString()).SendAsync("MessageReceived", chatMessage);
         }
+
+        public async Task LoadChatHistory(string user1, string user2)
+        {
+            var messages = await _chatService.GetChatHistoryAsync(Guid.Parse(user1), Guid.Parse(user2));
+            await Clients.Caller.SendAsync("ChatHistoryReceived", messages);
+        }
     }
 }

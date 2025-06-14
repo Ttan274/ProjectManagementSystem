@@ -1,6 +1,7 @@
 ﻿@model List<UserDto>
 @{
     Layout = "_MainLayout";
+    var userId = ViewBag.userId;
 }
 
 <style>
@@ -144,5 +145,58 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js" ></script>
 <script>
+    const currentUserId = @userId;
+    let selectedUserId = null;
 
+    const connection = new signalR.HubConnectionBuilder().withUrl("/chathub").build();
+
+    connection.on("MessageReceived", function (message) {
+        appendMessage(message, false);
+    });
+
+    connection.on("MessageSent", function (message) {
+        appendMessage(message, true);
+    });
+
+    connection.on("ChatHistoryReceived", function (messages) {
+        const chatBox = document.getElementById("chatMessages");
+        chatBox.innerHTML = "";
+        messages.forEach(msg => appendMessage(msg, msg.senderId == currentUserId));
+    });
+
+    function appendMessage(msg, isMine) {
+        const msgDiv = document.createElement("div");
+        msgDiv.className = isMine ? "message mine" : "message theirs";
+        msgDiv.innerText = msg.message;
+        document.getElementById("chatMessages").appendChild(msgDiv);
+    }
+
+    document.getElementById("sendButton").addEventListener("click", async () => {
+        const input = document.getElementById("messageInput");
+        const text = input.value.trim();
+        if (!text || selectedUserId === null) return;
+
+        const messageDto = {
+            senderId: currentUserId,
+            receiverId: selectedUserId,
+            message: text
+        };
+
+        await connection.invoke("SendMessageAsync", messageDto);
+        input.value = "";
+    });
+
+    document.querySelectorAll(".user").forEach(li => {
+        li.addEventListener("click", () => {
+            selectedUserId = parseInt(li.dataset.userid);
+            loadChatWith(currentUserId, selectedUserId);
+            document.getElementById("chatHeader").innerText = "Chat with " + li.innerText;
+        });
+    });
+
+    async function loadChatWith(cUserId, userId) {
+        await connection.invoke("LoadChatHistory", cUserId, userId);
+    }
+
+    connection.start().then(() => console.log("Connected")).catch(err => console.error(err));
 </script>

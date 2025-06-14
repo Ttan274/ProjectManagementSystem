@@ -142,5 +142,43 @@ namespace ProjectManagementSystem.Application.User
                 throw;
             }
         }
+
+        public async Task<Guid> GetCurrentUserId(ClaimsPrincipal principal)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(principal);
+
+                if (user is null)
+                    throw new Exception();
+
+                return user.Id;
+            }
+            catch (Exception)
+            {
+                return new Guid();
+            }
+        }
+
+        public async Task<List<UserDto>> GetAllUsersExceptCurrent(ClaimsPrincipal principal, string teamId)
+        {
+            try
+            {
+                var currentUser = await _userManager.GetUserAsync(principal);
+
+                var users = await _userManager.Users.Where(x => (x != currentUser) && (x.TeamId == Guid.Parse(teamId))).ToListAsync();
+
+                if (users is null)
+                    return [];
+
+                var mappedResult = _mapper.Map<List<AppUser>, List<UserDto>>(users);
+
+                return mappedResult;
+            }
+            catch (Exception)
+            {
+                return [];
+            }
+        }
     }
 }
