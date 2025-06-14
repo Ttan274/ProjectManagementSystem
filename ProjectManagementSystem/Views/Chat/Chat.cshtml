@@ -1,4 +1,4 @@
-﻿
+﻿@model List<UserDto>
 @{
     Layout = "_MainLayout";
 }
@@ -113,15 +113,17 @@
         border-radius: 20px;
     }
 </style>
+
 <div class="chat-container">
     <div class="chat-wrapper">
         <!-- Renamed from aside to div to avoid layout conflict -->
         <div class="chat-sidebar">
             <h2>Chats</h2>
             <ul id="userList">
-                <li class="user" data-username="alice">Alice</li>
-                <li class="user" data-username="bob">Bob</li>
-                <!-- Render more dynamically later -->
+                @foreach (var user in Model)
+                {
+                    <li class="user" data-userId="@user.Id">@user.UserName</li>
+                }
             </ul>
         </div>
 
@@ -139,3 +141,8 @@
         </main>
     </div>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js" ></script>
+<script>
+
+</script>
