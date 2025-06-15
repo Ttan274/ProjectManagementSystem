@@ -16,6 +16,7 @@ namespace ProjectManagementSystem.Persistance.DbContext
         public DbSet<Comment> Comments { get; set; }
         public DbSet<AppInfo> AppInfos { get; set; }
         public DbSet<ProjectTeamConfig> ProjectTeamConfigs { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -44,6 +45,18 @@ namespace ProjectManagementSystem.Persistance.DbContext
                 .WithOne(x => x.Project)
                 .HasForeignKey(x => x.ProjectId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<ChatMessage>()
+                .HasOne(m => m.Sender)
+                .WithMany(m => m.SentMessages)
+                .HasForeignKey(m => m.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<ChatMessage>()
+               .HasOne(m => m.Receiver)
+               .WithMany(m => m.ReceivedMessages)
+               .HasForeignKey(m => m.ReceiverId)
+               .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

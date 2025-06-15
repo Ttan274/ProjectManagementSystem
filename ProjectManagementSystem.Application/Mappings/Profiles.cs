@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Octokit;
 using ProjectManagementSystem.Application.Abstractions.AppInfo.Dto;
+using ProjectManagementSystem.Application.Abstractions.Chat.Dto;
 using ProjectManagementSystem.Application.Abstractions.Documentation.Dto;
 using ProjectManagementSystem.Application.Abstractions.GitHubRepoAnalytics.Dto;
 using ProjectManagementSystem.Application.Abstractions.Project.Dto;
@@ -36,6 +37,7 @@ namespace ProjectManagementSystem.Application.Mappings
                 .ForMember(dest => dest.RepoName, opt => opt.MapFrom(src => src.GitHubRepo));
             CreateMap<GitHubCommitFile, GitCommitFileDto>().ReverseMap();
             CreateMap<Domain.Entities.ProjectTeamConfig, ProjectTeamConfigDto>().ReverseMap();
+            CreateMap<Domain.Entities.ChatMessage, ChatMessageDto>().ReverseMap();
         }
     }
 }

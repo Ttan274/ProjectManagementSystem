@@ -1,0 +1,202 @@
+﻿@model List<UserDto>
+@{
+    Layout = "_MainLayout";
+    var userId = ViewBag.userId;
+}
+
+<style>
+
+    .chat-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* Full height to center vertically */
+        width: 100%;
+    }
+
+    .chat-wrapper {
+        display: flex;
+        width: 900px;
+        max-width: 100%;
+        height: 600px;
+        background-color: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+
+        .chat-wrapper .chat-sidebar {
+            width: 250px;
+            background: #fff;
+            border-right: 1px solid #ddd;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+    .chat-sidebar h2 {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    .chat-sidebar .user {
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+        .chat-sidebar .user:hover {
+            background: #f2f2f2;
+        }
+
+    .chat-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background-color: #e5ddd5;
+    }
+
+    .chat-header {
+        padding: 15px 20px;
+        background: #fff;
+        border-bottom: 1px solid #ddd;
+        font-weight: bold;
+    }
+
+    .chat-messages {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+    .message {
+        margin-bottom: 10px;
+        padding: 10px 15px;
+        border-radius: 20px;
+        max-width: 70%;
+        line-height: 1.4;
+    }
+
+        .message.you {
+            background: #dcf8c6;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .message.them {
+            background: #fff;
+            margin-right: auto;
+        }
+
+    .chat-input {
+        padding: 15px 20px;
+        background: #fff;
+        border-top: 1px solid #ddd;
+        display: flex;
+    }
+
+    #messageInput {
+        flex: 1;
+        padding: 10px 15px;
+        border: 1px solid #ccc;
+        border-radius: 20px;
+        outline: none;
+    }
+
+    #sendButton {
+        margin-left: 10px;
+        padding: 10px 20px;
+        border: none;
+        background: #007bff;
+        color: white;
+        border-radius: 20px;
+    }
+</style>
+
+<div class="chat-container">
+    <div class="chat-wrapper">
+        <!-- Renamed from aside to div to avoid layout conflict -->
+        <div class="chat-sidebar">
+            <h2>Chats</h2>
+            <ul id="userList">
+                @foreach (var user in Model)
+                {
+                    <li class="user" data-userId="@user.Id">@user.UserName</li>
+                }
+            </ul>
+        </div>
+
+        <main class="chat-area">
+            <div class="chat-header" id="chatHeader">Select a user</div>
+
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will appear here -->
+            </div>
+
+            <div class="chat-input">
+                <input type="text" id="messageInput" placeholder="Type your message..." />
+                <button id="sendButton">Send</button>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js" ></script>
+<script>
+    const currentUserId = @userId;
+    let selectedUserId = null;
+
+    const connection = new signalR.HubConnectionBuilder().withUrl("/chathub").build();
+
+    connection.on("MessageReceived", function (message) {
+        appendMessage(message, false);
+    });
+
+    connection.on("MessageSent", function (message) {
+        appendMessage(message, true);
+    });
+
+    connection.on("ChatHistoryReceived", function (messages) {
+        const chatBox = document.getElementById("chatMessages");
+        chatBox.innerHTML = "";
+        messages.forEach(msg => appendMessage(msg, msg.senderId == currentUserId));
+    });
+
+    function appendMessage(msg, isMine) {
+        const msgDiv = document.createElement("div");
+        msgDiv.className = isMine ? "message mine" : "message theirs";
+        msgDiv.innerText = msg.message;
+        document.getElementById("chatMessages").appendChild(msgDiv);
+    }
+
+    document.getElementById("sendButton").addEventListener("click", async () => {
+        const input = document.getElementById("messageInput");
+        const text = input.value.trim();
+        if (!text || selectedUserId === null) return;
+
+        const messageDto = {
+            senderId: currentUserId,
+            receiverId: selectedUserId,
+            message: text
+        };
+
+        await connection.invoke("SendMessageAsync", messageDto);
+        input.value = "";
+    });
+
+    document.querySelectorAll(".user").forEach(li => {
+        li.addEventListener("click", () => {
+            selectedUserId = parseInt(li.dataset.userid);
+            loadChatWith(currentUserId, selectedUserId);
+            document.getElementById("chatHeader").innerText = "Chat with " + li.innerText;
+        });
+    });
+
+    async function loadChatWith(cUserId, userId) {
+        await connection.invoke("LoadChatHistory", cUserId, userId);
+    }
+
+    connection.start().then(() => console.log("Connected")).catch(err => console.error(err));
+</script>

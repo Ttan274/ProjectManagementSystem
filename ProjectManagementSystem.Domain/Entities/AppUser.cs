@@ -20,5 +20,7 @@ namespace ProjectManagementSystem.Domain.Entities
         public Team? Team { get; set; }
         public ICollection<Domain.Entities.Task>? Tasks { get; set; }
         public bool MustChangePassword { get; set; }
+        public ICollection<ChatMessage>? SentMessages { get; set; }
+        public ICollection<ChatMessage>? ReceivedMessages { get; set; }
     }
 }

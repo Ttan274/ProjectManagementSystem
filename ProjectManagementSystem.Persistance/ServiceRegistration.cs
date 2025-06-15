@@ -3,11 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectManagementSystem.Application.Abstractions.AppInfo;
+using ProjectManagementSystem.Application.Abstractions.Chat;
 using ProjectManagementSystem.Application.Abstractions.Documentation;
 using ProjectManagementSystem.Application.Abstractions.GitHubRepoAnalytics;
 using ProjectManagementSystem.Application.Abstractions.Project;
 using ProjectManagementSystem.Application.Abstractions.ProjectTeamConfig;
 using ProjectManagementSystem.Application.Abstractions.Repositories.AppInfo;
+using ProjectManagementSystem.Application.Abstractions.Repositories.Chat;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Documentation;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Project;
 using ProjectManagementSystem.Application.Abstractions.Repositories.ProjectTeamConfig;
@@ -20,6 +22,7 @@ using ProjectManagementSystem.Application.Abstractions.Task;
 using ProjectManagementSystem.Application.Abstractions.Team;
 using ProjectManagementSystem.Application.Abstractions.User;
 using ProjectManagementSystem.Application.AppInfo;
+using ProjectManagementSystem.Application.Chat;
 using ProjectManagementSystem.Application.Documentation;
 using ProjectManagementSystem.Application.GitHubRepoAnalytics;
 using ProjectManagementSystem.Application.Project;
@@ -32,6 +35,7 @@ using ProjectManagementSystem.Application.User;
 using ProjectManagementSystem.Domain.Entities;
 using ProjectManagementSystem.Persistance.DbContext;
 using ProjectManagementSystem.Persistance.Repositories.AppInfo;
+using ProjectManagementSystem.Persistance.Repositories.Chat;
 using ProjectManagementSystem.Persistance.Repositories.Documentation;
 using ProjectManagementSystem.Persistance.Repositories.Project;
 using ProjectManagementSystem.Persistance.Repositories.ProjectTeamConfig;
@@ -106,6 +110,11 @@ namespace ProjectManagementSystem.Persistance
             services.AddScoped<IAppInfoService, AppInfoService>();
             services.AddScoped<IAppInfoReadRepository, AppInfoReadRepository>();
             services.AddScoped<IAppInfoWriteRepository, AppInfoWriteRepository>();
+
+            //Chat Messages
+            services.AddScoped<IChatReadRepository, ChatReadRepository>();
+            services.AddScoped<IChatWriteRepository, ChatWriteRepository>();
+            services.AddScoped<IChatService, ChatService>();
 
             //GithubAnalytics
             services.AddScoped<IGitHubRepoAnalyticsService, GitHubRepoAnalyticsService>();

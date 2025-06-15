@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectManagementSystem.Persistance.DbContext;
 
@@ -10,9 +11,11 @@ using ProjectManagementSystem.Persistance.DbContext;
 namespace ProjectManagementSystem.Persistance.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250614130431_Chat")]
+    partial class Chat
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -436,56 +439,6 @@ namespace ProjectManagementSystem.Persistance.Migrations
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("ProjectManagementSystem.Domain.Entities.ProjectTeamConfig", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<double>("CodingScoreWeight")
-                        .HasColumnType("double");
-
-                    b.Property<double>("CommitWeight")
-                        .HasColumnType("double");
-
-                    b.Property<DateTime>("CreatedDatee")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<double>("NetChangeWeight")
-                        .HasColumnType("double");
-
-                    b.Property<double>("OnTimeDeliveryWeight")
-                        .HasColumnType("double");
-
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<double>("RefactorWeight")
-                        .HasColumnType("double");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("Tag")
-                        .HasColumnType("longtext");
-
-                    b.Property<double>("TargetProximityWeight")
-                        .HasColumnType("double");
-
-                    b.Property<double>("TaskCompletionWeight")
-                        .HasColumnType("double");
-
-                    b.Property<string>("TeamIntroduction")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectId")
-                        .IsUnique();
-
-                    b.ToTable("ProjectTeamConfigs");
-                });
-
             modelBuilder.Entity("ProjectManagementSystem.Domain.Entities.Sprint", b =>
                 {
                     b.Property<Guid>("Id")
@@ -738,17 +691,6 @@ namespace ProjectManagementSystem.Persistance.Migrations
                     b.Navigation("Team");
                 });
 
-            modelBuilder.Entity("ProjectManagementSystem.Domain.Entities.ProjectTeamConfig", b =>
-                {
-                    b.HasOne("ProjectManagementSystem.Domain.Entities.Project", "Project")
-                        .WithOne("ProjectTeamConfig")
-                        .HasForeignKey("ProjectManagementSystem.Domain.Entities.ProjectTeamConfig", "ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
-                });
-
             modelBuilder.Entity("ProjectManagementSystem.Domain.Entities.Sprint", b =>
                 {
                     b.HasOne("ProjectManagementSystem.Domain.Entities.Project", "Project")
@@ -803,8 +745,6 @@ namespace ProjectManagementSystem.Persistance.Migrations
             modelBuilder.Entity("ProjectManagementSystem.Domain.Entities.Project", b =>
                 {
                     b.Navigation("Applications");
-
-                    b.Navigation("ProjectTeamConfig");
 
                     b.Navigation("Sprints");
                 });
