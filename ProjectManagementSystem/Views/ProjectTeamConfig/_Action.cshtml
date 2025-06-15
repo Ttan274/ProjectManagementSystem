@@ -1,0 +1,206 @@
+﻿@model ProjectManagementSystem.Application.Abstractions.ProjectTeamConfig.Dto.ProjectTeamConfigDto
+
+@{
+    var isCreate = Model.Id == Guid.Empty;
+}
+
+<div class="container-fluid p-2" id="projectTeamConfigContainer">
+    <!-- Configuration Warning Alert -->
+    <div class="alert alert-warning alert-dismissible fade show mb-4 d-none" role="alert" id="projectTeamconfigAlert">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-exclamation-triangle me-3"></i>
+            <div>
+                <h6 class="alert-heading mb-1">Configuration Required</h6>
+                <p class="mb-0">Please configure your project evaluation settings below before proceeding. Adjust the performance metrics and coding parameters to match your team's priorities and project requirements.</p>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="row g-4">
+        <div class="d-none">
+            <input id="projectConfigId" value="@Model.Id" />
+            <input id="teamConfigProjectId" value="@Model.ProjectId" />
+        </div>
+
+        <!-- Performance Metrics Section -->
+        <section class="col-lg-6">
+            <div class="card shadow-sm p-1 w-100 h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Performance Metrics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <label class="form-label d-flex justify-content-between align-items-center mb-2">
+                            <span><i class="fas fa-tasks me-2"></i>Task Completion</span>
+                            <span class="badge bg-primary rounded-pill slider-value" id="taskCompletionValue">@Model.TaskCompletionWeightPercentage%</span>
+                        </label>
+                        <input type="range" class="form-range custom-slider" id="taskCompletionWeight" min="0" max="100" step="1" value="@Model.TaskCompletionWeightPercentage">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label d-flex justify-content-between align-items-center mb-2">
+                            <span><i class="fas fa-clock me-2"></i>On-Time Delivery</span>
+                            <span class="badge bg-primary rounded-pill slider-value" id="onTimeDeliveryValue">@Model.OnTimeDeliveryWeightPercentage%</span>
+                        </label>
+                        <input type="range" class="form-range custom-slider" id="onTimeDeliveryWeight" min="0" max="100" step="1" value="@Model.OnTimeDeliveryWeightPercentage">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label d-flex justify-content-between align-items-center mb-2">
+                            <span><i class="fas fa-bullseye me-2"></i>Target Proximity</span>
+                            <span class="badge bg-primary rounded-pill slider-value" id="targetProximityValue">@Model.TargetProximityWeightPercentage%</span>
+                        </label>
+                        <input type="range" class="form-range custom-slider" id="targetProximityWeight" min="0" max="100" step="1" value="@Model.TargetProximityWeightPercentage">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label d-flex justify-content-between align-items-center mb-2">
+                            <span><i class="fas fa-code me-2"></i>Code Quality</span>
+                            <span class="badge bg-primary rounded-pill slider-value" id="codingScoreValue">@Model.CodingScoreWeightPercentage%</span>
+                        </label>
+                        <input type="range" class="form-range custom-slider" id="codingScoreWeight" min="0" max="100" step="1" value="@Model.CodingScoreWeightPercentage">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Coding Parameters Section -->
+        <section class="col-lg-6">
+            <div class="card shadow-sm p-1 w-100 h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-laptop-code me-2"></i>Coding Parameters</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <label class="form-label d-flex justify-content-between align-items-center mb-2">
+                            <span><i class="fas fa-code-branch me-2"></i>Commits</span>
+                            <span class="badge bg-success rounded-pill slider-value" id="commitWeightValue">@Model.CommitWeightPercentage%</span>
+                        </label>
+                        <input type="range" class="form-range custom-slider" id="commitWeight" min="0" max="100" step="1" value="@Model.CommitWeightPercentage">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label d-flex justify-content-between align-items-center mb-2">
+                            <span><i class="fas fa-exchange-alt me-2"></i>Net Code Change</span>
+                            <span class="badge bg-success rounded-pill slider-value" id="netChangeWeightValue">@Model.NetChangeWeightPercentage%</span>
+                        </label>
+                        <input type="range" class="form-range custom-slider" id="netChangeWeight" min="0" max="100" step="1" value="@Model.NetChangeWeightPercentage">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label d-flex justify-content-between align-items-center mb-2">
+                            <span><i class="fas fa-redo me-2"></i>Refactoring Effort</span>
+                            <span class="badge bg-success rounded-pill slider-value" id="refactorWeightValue">@Model.RefactorWeightPercentage%</span>
+                        </label>
+                        <input type="range" class="form-range custom-slider" id="refactorWeight" min="0" max="100" step="1" value="@Model.RefactorWeightPercentage">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Save Button -->
+    <div class="row mt-4">
+        <div class="col text-end">
+            <button onclick="@(isCreate ? "createProjectConfig()" : "updateProjectConfig()")" class="btn btn-primary px-4 py-2 shadow-sm">
+                <i class="fas fa-save me-2"></i>@(isCreate ? "Save" : "Update") Configuration
+            </button>
+        </div>
+    </div>
+
+    <!-- Team Profile Section -->
+    <section class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm w-100 p-1">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-users me-2"></i>Team Profile</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label" for="teamIntroduction">Describe your team</label>
+                        <textarea class="form-control" id="teamIntroduction" placeholder="Example: Our team consists of 5 developers (2 frontend, 2 backend, 1 full-stack) working on a web application project. We use Agile methodology with 2-week sprints..." rows="5">@Model.TeamIntroduction</textarea>
+                    </div>
+
+                    <button class="btn btn-outline-info w-100 mt-3 d-flex align-items-center justify-content-center" id="aiSupportButton" onclick="handleAiSupportButtonClick()">
+                        <i class="fas fa-robot me-2"></i> Get AI Weight Suggestions
+                    </button>
+
+                    <div class="text-center mt-3" id="aiResponseMessage" style="display: none;">
+                        <div class="spinner-border text-info" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Analyzing team profile and project requirements...</p>
+                    </div>
+
+                    <div id="aiResponse" class="alert alert-info mt-3" style="display: none;">
+                        <div class="d-flex">
+                            <i class="fas fa-lightbulb me-3 mt-1"></i>
+                            <div>
+                                <h6 class="alert-heading">AI Recommendation</h6>
+                                <p id="aiSuggestionText" class="mb-2">Based on your team composition and project type, I recommend prioritizing code quality (40%) and refactoring effort (25%) as you have several junior developers who would benefit from clean code practices.</p>
+                                <button onclick="handleApplyAiSuggestion()" class="btn btn-sm btn-info mt-2" id="applyAiSuggestion">
+                                    <i class="fas fa-magic me-1"></i> Apply Suggestions
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+    .custom-slider {
+        height: 8px;
+        border-radius: 4px;
+    }
+
+        .custom-slider::-webkit-slider-thumb {
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border: 2px solid #0d6efd;
+            border-radius: 50%;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+
+    .card-header {
+        border-radius: 10px 10px 0 0 !important;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        padding: 10px 15px;
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+    }
+
+</style>
+
+<script type="text/javascript">
+    performanceValues = {
+        taskCompletion: @Model.TaskCompletionWeightPercentage,
+        onTimeDelivery: @Model.OnTimeDeliveryWeightPercentage,
+        targetProximity: @Model.TargetProximityWeightPercentage,
+        codingScore: @Model.CodingScoreWeightPercentage,
+    };
+
+    codingValues = {
+        commits: @Model.CommitWeightPercentage,
+        netChange: @Model.NetChangeWeightPercentage,
+        refactor: @Model.RefactorWeightPercentage,
+    };
+
+    setupSliders(performanceSliders, performanceValues);
+    setupSliders(codingSliders, codingValues);
+</script>

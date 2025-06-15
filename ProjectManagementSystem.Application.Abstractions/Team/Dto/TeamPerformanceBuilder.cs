@@ -1,244 +1,237 @@
 ﻿using ProjectManagementSystem.Application.Abstractions.GitHubRepoAnalytics.Dto;
+using ProjectManagementSystem.Application.Abstractions.ProjectTeamConfig.Dto;
 using ProjectManagementSystem.Application.Abstractions.Sprint.Dto;
 using ProjectManagementSystem.Application.Abstractions.Task.Dto;
 using ProjectManagementSystem.Common.Consts;
 
 namespace ProjectManagementSystem.Application.Abstractions.Team.Dto
 {
-    public class TeamPerformanceBuilder(List<SprintDetailsDto> sprintDetailsList, List<UserCommitStatsDto> commitStats)
+    public class TeamPerformanceBuilder
     {
-        private readonly List<SprintDetailsDto> sprintDetailsList = sprintDetailsList;
-        private readonly List<UserCommitStatsDto> commitStats = commitStats;
+        private readonly List<SprintDetailsDto> sprintDetailsList;
+        private readonly List<UserCommitStatsDto> commitStats;
+        private readonly ProjectTeamConfigDto projectTeamConfig;
+        private readonly List<(TaskSummaryDto Task, SprintDetailsDto Sprint)> allTasksWithSprints;
+
+        private readonly double[] weights;
+
+        public TeamPerformanceBuilder(List<SprintDetailsDto> sprintDetailsList,
+                                      List<UserCommitStatsDto> commitStats,
+                                      ProjectTeamConfigDto projectTeamConfig)
+        {
+            this.sprintDetailsList = sprintDetailsList ?? throw new ArgumentNullException(nameof(sprintDetailsList));
+            this.commitStats = commitStats ?? throw new ArgumentNullException(nameof(commitStats));
+            this.projectTeamConfig = projectTeamConfig ?? throw new ArgumentNullException(nameof(projectTeamConfig));
+            allTasksWithSprints = GetAllTasksWithSprints();
+
+            weights =
+            [
+                projectTeamConfig.TaskCompletionWeight,
+                projectTeamConfig.OnTimeDeliveryWeight,
+                projectTeamConfig.TargetProximityWeight,
+                projectTeamConfig.CodingScoreWeight,
+                projectTeamConfig.RefactorWeight,
+                projectTeamConfig.CommitWeight
+            ];
+        }
 
         public TeamPerformanceResult Build()
         {
-            var result = new TeamPerformanceResult();
+            if (!sprintDetailsList.Any())
+                return new TeamPerformanceResult();
 
-            if (sprintDetailsList == null || !sprintDetailsList.Any())
-                return result;
+            var metrics = CalculateTeamMetrics();
+            var memberPerformances = CalculateMemberPerformances();
 
-            result.OverallScore = CalculateOverallScore();
-            result.AvgTaskCompletion = CalculateAvgTaskCompletion();
-            result.AvgOnTimeDelivery = CalculateAvgOnTimeDelivery();
-            result.AvgTargetProximity = CalculateAvgTargetProximity();
-
-            result.MemberPerformances = CalculateMemberPerformances();
-
-            return result;
-        }
-
-        private double CalculateOverallScore(List<MemberPerformance> allMemberPerformances = null)
-        {
-            double completionWeight = 0.4;
-            double onTimeWeight = 0.3;
-            double targetWeight = 0.2;
-            double codingWeight = 0.1;
-
-            double completionScore = CalculateAvgTaskCompletion();
-            double onTimeScore = CalculateAvgOnTimeDelivery();
-            double targetScore = CalculateAvgTargetProximity();
-            double codingScore = CalculateAvgCodingScore();
-
-            double rawScore = (completionScore * completionWeight) +
-                             (onTimeScore * onTimeWeight) +
-                             (targetScore * targetWeight) +
-                             (codingScore * codingWeight);
-
-            if (allMemberPerformances != null && allMemberPerformances.Any())
+            return new TeamPerformanceResult
             {
-                var allScores = allMemberPerformances.Select(m =>
-                    (m.TaskCompletionRate * completionWeight) +
-                    (m.OnTimeDeliveryRate * onTimeWeight) +
-                    (m.CodingScore * codingWeight))
-                    .ToList();
-
-                allScores.Add(rawScore);
-
-                double minScore = allScores.Min();
-                double maxScore = allScores.Max();
-                double range = maxScore - minScore;
-
-                if (range > 0)
-                {
-                    return ((rawScore - minScore) / range) * 100;
-                }
-            }
-
-            return Math.Max(0, Math.Min(100, rawScore));
+                OverallScore = Math.Round(CalculateWeightedScore(metrics), 2),
+                AvgTaskCompletion = Math.Round(metrics.taskCompletion, 2),
+                AvgOnTimeDelivery = Math.Round(metrics.onTimeDelivery, 2),
+                AvgTargetProximity = Math.Round(metrics.targetProximity, 2),
+                AvgCodingScore = Math.Round(metrics.codingScore, 2),
+                AvgRefactorRate = Math.Round(metrics.refactorRate, 2),
+                AvgCommitEfficiency = Math.Round(metrics.commitEfficiency, 2),
+                MemberPerformances = memberPerformances
+            };
         }
-        private double CalculateAvgTaskCompletion()
+
+        private (double taskCompletion, double onTimeDelivery, double targetProximity,
+                double codingScore, double refactorRate, double commitEfficiency) CalculateTeamMetrics()
         {
             var allTasks = GetAllTasks();
-            if (!allTasks.Any())
-                return 0;
 
-            var completedTasks = allTasks.Count(t => t.IsCompleted == true);
-            return (double)completedTasks / allTasks.Count * 100;
+            return (
+                taskCompletion: CalculateTaskCompletionRate(allTasks),
+                onTimeDelivery: CalculateOnTimeDeliveryRate(),
+                targetProximity: CalculateTargetProximityRate(allTasks),
+                codingScore: CalculateAverageMetric(commitStats, c => c.CodingScore),
+                refactorRate: CalculateAverageMetric(commitStats, c => c.RefactorScore),
+                commitEfficiency: CalculateAverageMetric(commitStats, c => c.CommitEfficiency)
+            );
         }
 
-        private double CalculateAvgOnTimeDelivery()
+        private double CalculateWeightedScore((double taskCompletion, double onTimeDelivery, double targetProximity,
+                                             double codingScore, double refactorRate, double commitEfficiency) metrics)
         {
-            var allTasksWithSprints = GetAllTasksWithSprints();
-            if (!allTasksWithSprints.Any())
-                return 0;
+            var scores = new[] { metrics.taskCompletion, metrics.onTimeDelivery, metrics.targetProximity,
+                               metrics.codingScore, metrics.refactorRate, metrics.commitEfficiency };
+
+            return CalculateWeightedAverage(scores, weights);
+        }
+
+        private double CalculateWeightedScore(params double[] scores)
+        {
+            return CalculateWeightedAverage(scores, weights);
+        }
+
+        private static double CalculateWeightedAverage(double[] scores, double[] weights)
+        {
+            if (scores.Length != weights.Length)
+                throw new ArgumentException("Scores and weights arrays must have the same length");
+
+            double weightedSum = scores.Zip(weights, (score, weight) => score * weight).Sum();
+            double totalWeight = weights.Sum();
+
+            return totalWeight > 0 ? Math.Clamp(weightedSum / totalWeight, 0, 100) : 0;
+        }
+
+        private double CalculateTaskCompletionRate(IEnumerable<TaskSummaryDto> tasks)
+        {
+            var taskList = tasks.ToList();
+            return taskList.Any() ? CalculateCompletionRate(taskList) : 0;
+        }
+
+        private double CalculateOnTimeDeliveryRate()
+        {
+            if (!allTasksWithSprints.Any()) return 0;
 
             var completedTasks = allTasksWithSprints
-                .Where(t => t.Task.IsCompleted == true && t.Task.CompletedAt != null);
+                .Where(t => t.Task.IsCompleted == true && t.Task.CompletedAt.HasValue)
+                .ToList();
 
-            if (!completedTasks.Any())
-                return 0;
-
-            var onTimeTasks = completedTasks.Count(t => t.Task.CompletedAt <= t.Sprint.FinishDate);
-            var percentage = (double)onTimeTasks / completedTasks.Count() * 100;
-
-            return Math.Round(percentage, 2);
+            return completedTasks.Any()
+                ? CalculateOnTimeRate(completedTasks, t => t.Task.CompletedAt <= t.Sprint.FinishDate)
+                : 0;
         }
 
-        private double CalculateAvgTargetProximity()
+        private double CalculateTargetProximityRate(IEnumerable<TaskSummaryDto> allTasks)
         {
-            var allTasks = GetAllTasks();
-            if (!allTasks.Any())
-                return 0;
+            var taskList = allTasks.ToList();
+            if (!taskList.Any()) return 0;
 
-            var completedTasks = allTasks.Where(t => t.IsCompleted == true).ToList();
-            if (!completedTasks.Any())
-                return 0;
+            var completedTasks = taskList.Where(t => t.IsCompleted == true).ToList();
+            if (!completedTasks.Any()) return 0;
 
-            double totalEffort = allTasks.Sum(t => t.EffortScore ?? 0);
+            double totalEffort = taskList.Sum(t => t.EffortScore ?? 0);
             double completedEffort = completedTasks.Sum(t => t.EffortScore ?? 0);
 
-            if (totalEffort == 0)
-                return 0;
-
-            return (completedEffort / totalEffort) * 100;
+            return totalEffort > 0 ? (completedEffort / totalEffort) * 100 : 0;
         }
 
-        private double CalculateAvgCodingScore()
+        private static double CalculateAverageMetric<T>(IEnumerable<T> items, Func<T, double> selector)
         {
-            if (commitStats == null || !commitStats.Any())
-                return 0;
+            if (items?.Any() != true) return 0;
 
-            return commitStats.Average(c => c.CodingScore);
+            return items.Select(selector)
+                       .Select(score => Math.Clamp(score, 0, 100))
+                       .Average();
         }
 
         private List<MemberPerformance> CalculateMemberPerformances()
         {
-            var memberPerformances = new Dictionary<string, MemberPerformance>();
-            var allTasksWithSprints = GetAllTasksWithSprints();
-
-            if (!allTasksWithSprints.Any())
-                return new List<MemberPerformance>();
-
-            var allMembers = allTasksWithSprints
-                .Where(t => !string.IsNullOrEmpty(t.Task.AssignedMember) && t.Task.AssignedMember != Defaults.UNKNOWN_USER)
-                .Select(t => t.Task.AssignedMember)
-                .Distinct()
+            var memberGroups = allTasksWithSprints
+                .Where(t => !string.IsNullOrWhiteSpace(t.Task.AssignedMember) &&
+                           t.Task.AssignedMember != Defaults.UNKNOWN_USER)
+                .GroupBy(t => t.Task.AssignedMember)
                 .ToList();
 
-            var tempPerformances = new List<MemberPerformance>();
+            var memberPerformances = memberGroups
+                .Select(g => CreateMemberPerformance(g.Key, g.ToList()))
+                .OrderByDescending(m => m.OverallScore)
+                .ToList();
 
-            foreach (var member in allMembers)
-            {
-                var memberTasks = allTasksWithSprints
-                    .Where(t => t.Task.AssignedMember == member)
-                    .ToList();
-
-                var commitStat = commitStats?.FirstOrDefault(c => c.Username == member);
-
-                var performance = new MemberPerformance
-                {
-                    MemberName = member,
-                    TaskCompletionRate = CalculateMemberTaskCompletion(memberTasks),
-                    OnTimeDeliveryRate = CalculateMemberOnTimeDelivery(memberTasks),
-                    CodingScore = commitStat?.CodingScore ?? 0
-                };
-
-                tempPerformances.Add(performance);
-            }
-
-            foreach (var performance in tempPerformances)
-            {
-                var memberTasks = allTasksWithSprints
-                    .Where(t => t.Task.AssignedMember == performance.MemberName)
-                    .ToList();
-
-                var commitStat = commitStats?.FirstOrDefault(c => c.Username == performance.MemberName);
-
-                performance.OverallScore = CalculateNormalizedOverallScore(memberTasks, commitStat, tempPerformances);
-
-                performance.PerformanceLabel = GetPerformanceLabel(performance.OverallScore);
-                memberPerformances[performance.MemberName ?? Defaults.UNKNOWN_USER] = performance;
-            }
-
-            return memberPerformances.Values.OrderByDescending(m => m.OverallScore).ToList();
+            return memberPerformances;
         }
-        private double CalculateMemberTaskCompletion(List<(TaskSummaryDto Task, SprintDetailsDto Sprint)> memberTasks)
-        {
-            if (!memberTasks.Any())
-                return 0;
 
-            var completedTasks = memberTasks.Count(t => t.Task.IsCompleted == true);
-            return (double)completedTasks / memberTasks.Count * 100;
+        private MemberPerformance CreateMemberPerformance(string memberName,
+            List<(TaskSummaryDto Task, SprintDetailsDto Sprint)> memberTasks)
+        {
+            var commitStat = commitStats?.FirstOrDefault(c => c.Username == memberName);
+            var memberTaskList = memberTasks.Select(t => t.Task).ToList();
+
+            double completionRate = CalculateTaskCompletionRate(memberTaskList);
+            double onTimeRate = CalculateMemberOnTimeDelivery(memberTasks);
+            double targetProximity = CalculateTargetProximityRate(memberTaskList);
+            double codingScore = Math.Clamp(commitStat?.CodingScore ?? 0, 0, 100);
+            double refactorScore = Math.Clamp(commitStat?.RefactorScore ?? 0, 0, 100);
+            double commitEfficiency = Math.Clamp(commitStat?.CommitEfficiency ?? 0, 0, 100);
+
+            double overallScore = CalculateWeightedScore(
+                completionRate, onTimeRate, targetProximity,
+                codingScore, refactorScore, commitEfficiency);
+
+            return new MemberPerformance
+            {
+                MemberName = memberName,
+                TaskCompletionRate = Math.Round(completionRate, 2),
+                OnTimeDeliveryRate = Math.Round(onTimeRate, 2),
+                TargetProximity = Math.Round(targetProximity, 2),
+                CodingScore = Math.Round(codingScore, 2),
+                RefactorScore = Math.Round(refactorScore, 2),
+                CommitEfficiency = Math.Round(commitEfficiency, 2),
+                OverallScore = Math.Round(overallScore, 2),
+                PerformanceLabel = GetPerformanceLabel(overallScore)
+            };
         }
 
         private double CalculateMemberOnTimeDelivery(List<(TaskSummaryDto Task, SprintDetailsDto Sprint)> memberTasks)
         {
-            if (!memberTasks.Any())
-                return 0;
+            if (!memberTasks.Any()) return 0;
 
-            var sprintGroups = memberTasks
-                .Where(t => t.Task.IsCompleted == true && t.Sprint.FinishDate != null)
-                .GroupBy(t => t.Sprint.Id);
+            var completedTasksBySprint = memberTasks
+                .Where(t => t.Task.IsCompleted == true && t.Sprint.FinishDate.HasValue)
+                .GroupBy(t => t.Sprint.Id)
+                .ToList();
 
-            if (!sprintGroups.Any())
-                return 0;
+            if (!completedTasksBySprint.Any()) return 0;
 
-            double totalOnTimeRate = 0;
-            int countedSprints = 0;
-
-            foreach (var group in sprintGroups)
+            var sprintOnTimeRates = completedTasksBySprint.Select(group =>
             {
                 var sprintFinishDate = group.First().Sprint.FinishDate;
-                var completedTasks = group.Select(t => t.Task).ToList();
-                var onTimeTasks = completedTasks.Count(t => t.CompletedAt <= sprintFinishDate);
-                double sprintOnTimeRate = (double)onTimeTasks / completedTasks.Count * 100;
+                return CalculateOnTimeRate(group.ToList(), t => t.Task.CompletedAt <= sprintFinishDate);
+            });
 
-                totalOnTimeRate += sprintOnTimeRate;
-                countedSprints++;
-            }
-
-            var average = countedSprints > 0 ? totalOnTimeRate / countedSprints : 0;
-            return Math.Round(average, 2);
+            return sprintOnTimeRates.Average();
         }
 
-        public double CalculateNormalizedOverallScore(List<(TaskSummaryDto Task, SprintDetailsDto Sprint)> memberTasks,
-                                         UserCommitStatsDto? commitStat,
-                                         List<MemberPerformance> allMemberPerformances)
+        private static double CalculateCompletionRate(IEnumerable<TaskSummaryDto> tasks)
         {
-            double completionRate = CalculateMemberTaskCompletion(memberTasks);
-            double onTimeRate = CalculateMemberOnTimeDelivery(memberTasks);
-            double codingScore = commitStat?.CodingScore ?? 0;
+            var taskList = tasks.ToList();
+            int totalTasks = taskList.Count;
+            int completedTasks = taskList.Count(t => t.IsCompleted == true);
 
-            double overallScore = (completionRate * 0.4) + (onTimeRate * 0.4) + (codingScore * 0.2);
-
-            var allScores = allMemberPerformances.Select(m => m.OverallScore).ToList();
-
-            double minScore = allScores.Min();
-            double maxScore = allScores.Max();
-            double range = maxScore - minScore;
-
-            double normalizedScore = range > 0 ? ((overallScore - minScore) / range) * 100 : 50;
-
-            return allScores.Count(s => s <= overallScore) / (double)allScores.Count * 100;
+            return totalTasks > 0 ? (double)completedTasks / totalTasks * 100 : 0;
         }
 
-        private string GetPerformanceLabel(double overallScore)
+        private static double CalculateOnTimeRate<T>(IEnumerable<T> items, Func<T, bool> isOnTimePredicate)
         {
-            if (overallScore >= 90) return "Leader";
-            if (overallScore >= 75) return "Good";
-            if (overallScore >= 60) return "Average";
-            return "Needs Improvement";
+            var itemList = items.ToList();
+            int totalItems = itemList.Count;
+            int onTimeItems = itemList.Count(isOnTimePredicate);
+
+            return totalItems > 0 ? (double)onTimeItems / totalItems * 100 : 0;
         }
+
+        private static string GetPerformanceLabel(double overallScore) => overallScore switch
+        {
+            >= 90 => "Excellent",
+            >= 80 => "Very Good",
+            >= 70 => "Good",
+            >= 60 => "Satisfactory",
+            >= 50 => "Needs Improvement",
+            _ => "Poor"
+        };
 
         private List<TaskSummaryDto> GetAllTasks()
         {
@@ -250,24 +243,22 @@ namespace ProjectManagementSystem.Application.Abstractions.Team.Dto
         private List<(TaskSummaryDto Task, SprintDetailsDto Sprint)> GetAllTasksWithSprints()
         {
             return sprintDetailsList
-                .SelectMany(s => s.Tasks?
-                    .Select(t => (Task: t, Sprint: s))
-                    ?? Enumerable.Empty<(TaskSummaryDto, SprintDetailsDto)>())
+                .SelectMany(s => s.Tasks?.Select(t => (Task: t, Sprint: s)) ??
+                               Enumerable.Empty<(TaskSummaryDto, SprintDetailsDto)>())
                 .ToList();
         }
     }
 
     public class TeamPerformanceResult
     {
-        public TeamPerformanceResult()
-        {
-            MemberPerformances = new List<MemberPerformance>();
-        }
         public double OverallScore { get; set; }
         public double AvgTaskCompletion { get; set; }
         public double AvgOnTimeDelivery { get; set; }
         public double AvgTargetProximity { get; set; }
-        public List<MemberPerformance> MemberPerformances { get; set; }
+        public double AvgCodingScore { get; set; }
+        public double AvgRefactorRate { get; set; }
+        public double AvgCommitEfficiency { get; set; }
+        public List<MemberPerformance> MemberPerformances { get; set; } = new();
     }
 
     public class MemberPerformance
@@ -275,9 +266,11 @@ namespace ProjectManagementSystem.Application.Abstractions.Team.Dto
         public string? MemberName { get; set; }
         public double TaskCompletionRate { get; set; }
         public double OnTimeDeliveryRate { get; set; }
+        public double TargetProximity { get; set; }
         public double CodingScore { get; set; }
+        public double RefactorScore { get; set; }
+        public double CommitEfficiency { get; set; }
         public string? PerformanceLabel { get; set; }
-
         public double OverallScore { get; set; }
     }
 }

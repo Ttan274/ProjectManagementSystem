@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using ProjectManagementSystem.Application.Abstractions.AppInfo;
 using ProjectManagementSystem.Application.Abstractions.AppInfo.Dto;
 using ProjectManagementSystem.Application.Abstractions.GitHubRepoAnalytics;
 using ProjectManagementSystem.Application.Abstractions.GitHubRepoAnalytics.Dto;
+using ProjectManagementSystem.Application.Abstractions.ProjectTeamConfig;
 using ProjectManagementSystem.Application.Abstractions.Sprint;
 using ProjectManagementSystem.Application.Abstractions.Sprint.Dto;
 using ProjectManagementSystem.Application.Abstractions.Team;
@@ -17,8 +19,11 @@ namespace ProjectManagementSystem.Controllers
         ISprintService sprintService,
         IAppInfoService appInfoService,
         IGitHubRepoAnalyticsService repoAnalyticsService,
+        IProjectTeamConfigService projectTeamConfigService,
+        IMemoryCache memoryCache,
         IMapper mapper) : BaseController
     {
+        private const string CommitStatsCacheKey = "CommitStats_{0}";
         public async Task<IActionResult> GetTeamMemberPerformances(FilterTeamMemberPerformanceDto filterRequest)
         {
             if (filterRequest == null)
@@ -54,6 +59,11 @@ namespace ProjectManagementSystem.Controllers
 
             try
             {
+                if (memoryCache.TryGetValue(string.Format(CommitStatsCacheKey, projectId), out List<GitCommitDto> cachedGitCommits))
+                {
+                    return await BuildTeamPerformance(cachedGitCommits, projectId);
+                }
+
                 var sprintResponse = await sprintService
                     .GetSprintDetailListAsync(projectId)
                     .ConfigureAwait(false);
@@ -63,7 +73,7 @@ namespace ProjectManagementSystem.Controllers
                     return BadRequest(BadRequest());
                 }
 
-                var sprintDetailList = sprintResponse.Data ?? [];
+                var sprintDetailList = sprintResponse.Data;
 
                 if (sprintDetailList == null)
                 {
@@ -74,29 +84,44 @@ namespace ProjectManagementSystem.Controllers
 
                 if (!applicationResponse.Success)
                 {
-                    return BadRequest(Error(applicationResponse?.ErrorMessage ?? "Internal server error occured."));
+                    return BadRequest(Error(applicationResponse?.ErrorMessage ?? "Internal server error occurred."));
                 }
 
-                var applications = applicationResponse.Data ?? [];
+                var applications = applicationResponse.Data;
 
                 var gitCredentials = mapper.Map<List<AppGitCredentialDto>>(applications.Where(x => x.ProjectId == projectId));
 
-                List<GitCommitDto> gitCommits = [];
+                List<GitCommitDto> gitCommits = new();
 
-                foreach (var gitCredential in gitCredentials)
+                var tasks = gitCredentials.Select(async gitCredential =>
                 {
                     var repoAnalyticsResponse = await repoAnalyticsService
                         .GetCommitsAsync(gitCredential)
                         .ConfigureAwait(false);
 
-                    gitCommits.AddRange(repoAnalyticsResponse.Data ?? []);
+                    return repoAnalyticsResponse.Data ?? new List<GitCommitDto>();
+                }).ToList();
+
+                var result = await Task.WhenAll(tasks).ConfigureAwait(false);
+
+                foreach (var commits in result)
+                {
+                    gitCommits.AddRange(commits);
                 }
 
-                var analysisResult = new CommitAnalysisBuilder(gitCommits).AddCommitStatAnalysis().Build();
+                memoryCache.Set(string.Format(CommitStatsCacheKey, projectId), gitCommits, TimeSpan.FromMinutes(10));
 
-                var commitStats = analysisResult.CommitStatAnalysis?.CommitStats ?? [];
+                var projectTeamConfigResponse = await projectTeamConfigService
+                    .GetByProjectIdAsync(projectId)
+                    .ConfigureAwait(false);
 
-                var builder = new TeamPerformanceBuilder(sprintDetailList, commitStats);
+                var analysisResult = new CommitAnalysisBuilder(gitCommits, projectTeamConfigResponse.Data)
+                    .AddCommitStatAnalysis()
+                    .Build();
+
+                var commitStats = analysisResult.CommitStatAnalysis?.CommitStats;
+
+                var builder = new TeamPerformanceBuilder(sprintDetailList, commitStats, projectTeamConfigResponse.Data);
 
                 var overviewMetrics = builder.Build();
 
@@ -104,8 +129,37 @@ namespace ProjectManagementSystem.Controllers
             }
             catch (Exception)
             {
-                return BadRequest(Error(new SprintOverviewMetricsDto(), "Internal server error occured"));
+                return BadRequest(Error(new SprintOverviewMetricsDto(), "Internal server error occurred"));
             }
+        }
+
+        private async Task<IActionResult> BuildTeamPerformance(List<GitCommitDto> gitCommits, Guid projectId)
+        {
+            var sprintResponse = await sprintService
+                .GetSprintDetailListAsync(projectId)
+                .ConfigureAwait(false);
+
+            var sprintDetailList = sprintResponse.Data;
+
+            var applicationResponse = await appInfoService.GetListAsync();
+
+            var applications = applicationResponse.Data;
+
+            var projectTeamConfigResponse = await projectTeamConfigService
+                .GetByProjectIdAsync(projectId)
+                .ConfigureAwait(false);
+
+            var analysisResult = new CommitAnalysisBuilder(gitCommits, projectTeamConfigResponse.Data)
+                .AddCommitStatAnalysis()
+                .Build();
+
+            var commitStats = analysisResult.CommitStatAnalysis?.CommitStats;
+
+            var builder = new TeamPerformanceBuilder(sprintDetailList, commitStats, projectTeamConfigResponse.Data);
+
+            var overviewMetrics = builder.Build();
+
+            return Ok(Success(overviewMetrics));
         }
     }
 }

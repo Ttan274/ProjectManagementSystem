@@ -1,13 +1,16 @@
-﻿namespace ProjectManagementSystem.Application.Abstractions.GitHubRepoAnalytics.Dto
+﻿using ProjectManagementSystem.Application.Abstractions.ProjectTeamConfig.Dto;
+
+namespace ProjectManagementSystem.Application.Abstractions.GitHubRepoAnalytics.Dto
 {
     public class CommitAnalysisBuilder
     {
         private readonly List<ICommitAnalysis> analyses;
         private readonly List<GitCommitDto> commits;
-
-        public CommitAnalysisBuilder(List<GitCommitDto> commits)
+        private readonly ProjectTeamConfigDto? projectTeamConfig;
+        public CommitAnalysisBuilder(List<GitCommitDto> commits, ProjectTeamConfigDto? projectTeamConfig)
         {
             this.commits = commits ?? throw new ArgumentNullException(nameof(commits));
+            this.projectTeamConfig = projectTeamConfig;
             analyses = [];
         }
 
@@ -17,7 +20,7 @@
         public CommitAnalysisBuilder AddProjectHealth() => AddAnalysis(new ProjectHealthAnalysis());
         public CommitAnalysisBuilder AddWorkflowAnalysis() => AddAnalysis(new WorkflowAnalysis());
         public CommitAnalysisBuilder AddRiskAnalysis() => AddAnalysis(new RiskAnalysis());
-        public CommitAnalysisBuilder AddCommitStatAnalysis() => AddAnalysis(new CommitStatAnalysis());
+        public CommitAnalysisBuilder AddCommitStatAnalysis() => AddAnalysis(new CommitStatAnalysis(projectTeamConfig));
 
         public CommitAnalysisBuilder AddAllAnalyses()
         {

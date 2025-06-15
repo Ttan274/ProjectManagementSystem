@@ -1,54 +1,88 @@
 ﻿@{
     Layout = "_MainLayout";
     ViewData["Title"] = "Project Performance Dashboard";
+
+    bool hasProjectConfigured = ViewBag.HasProjectConfigured ?? false;
 }
 
 <link rel="stylesheet" href="~/css/projectPerformance.css" asp-append-version="true" />
 <script src="~/js/gitMetrics.js" asp-append-version="true"></script>
 <script src="~/js/sprintMetrics.js" asp-append-version="true"></script>
+<script src="~/js/projectConfig.js" asp-append-version="true"></script>
 
-<main class="content">
-    <div class="header">
-    </div>
-    <div class="dashboard-container m-5">
-        <partial name="_DashboardHeader" />
-
-        <ul class="nav nav-tabs" id="performanceTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true"><i class="bi bi-graph-up me-1"></i> Performance Indicators</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="elastic-tab" data-bs-toggle="tab" data-bs-target="#elastic-data" type="button" role="tab" aria-controls="elastic-data" aria-selected="false"><i class="bi bi-database-check me-1"></i> Elastic Data</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="gitanalysis-tab" data-bs-toggle="tab" data-bs-target="#git-commits" type="button" role="tab" aria-controls="git-commits" aria-selected="false"><i class="bi bi-git me-1"></i> Git Metrics</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="team-tab" data-bs-toggle="tab" data-bs-target="#team" type="button" role="tab" aria-controls="team" aria-selected="false"><i class="bi bi-people-fill me-1"></i> Team Performance</button>
-            </li>
-        </ul>
-
-        <div class="tab-content" id="performanceTabsContent">
-            <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
-                <partial name="_OverviewTab" />
+<div class="modal fade" id="projectTeamConfigModal" aria-hidden="true" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="projectTeamConfigModalLabel">Project Team Configuration</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="tab-pane fade" id="elastic-data" role="tabpanel" aria-labelledby="elastic-tab">
-                <partial name="_ElasticDataTab" />
-            </div>
-            <div class="tab-pane fade" id="git-commits" role="tabpanel" aria-labelledby="gitanalysis-tab">
-                <partial name="_GitAnalytics" />
-            </div>
-            <div class="tab-pane fade" id="team" role="tabpanel" aria-labelledby="team-tab">
-                <partial name="_TeamPerformanceTab" />
+            @Html.AntiForgeryToken()
+            <div class="modal-body text-center">
             </div>
         </div>
     </div>
-    <div class="d-none">
-        <input id="ProjectId" name="ProjectId" type="hidden" value="@ViewBag.ProjectId">
-    </div>
-</main>
+</div>
+
 @section Scripts {
     <script>
         const projectId = "@Html.Raw(ViewBag.ProjectId)";
+
+        $(document).on("shown.bs.tab", 'button[data-bs-toggle="tab"]', function (e) {
+            const selectedTabId = $(e.target).attr("id");
+            localStorage.setItem("lastSelectedTabId", selectedTabId);
+        });
+    
     </script>
+}
+
+@if (!hasProjectConfigured)
+{
+    <script>
+        $(document).ready(function(){
+            openProjectConfigModal(true);
+        });
+    </script>
+}
+else
+{
+    <main class="content">
+        <div class="header">
+        </div>
+        <div class="dashboard-container m-3">
+            <partial name="_DashboardHeader" />
+
+            <ul class="nav nav-tabs" id="performanceTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true"><i class="bi bi-graph-up me-1"></i> Performance Indicators</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="gitanalysis-tab" data-bs-toggle="tab" data-bs-target="#git-commits" type="button" role="tab" aria-controls="git-commits" aria-selected="false"><i class="bi bi-git me-1"></i> Git Metrics</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="team-tab" data-bs-toggle="tab" data-bs-target="#team" type="button" role="tab" aria-controls="team" aria-selected="false"><i class="bi bi-people-fill me-1"></i> Team Performance</button>
+                </li>
+                <li class="nav-item d-none" role="presentation">
+                    <button class="nav-link" id="empty-tab" data-bs-toggle="tab" data-bs-target="#empty" type="button" role="tab" aria-controls="empty" aria-selected="false"><i class="bi bi-people-fill me-1"></i> empty tab</button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="performanceTabsContent">
+                <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+                    <partial name="_OverviewTab" />
+                </div>
+                <div class="tab-pane fade" id="git-commits" role="tabpanel" aria-labelledby="gitanalysis-tab">
+                    <partial name="_GitAnalytics" />
+                </div>
+                <div class="tab-pane fade" id="team" role="tabpanel" aria-labelledby="team-tab">
+                    <partial name="_TeamPerformanceTab" />
+                </div>
+                <div class="tab-pane fade" id="empty" role="tabpanel" aria-labelledby="empty-tab">
+                </div>
+            </div>
+        </div>
+        <div class="d-none">
+            <input id="ProjectId" name="ProjectId" type="hidden" value="@ViewBag.ProjectId">
+        </div>
+    </main>
 }

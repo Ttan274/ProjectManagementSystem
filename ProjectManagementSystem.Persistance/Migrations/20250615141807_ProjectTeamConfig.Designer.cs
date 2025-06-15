@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectManagementSystem.Persistance.DbContext;
 
@@ -10,9 +11,11 @@ using ProjectManagementSystem.Persistance.DbContext;
 namespace ProjectManagementSystem.Persistance.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250615141807_ProjectTeamConfig")]
+    partial class ProjectTeamConfig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -289,39 +292,6 @@ namespace ProjectManagementSystem.Persistance.Migrations
                     b.HasIndex("TeamId");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("ProjectManagementSystem.Domain.Entities.ChatMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateTime>("CreatedDatee")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Message")
-                        .HasColumnType("longtext");
-
-                    b.Property<Guid>("ReceiverId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("SenderId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("Tag")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReceiverId");
-
-                    b.HasIndex("SenderId");
-
-                    b.ToTable("ChatMessages");
                 });
 
             modelBuilder.Entity("ProjectManagementSystem.Domain.Entities.Comment", b =>
@@ -687,25 +657,6 @@ namespace ProjectManagementSystem.Persistance.Migrations
                     b.Navigation("Team");
                 });
 
-            modelBuilder.Entity("ProjectManagementSystem.Domain.Entities.ChatMessage", b =>
-                {
-                    b.HasOne("ProjectManagementSystem.Domain.Entities.AppUser", "Receiver")
-                        .WithMany("ReceivedMessages")
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ProjectManagementSystem.Domain.Entities.AppUser", "Sender")
-                        .WithMany("SentMessages")
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Receiver");
-
-                    b.Navigation("Sender");
-                });
-
             modelBuilder.Entity("ProjectManagementSystem.Domain.Entities.Comment", b =>
                 {
                     b.HasOne("ProjectManagementSystem.Domain.Entities.Documentation", "Documentation")
@@ -788,10 +739,6 @@ namespace ProjectManagementSystem.Persistance.Migrations
 
             modelBuilder.Entity("ProjectManagementSystem.Domain.Entities.AppUser", b =>
                 {
-                    b.Navigation("ReceivedMessages");
-
-                    b.Navigation("SentMessages");
-
                     b.Navigation("Tasks");
                 });
 

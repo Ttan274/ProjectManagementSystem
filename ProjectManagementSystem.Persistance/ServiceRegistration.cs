@@ -7,10 +7,12 @@ using ProjectManagementSystem.Application.Abstractions.Chat;
 using ProjectManagementSystem.Application.Abstractions.Documentation;
 using ProjectManagementSystem.Application.Abstractions.GitHubRepoAnalytics;
 using ProjectManagementSystem.Application.Abstractions.Project;
+using ProjectManagementSystem.Application.Abstractions.ProjectTeamConfig;
 using ProjectManagementSystem.Application.Abstractions.Repositories.AppInfo;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Chat;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Documentation;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Project;
+using ProjectManagementSystem.Application.Abstractions.Repositories.ProjectTeamConfig;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Sprint;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Task;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Team;
@@ -24,6 +26,7 @@ using ProjectManagementSystem.Application.Chat;
 using ProjectManagementSystem.Application.Documentation;
 using ProjectManagementSystem.Application.GitHubRepoAnalytics;
 using ProjectManagementSystem.Application.Project;
+using ProjectManagementSystem.Application.ProjectTeamConfig;
 using ProjectManagementSystem.Application.Sprint;
 using ProjectManagementSystem.Application.SubTaskProducer;
 using ProjectManagementSystem.Application.Task;
@@ -35,6 +38,7 @@ using ProjectManagementSystem.Persistance.Repositories.AppInfo;
 using ProjectManagementSystem.Persistance.Repositories.Chat;
 using ProjectManagementSystem.Persistance.Repositories.Documentation;
 using ProjectManagementSystem.Persistance.Repositories.Project;
+using ProjectManagementSystem.Persistance.Repositories.ProjectTeamConfig;
 using ProjectManagementSystem.Persistance.Repositories.Sprint;
 using ProjectManagementSystem.Persistance.Repositories.Task;
 using ProjectManagementSystem.Persistance.Repositories.Team;
@@ -114,6 +118,11 @@ namespace ProjectManagementSystem.Persistance
 
             //GithubAnalytics
             services.AddScoped<IGitHubRepoAnalyticsService, GitHubRepoAnalyticsService>();
+
+            //Project Team Config
+            services.AddScoped<IProjectTeamConfigService, ProjectTeamConfigService>();
+            services.AddScoped<IProjectTeamConfigReadRepository, ProjectTeamConfigReadRepository>();
+            services.AddScoped<IProjectTeamConfigWriteRepository, ProjectTeamConfigWriteRepository>();
 
             services.AddMemoryCache();
 
