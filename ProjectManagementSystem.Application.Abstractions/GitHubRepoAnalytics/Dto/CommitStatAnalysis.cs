@@ -1,11 +1,19 @@
-﻿namespace ProjectManagementSystem.Application.Abstractions.GitHubRepoAnalytics.Dto
+﻿using ProjectManagementSystem.Application.Abstractions.ProjectTeamConfig.Dto;
+
+namespace ProjectManagementSystem.Application.Abstractions.GitHubRepoAnalytics.Dto
 {
     public class CommitStatAnalysis : ICommitAnalysis
     {
-        public CommitStatAnalysis()
+        private readonly ProjectTeamConfigDto? projectTeamConfig;
+        public CommitStatAnalysis(ProjectTeamConfigDto? projectTeamConfig)
         {
+            this.projectTeamConfig = projectTeamConfig;
             AnalysisName = "CommitStats";
             CommitStats = [];
+        }
+        public CommitStatAnalysis()
+        {
+
         }
 
         public List<UserCommitStatsDto> CommitStats { get; set; }
@@ -41,7 +49,7 @@
                     value.EstimatedRefactoredLines += estimatedRefactor;
                 }
 
-                value.SetCodingScore();
+                value.CalculateAllScores(projectTeamConfig);
             }
 
             CommitStats = [.. userStatsDict.Values];

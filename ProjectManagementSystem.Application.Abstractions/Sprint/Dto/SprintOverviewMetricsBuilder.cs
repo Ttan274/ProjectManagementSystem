@@ -163,12 +163,14 @@ namespace ProjectManagementSystem.Application.Abstractions.Sprint.Dto
 
         public SprintOverviewMetricsBuilder WithSprintCompletionChart()
         {
-            sprintOverviewMetrics.SprintCompletions = sprintDetails.Select(sprint => new SprintCompletionChartDto
-            {
-                SprintName = sprint.Name ?? "Unknown",
-                PlannedTaskCount = sprint.Tasks.Count,
-                CompletedTaskCount = sprint.Tasks.Count(t => t.IsCompleted == true)
-            }).ToList();
+            sprintOverviewMetrics.SprintCompletions = sprintDetails
+                .OrderBy(x => x.StartDate)
+                .Select(sprint => new SprintCompletionChartDto
+                {
+                    SprintName = sprint.Name ?? "Unknown",
+                    PlannedTaskCount = sprint.Tasks.Count,
+                    CompletedTaskCount = sprint.Tasks.Count(t => t.IsCompleted == true)
+                }).ToList();
 
             return this;
         }

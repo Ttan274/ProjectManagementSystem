@@ -33,12 +33,14 @@ namespace ProjectManagementSystem.Controllers
 
                 var today = DateTime.Today;
 
-                var sprintSelects = sprintResponse.Data.Select(x => new SprintSelectModel()
-                {
-                    Id = x.Id,
-                    Name = $"{x.SprintName} ({x.StartDate:dd.MM.yyyy} - {x.FinishDate:dd.MM.yyyy})",
-                    IsCurrent = (x.StartDate < today && x.FinishDate > today) ? 1 : 0
-                });
+                var sprintSelects = sprintResponse.Data
+                    .OrderByDescending(x => x.CreatedDate)
+                    .Select(x => new SprintSelectModel()
+                    {
+                        Id = x.Id,
+                        Name = $"{x.SprintName} ({x.StartDate:dd.MM.yyyy} - {x.FinishDate:dd.MM.yyyy})",
+                        IsCurrent = (x.StartDate < today && x.FinishDate > today) ? 1 : 0
+                    });
 
                 return Ok(Success(sprintSelects));
             }

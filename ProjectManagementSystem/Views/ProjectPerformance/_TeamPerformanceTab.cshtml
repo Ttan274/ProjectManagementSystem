@@ -36,6 +36,30 @@
             <div class="metric-value" id="teamAvgTargetProximity">Loading...</div>
             <div class="metric-description">Average proximity to sprint goals.</div>
         </div>
+        <div class="metric-card animate__animated animate__fadeIn">
+            <div class="metric-header">
+                <i class="bi bi-code-slash icon-primary"></i>
+                <h5>Avg. Coding Score</h5>
+            </div>
+            <div class="metric-value" id="teamAvgCodingScore">Loading...</div>
+            <div class="metric-description">Average coding score of team members.</div>
+        </div>
+        <div class="metric-card animate__animated animate__fadeIn">
+            <div class="metric-header">
+                <i class="bi bi-arrow-repeat icon-secondary"></i>
+                <h5>Avg. Refactor Rate</h5>
+            </div>
+            <div class="metric-value" id="teamAvgRefactorRate">Loading...</div>
+            <div class="metric-description">Average refactor rate of team members.</div>
+        </div>
+        <div class="metric-card animate__animated animate__fadeIn">
+            <div class="metric-header">
+                <i class="bi bi-pencil-square icon-warning"></i>
+                <h5>Avg. Commit Efficiency</h5>
+            </div>
+            <div class="metric-value" id="teamAvgCommitEfficiency">Loading...</div>
+            <div class="metric-description">Average commit efficiency of team members.</div>
+        </div>
     </div>
 
     <h4 class="section-title mt-4">
@@ -44,16 +68,24 @@
     <div id="memberCardsContainer"></div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/sanitize-html@2.7.1/dist/sanitize-html.min.js"></script>
 <script>
     $(document).ready(function () {
         function labelClass(label) {
             switch (label) {
-                case "Leader": return "badge-success";
-                case "Good": return "badge-warning";
-                case "Average": return "badge-warning";
-                case "Needs Improvement": return "badge-danger";
-                default: return "badge-secondary";
+                case "Excellent":
+                    return "badge-success";
+                case "Very Good":
+                    return "badge-primary";
+                case "Good":
+                    return "badge-info";
+                case "Satisfactory":
+                    return "badge-warning";
+                case "Needs Improvement":
+                    return "badge-danger";
+                case "Poor":
+                    return "badge-dark";
+                default:
+                    return "badge-secondary";
             }
         }
 
@@ -62,6 +94,9 @@
             $('#teamAvgTaskCompletion').text('Loading...');
             $('#teamAvgOnTimeDelivery').text('Loading...');
             $('#teamAvgTargetProximity').text('Loading...');
+            $('#teamAvgCodingScore').text('Loading...');
+            $('#teamAvgRefactorRate').text('Loading...');
+            $('#teamAvgCommitEfficiency').text('Loading...');
             $('#memberCardsContainer').empty();
 
             try {
@@ -73,34 +108,62 @@
                 $('#teamAvgTaskCompletion').text(`${escapeHtml(metrics.avgTaskCompletion.toString())}%`);
                 $('#teamAvgOnTimeDelivery').text(`${escapeHtml(metrics.avgOnTimeDelivery.toString())}%`);
                 $('#teamAvgTargetProximity').text(`${escapeHtml(metrics.avgTargetProximity.toString())}%`);
+                $('#teamAvgCodingScore').text(`${escapeHtml(metrics.avgCodingScore.toString())}`);
+                $('#teamAvgRefactorRate').text(`${escapeHtml(metrics.avgRefactorRate.toString())}%`);
+                $('#teamAvgCommitEfficiency').text(`${escapeHtml(metrics.avgCommitEfficiency.toString())}%`);
 
+                // Displaying individual member performance
                 metrics.memberPerformances.forEach((member) => {
                     const memberName = escapeHtml(member.memberName);
                     const taskRate = escapeHtml(member.taskCompletionRate.toString());
                     const onTimeRate = escapeHtml(member.onTimeDeliveryRate.toString());
+                    const codingScore = escapeHtml(member.codingScore.toString());
+                    const refactorScore = escapeHtml(member.refactorScore.toString());
+                    const commitEfficiency = escapeHtml(member.commitEfficiency.toString());
                     const performanceLabel = escapeHtml(member.performanceLabel);
                     const badgeClass = labelClass(performanceLabel);
+                    const overallScore = escapeHtml(member.overallScore.toString());
 
                     const card = `
                         <div class="member-card">
-                            <img src="/images/default_avatar.jpg" alt="Team Member" class="member-avatar">
-                            <div class="member-info">
-                                <div class="member-name">${memberName}</div>
-                                <div class="member-role">Software Developer</div>
-                            </div>
-                            <div class="performance-bars">
-                                <div class="progress-label"><span>Task Completion</span><span>${taskRate}%</span></div>
-                                <div class="progress">
-                                    <div class="progress-bar bg-success" role="progressbar" style="width: ${taskRate}%;" aria-valuenow="${taskRate}"></div>
-                                </div>
-                                <div class="progress-label"><span>On-Time Delivery</span><span>${onTimeRate}%</span></div>
-                                <div class="progress">
-                                    <div class="progress-bar" role="progressbar" style="width: ${onTimeRate}%; background-color: var(--primary-color);" aria-valuenow="${onTimeRate}"></div>
+                            <div class="col-8">
+                                <div class="member-info">
+                                    <img src="/images/default_avatar.jpg" alt="Team Member" class="member-avatar">
+                                    <div class="member-name me-2">${memberName}</div>
+                                    <div class="member-role">Software Developer</div>
                                 </div>
                             </div>
-                            <span class="badge ${badgeClass} ms-3">${performanceLabel}</span>
+                            <div class="col-2 d-flex pe-4 flex-column align-items-start">
+                                <span class="badge ${badgeClass} m-0 align-self-start">${performanceLabel}</span>
+                                <div class="overall-score text-start">Overall Score: ${overallScore}%</div>
+                            </div>
+                            <div class="col-2">
+                                <div class="performance-bars">
+                                    <div class="progress-label"><span>Task Completion</span><span>${taskRate}%</span></div>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: ${taskRate}%" aria-valuenow="${taskRate}"></div>
+                                    </div>
+                                    <div class="progress-label"><span>On-Time Delivery</span><span>${onTimeRate}%</span></div>
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" style="width: ${onTimeRate}%; background-color: var(--primary-color);" aria-valuenow="${onTimeRate}"></div>
+                                    </div>
+                                    <div class="progress-label"><span>Coding Score</span><span>${codingScore}</span></div>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-warning" role="progressbar" style="width: ${codingScore}%; background-color: var(--warning-color);" aria-valuenow="${codingScore}"></div>
+                                    </div>
+                                    <div class="progress-label"><span>Refactor Score</span><span>${refactorScore}</span></div>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-secondary" role="progressbar" style="width: ${refactorScore}%" aria-valuenow="${refactorScore}"></div>
+                                    </div>
+                                    <div class="progress-label"><span>Commit Efficiency</span><span>${commitEfficiency}%</span></div>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-info" role="progressbar" style="width: ${commitEfficiency}%" aria-valuenow="${commitEfficiency}"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     `;
+
                     $('#memberCardsContainer').append(card);
                 });
             } catch (error) {
@@ -108,6 +171,9 @@
                 $('#teamAvgTaskCompletion').text('Error');
                 $('#teamAvgOnTimeDelivery').text('Error');
                 $('#teamAvgTargetProximity').text('Error');
+                $('#teamAvgCodingScore').text('Error');
+                $('#teamAvgRefactorRate').text('Error');
+                $('#teamAvgCommitEfficiency').text('Error');
                 $('#memberCardsContainer').html('<p class="text-danger">Failed to load member performance.</p>');
                 console.error("Loading Error:", error.message);
             }
@@ -132,6 +198,9 @@
                     $('#teamAvgTaskCompletion').text('Error');
                     $('#teamAvgOnTimeDelivery').text('Error');
                     $('#teamAvgTargetProximity').text('Error');
+                    $('#teamAvgCodingScore').text('Error');
+                    $('#teamAvgRefactorRate').text('Error');
+                    $('#teamAvgCommitEfficiency').text('Error');
                     $('#memberCardsContainer').html('<p class="text-danger">Data fetch failed: Server error.</p>');
                     console.error("AJAX Error:", error);
                 }

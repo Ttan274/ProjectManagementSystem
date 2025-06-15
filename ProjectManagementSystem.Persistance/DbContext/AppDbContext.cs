@@ -15,6 +15,7 @@ namespace ProjectManagementSystem.Persistance.DbContext
         public DbSet<Documentation> Documentations { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<AppInfo> AppInfos { get; set; }
+        public DbSet<ProjectTeamConfig> ProjectTeamConfigs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

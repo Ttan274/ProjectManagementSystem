@@ -4,6 +4,7 @@ using ProjectManagementSystem.Application.Abstractions.AppInfo;
 using ProjectManagementSystem.Application.Abstractions.AppInfo.Dto;
 using ProjectManagementSystem.Application.Abstractions.GitHubRepoAnalytics;
 using ProjectManagementSystem.Application.Abstractions.GitHubRepoAnalytics.Dto;
+using ProjectManagementSystem.Application.Abstractions.ProjectTeamConfig;
 using ProjectManagementSystem.Controllers.Base;
 
 namespace ProjectManagementSystem.Controllers
@@ -11,6 +12,7 @@ namespace ProjectManagementSystem.Controllers
     public class GithubAnalyticsController(
         IMapper mapper,
         IGitHubRepoAnalyticsService gitHubRepoAnalyticsService,
+        IProjectTeamConfigService projectTeamConfigService,
         IAppInfoService appInfoService)
         : BaseController
     {
@@ -50,7 +52,13 @@ namespace ProjectManagementSystem.Controllers
                     return BadRequest(Error("No commit found."));
                 }
 
-                var analysisResult = new CommitAnalysisBuilder(commitStatsResponse.Data)
+                var projectConfigResponse = await projectTeamConfigService
+                    .GetByProjectIdAsync((Guid)appInfo.ProjectId)
+                    .ConfigureAwait(false);
+
+                var analysisResult = new CommitAnalysisBuilder(
+                    commitStatsResponse.Data,
+                    projectConfigResponse.Data)
                 .AddAllAnalyses()
                 .Build();
 

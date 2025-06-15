@@ -23,5 +23,6 @@ namespace ProjectManagementSystem.Domain.Entities
         public Team? Team { get; set; }
         public ICollection<Sprint>? Sprints { get; set; }
         public ICollection<AppInfo>? Applications { get; set; }
+        public ProjectTeamConfig? ProjectTeamConfig { get; set; }
     }
 }
