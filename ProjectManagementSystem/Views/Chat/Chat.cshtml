@@ -1,7 +1,7 @@
 ﻿@model List<UserDto>
 @{
     Layout = "_MainLayout";
-    var userId = ViewBag.userId;
+    var cUserID = ViewBag.userId;
 }
 
 <style>
@@ -72,23 +72,30 @@
     }
 
     .message {
-        margin-bottom: 10px;
-        padding: 10px 15px;
-        border-radius: 20px;
-        max-width: 70%;
-        line-height: 1.4;
+        padding: 10px;
+        margin: 5px;
+        border-radius: 8px;
+        max-width: 60%;
     }
 
-        .message.you {
-            background: #dcf8c6;
-            margin-left: auto;
-            text-align: right;
-        }
+    .mine {
+        background-color: #d1e7dd;
+        align-self: flex-start;
+        text-align: left;
+        margin-right: auto;
+    }
 
-        .message.them {
-            background: #fff;
-            margin-right: auto;
-        }
+    .theirs {
+        background-color: #f8d7da;
+        align-self: flex-end;
+        text-align: right;
+        margin-left: auto;
+    }
+
+    #chatMessages {
+        display: flex;
+        flex-direction: column;
+    }
 
     .chat-input {
         padding: 15px 20px;
@@ -123,7 +130,7 @@
             <ul id="userList">
                 @foreach (var user in Model)
                 {
-                    <li class="user" data-userId="@user.Id">@user.UserName</li>
+                    <li class="user" data-userid="@user.Id">@user.UserName</li>
                 }
             </ul>
         </div>
@@ -145,13 +152,14 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js" ></script>
 <script>
-    const currentUserId = @userId;
+    const currentUserId = "@cUserID";
     let selectedUserId = null;
 
-    const connection = new signalR.HubConnectionBuilder().withUrl("/chathub").build();
+    const connection = new signalR.HubConnectionBuilder().withUrl("/ChatHub").build();
 
     connection.on("MessageReceived", function (message) {
-        appendMessage(message, false);
+        const isMine = message.senderId === currentUserId;
+        appendMessage(message, isMine);
     });
 
     connection.on("MessageSent", function (message) {
@@ -159,9 +167,13 @@
     });
 
     connection.on("ChatHistoryReceived", function (messages) {
+
         const chatBox = document.getElementById("chatMessages");
         chatBox.innerHTML = "";
-        messages.forEach(msg => appendMessage(msg, msg.senderId == currentUserId));
+        messages.forEach(msg => {
+            const isMine = msg.senderId === currentUserId;
+            appendMessage(msg, isMine);
+        });
     });
 
     function appendMessage(msg, isMine) {
@@ -175,7 +187,7 @@
         const input = document.getElementById("messageInput");
         const text = input.value.trim();
         if (!text || selectedUserId === null) return;
-
+        
         const messageDto = {
             senderId: currentUserId,
             receiverId: selectedUserId,
@@ -186,16 +198,19 @@
         input.value = "";
     });
 
-    document.querySelectorAll(".user").forEach(li => {
-        li.addEventListener("click", () => {
-            selectedUserId = parseInt(li.dataset.userid);
-            loadChatWith(currentUserId, selectedUserId);
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("userList").addEventListener("click", function (e) {
+            const li = e.target.closest(".user");
+            if (!li) return;
+
+            selectedUserId = li.dataset.userid;
+            loadChatWith(selectedUserId);
             document.getElementById("chatHeader").innerText = "Chat with " + li.innerText;
         });
     });
 
-    async function loadChatWith(cUserId, userId) {
-        await connection.invoke("LoadChatHistory", cUserId, userId);
+    async function loadChatWith(userId) {
+        await connection.invoke("LoadChatHistory", currentUserId, userId);
     }
 
     connection.start().then(() => console.log("Connected")).catch(err => console.error(err));

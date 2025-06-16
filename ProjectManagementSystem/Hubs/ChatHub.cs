@@ -13,7 +13,7 @@ namespace ProjectManagementSystem.Hubs
             _chatService = chatService;
         }
 
-        public async Task SenMessageAsync(ChatMessageDto chatMessage)
+        public async Task SendMessageAsync(ChatMessageDto chatMessage)
         {
             await _chatService.SaveMessageAsync(chatMessage);
 

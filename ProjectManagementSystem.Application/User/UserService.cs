@@ -166,7 +166,8 @@ namespace ProjectManagementSystem.Application.User
             {
                 var currentUser = await _userManager.GetUserAsync(principal);
 
-                var users = await _userManager.Users.Where(x => (x != currentUser) && (x.TeamId == Guid.Parse(teamId))).ToListAsync();
+                //&& (x.TeamId == Guid.Parse(teamId))
+                var users = await _userManager.Users.Where(x => x != currentUser ).ToListAsync();
 
                 if (users is null)
                     return [];

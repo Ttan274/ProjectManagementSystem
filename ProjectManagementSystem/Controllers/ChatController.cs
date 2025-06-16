@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProjectManagementSystem.Application.Abstractions.Chat;
 using ProjectManagementSystem.Application.Abstractions.User;
 
 namespace ProjectManagementSystem.Controllers
