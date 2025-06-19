@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystem.Application.Abstractions.ProjectTeamConfig;
 using ProjectManagementSystem.Application.Abstractions.ProjectTeamConfig.Dto;
 using ProjectManagementSystem.Controllers.Base;
@@ -128,6 +129,34 @@ namespace ProjectManagementSystem.Controllers
             catch (Exception)
             {
                 return BadRequest(Error("Interval server error occured."));
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> GetAiSuggestion([FromBody] ProjectTeamProfileDto projectTeamProfile)
+        {
+            if (projectTeamProfile == null || string.IsNullOrWhiteSpace(projectTeamProfile.TeamIntroduction))
+            {
+                return BadRequest(Error("Invalid request. Please provide, your team profile."));
+            }
+
+            try
+            {
+                var response = await projectTeamConfigService
+                    .GetOllamaSuggestionsAsync(projectTeamProfile)
+                    .ConfigureAwait(false);
+
+                if (!response.Success)
+                {
+                    return BadRequest(Error(response?.ErrorMessage ?? "Internal server error occured."));
+                }
+
+                return Ok(response);
+            }
+            catch (Exception)
+            {
+                return BadRequest(Error("Internal server error occured."));
             }
         }
     }

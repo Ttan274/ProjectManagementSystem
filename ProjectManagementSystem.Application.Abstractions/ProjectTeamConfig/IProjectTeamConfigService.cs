@@ -9,5 +9,6 @@ namespace ProjectManagementSystem.Application.Abstractions.ProjectTeamConfig
         ServiceResponse<ProjectTeamConfigDto> Update(ProjectTeamConfigDto projectTeamConfig);
         Task<ServiceResponse<ProjectTeamConfigDto?>> GetByIdAsync(Guid id);
         Task<ServiceResponse<ProjectTeamConfigDto?>> GetByProjectIdAsync(Guid projectId);
+        Task<ServiceResponse<ProjectConfigSuggestionDto>> GetOllamaSuggestionsAsync(ProjectTeamProfileDto teamProfile);
     }
 }

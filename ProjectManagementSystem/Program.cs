@@ -1,4 +1,6 @@
+using ProjectManagementSystem.Application.Abstractions.ProjectTeamConfig;
 using ProjectManagementSystem.Application.Abstractions.SubTaskProducer;
+using ProjectManagementSystem.Application.ProjectTeamConfig;
 using ProjectManagementSystem.Application.SubTaskProducer;
 using ProjectManagementSystem.Common.ServiceResponse;
 using ProjectManagementSystem.Hubs;
@@ -31,6 +33,11 @@ builder.Services.AddTransient<IServiceResponseHelper, ServiceResponseHelper>();
 builder.Services.Configure<List<NavBarItem>>(builder.Configuration.GetSection("NavBarOptions"));
 
 builder.Services.AddHttpClient<ISubTaskProducerService, SubTaskProducerService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["OllamaOptions:BaseAddress"]);
+});
+
+builder.Services.AddHttpClient<IProjectTeamConfigService, ProjectTeamConfigService>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["OllamaOptions:BaseAddress"]);
 });

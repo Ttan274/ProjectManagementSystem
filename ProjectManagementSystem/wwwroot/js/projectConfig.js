@@ -140,39 +140,97 @@ function normalizeSliders(sliders) {
 
 
 function handleAiSupportButtonClick() {
-    document.getElementById("aiResponse").style.display = "none";
-    document.getElementById("aiResponseMessage").style.display = "block";
-    document.getElementById("spinner").style.display = "block";
+    const teamIntroduction = $("#teamIntroduction").val().trim();
 
-    setTimeout(() => {
-        document.getElementById("aiResponseMessage").style.display = "none";
-        document.getElementById("spinner").style.display = "none";
-        document.getElementById("aiResponse").style.display = "block";
-        document.getElementById("aiSuggestionText").textContent =
-            "Suggested weights: Task Completion: 35%, On-Time Delivery: 35%, Code Quality: 15%, Target Proximity: 15%";
-        document.getElementById("applyAiSuggestion").style.display = "block"; 
-    }, 2500);
+    if (!teamIntroduction) {
+        toastr.warning("Please describe your team before requesting AI suggestions.");
+        return;
+    }
+
+    $("#aiResponseMessage").show();
+    $("#aiResponse").hide();
+
+    $.ajax({
+        url: "/ProjectTeamConfig/GetAiSuggestion",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ TeamIntroduction: teamIntroduction }),
+        success: function (result) {
+            if (!result || !result.success || !result.data) {
+                toastr.error(result.errorMessage || "Failed to get AI suggestions.");
+                return;
+            }
+
+            const data = result.data;
+
+            window.latestAiSuggestions = {
+                taskCompletion: {
+                    value: data["Task Completion"].value,
+                    reason: data["Task Completion"].reason
+                },
+                onTimeDelivery: {
+                    value: data["On-Time Delivery"].value,
+                    reason: data["On-Time Delivery"].reason
+                },
+                targetProximity: {
+                    value: data["Target Proximity"].value,
+                    reason: data["Target Proximity"].reason
+                },
+                codingScore: {
+                    value: data["Code Quality"].value,
+                    reason: data["Code Quality"].reason
+                }
+            };
+
+            let suggestionHtml = `<strong>AI Suggestions:</strong><ul class="mb-2">`;
+            for (const [key, val] of Object.entries(window.latestAiSuggestions)) {
+                const label = key
+                    .replace(/([A-Z])/g, ' $1')
+                    .replace(/^./, s => s.toUpperCase());
+                suggestionHtml += `<li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(val.value)}% – ${escapeHtml(val.reason)}</li>`;
+            }
+            suggestionHtml += `</ul>`;
+
+            $("#aiSuggestionText").html(suggestionHtml);
+            $("#aiResponseMessage").hide();
+            $("#aiResponse").show();
+            $("#applyAiSuggestion").show();
+
+            handleApplyAiSuggestion();
+
+            toastr.success("AI suggestions retrieved successfully.");
+        },
+        error: function (xhr) {
+            $("#aiResponseMessage").hide();
+            toastr.error("An error occurred while getting AI suggestions.");
+        }
+    });
 }
 
 function handleApplyAiSuggestion() {
-    const aiSuggestions = {
-        taskCompletion: 35,
-        onTimeDelivery: 35,
-        targetProximity: 15,
-        codingScore: 15,
-    };
+    if (!window.latestAiSuggestions) {
+        toastr.warning("No AI suggestion available to apply.");
+        return;
+    }
 
-    Object.keys(aiSuggestions).forEach((key) => {
-        document.getElementById(performanceSliders[key].input).value = aiSuggestions[key];
-        document.getElementById(performanceSliders[key].label).textContent = `${aiSuggestions[key]}%`;
-    });
+    const suggestions = window.latestAiSuggestions;
 
-    Object.keys(aiSuggestions).forEach((key) => {
-        document.getElementById(codingSliders[key].input).value = aiSuggestions[key];
-        document.getElementById(codingSliders[key].label).textContent = `${aiSuggestions[key]}%`;
+    Object.keys(suggestions).forEach(key => {
+        const val = suggestions[key].value;
+        const reason = suggestions[key].reason;
+
+        document.getElementById(performanceSliders[key].input).value = val;
+        document.getElementById(performanceSliders[key].label).textContent = `${val}%`;
+
+        const reasonElement = document.getElementById(`${key}Reason`);
+        if (reasonElement) {
+            reasonElement.textContent = reason;
+        }
     });
 
     document.getElementById("applyAiSuggestion").style.display = "none";
+
+    toastr.success("AI suggestions applied successfully.");
 }
 function getProjectTeamConfigForm() {
     const data = {
