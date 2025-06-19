@@ -1,5 +1,7 @@
+using ProjectManagementSystem.Application.Abstractions.GithubDependency;
 using ProjectManagementSystem.Application.Abstractions.ProjectTeamConfig;
 using ProjectManagementSystem.Application.Abstractions.SubTaskProducer;
+using ProjectManagementSystem.Application.GithubDependency;
 using ProjectManagementSystem.Application.ProjectTeamConfig;
 using ProjectManagementSystem.Application.SubTaskProducer;
 using ProjectManagementSystem.Common.ServiceResponse;
@@ -29,6 +31,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddTransient<IServiceResponseHelper, ServiceResponseHelper>();
+builder.Services.AddTransient<IGithubDependencyService, GithubDependencyService>();
 
 builder.Services.Configure<List<NavBarItem>>(builder.Configuration.GetSection("NavBarOptions"));
 

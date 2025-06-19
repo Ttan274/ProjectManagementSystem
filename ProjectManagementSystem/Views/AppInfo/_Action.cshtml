@@ -8,34 +8,48 @@
     @Html.AntiForgeryToken()
 
     <div class="mb-3">
-        <label for="name" class="form-label">Name</label>
-        <input type="text" class="form-control" id="Name" name="Name" value="@Model.Name">
+        <label for="Name" class="form-label">Name</label>
+        <input type="text" class="form-control" id="Name" name="Name" value="@Model.Name" required>
     </div>
+
     <div class="mb-3">
         <label for="Description" class="form-label">Description</label>
-        <textarea class="form-control" id="Description" name="Description">@Model.Description</textarea>
+        <textarea class="form-control" id="Description" name="Description" rows="3">@Model.Description</textarea>
     </div>
+
     <div class="mb-3">
-        <label for="appCode" class="form-label">App Code</label>
-        <input type="number" class="form-control" id="AppCode" name="AppCode" value="@Model.AppCode">
+        <label for="AppCode" class="form-label">App Code</label>
+        <input type="number" class="form-control" id="AppCode" name="AppCode" value="@Model.AppCode" required>
     </div>
+
     <div class="mb-3">
-        <label for="gitHubPatToken" class="form-label">GitHub PAT Token</label>
-        <input type="text" class="form-control" id="GitHubPatToken" name="GitHubPatToken" value="@Model.GitHubPatToken">
+        <label for="GitHubPatToken" class="form-label">GitHub PAT Token</label>
+        <div class="input-group">
+            <input type="password" class="form-control" id="GitHubPatToken" name="GitHubPatToken" value="@Model.GitHubPatToken" spellcheck="false">
+            <button class="btn btn-outline-secondary" type="button" id="toggleTokenVisibility">
+                <i class="bi bi-eye-fill" id="toggleIcon"></i>
+            </button>
+        </div>
+        <small class="text-muted">For security, the token will be hidden by default</small>
     </div>
-    <div class="mb-3">
-        <label for="gitHubOwner" class="form-label">GitHub Owner</label>
-        <input type="text" class="form-control" id="GitHubOwner" name="GitHubOwner" value="@Model.GitHubOwner">
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="GitHubOwner" class="form-label">GitHub Owner</label>
+            <input type="text" class="form-control" id="GitHubOwner" name="GitHubOwner" value="@Model.GitHubOwner" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="GitHubRepo" class="form-label">GitHub Repo</label>
+            <input type="text" class="form-control" id="GitHubRepo" name="GitHubRepo" value="@Model.GitHubRepo" required>
+        </div>
     </div>
+
     <div class="mb-3">
-        <label for="gitHubRepo" class="form-label">GitHub Repo</label>
-        <input type="text" class="form-control" id="GitHubRepo" name="GitHubRepo" value="@Model.GitHubRepo">
-    </div>
-    <div class="mb-3">
-        <label for="decommissionDate" class="form-label">Decommission Date</label>
+        <label for="DecommissionDate" class="form-label">Decommission Date</label>
         <input type="date" class="form-control" id="DecommissionDate" name="DecommissionDate"
                value="@(Model.DecommissionDate.HasValue ? Model.DecommissionDate.Value.ToString("yyyy-MM-dd") : "")">
     </div>
+
     <div class="mb-3 d-none">
         <input type="text" class="form-control" id="ProjectId" value="@Model.ProjectId" name="ProjectId">
         <input type="text" class="form-control" id="Id" value="@Model.Id" name="Id">
@@ -43,15 +57,47 @@
 
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" onclick="submitAppInfoForm()">@(Model.Id == Guid.Empty ? "Create" : "Update")</button>
+        <button type="button" class="btn btn-primary" onclick="submitAppInfoForm()">
+            @(Model.Id == Guid.Empty ? "Create" : "Update")
+        </button>
     </div>
 </form>
 
 <script>
     $(document).ready(function(){
+        // Form submit handler
         $('#appInfoForm').on('submit', function (e) {
-          e.preventDefault();
-          submitAppInfoForm();
+            e.preventDefault();
+            submitAppInfoForm();
+        });
+
+        // Toggle token visibility
+        $('#toggleTokenVisibility').click(function() {
+            const tokenField = $('#GitHubPatToken');
+            const icon = $('#toggleIcon');
+
+            if (tokenField.attr('type') === 'password') {
+                tokenField.attr('type', 'text');
+                icon.removeClass('bi-eye-fill').addClass('bi-eye-slash-fill');
+            } else {
+                tokenField.attr('type', 'password');
+                icon.removeClass('bi-eye-slash-fill').addClass('bi-eye-fill');
+            }
         });
     });
 </script>
+
+<style>
+    #toggleTokenVisibility {
+        border-top-right-radius: 0.375rem !important;
+        border-bottom-right-radius: 0.375rem !important;
+    }
+
+    #GitHubPatToken {
+        font-family: monospace;
+    }
+
+    .form-control:focus {
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+</style>

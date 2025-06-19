@@ -82,6 +82,38 @@ function deleteAppInfo(id) {
     $('#deleteAppModal').modal('show');
 }
 
+function displayProjectDependencies(appId) {
+    $('#appInfoModalBody').html(`
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Dependencies loading...</p>
+        </div>
+    `);
+
+    $('#appInfoModalLabel').text('Project Dependencies');
+
+    var modal = new bootstrap.Modal(document.getElementById('appInfoModal'));
+    modal.show();
+
+    $.ajax({
+        url: "/GitDependency/GetAppDependencies?appId=" + appId,
+        type: 'GET',
+        success: function (data) {
+            $('#appInfoModalBody').html(data);
+        },
+        error: function (xhr, status, error) {
+            $('#appInfoModalBody').html(`
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle-fill"></i> 
+                    Error loading dependencies: ${xhr.responseText || 'Unknown error'}
+                </div>
+            `);
+        }
+    });
+}
+
 function confirmDelete(id) {
     $('#deleteAppModal').modal('hide');
 
