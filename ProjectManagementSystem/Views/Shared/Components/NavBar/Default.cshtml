@@ -1,19 +1,160 @@
 ﻿@model Navbar
 
-<aside class="sidebar">
-    <h2 class="txt-center">@Model.MainTitle</h2>
-    <hr style="border-top: 1px solid #ccc;" />
-    <ul class="custom-menu-elements">
-        @foreach(var item in Model.NavbarItems)
-        {
-            if (string.IsNullOrEmpty(item.ElementId)) 
+<button id="sidebarToggle"
+        class="btn btn-primary-outline text-white position-fixed top-0 start-0 m-3"
+        style="z-index:1100;">
+    <i id="toggleIcon" class="fas fa-bars"></i>
+</button>
+
+<aside id="sidebar" class="sidebar bg-light border-end vh-100 position-fixed start-0 top-0 closed">
+    <div class="sidebar-content p-2">
+        <h2 class="text-center sidebar-title">@Model.MainTitle</h2>
+        <hr class="my-2 sidebar-divider" />
+        <ul class="custom-menu-elements">
+            @foreach (var item in Model.NavbarItems)
             {
-                <li><a asp-action="@item.Action" asp-controller="@item.Controller">@item.Title</a></li>
+                if (string.IsNullOrEmpty(item.ElementId))
+                {
+                    <li>
+                        <a asp-action="@item.Action" asp-controller="@item.Controller" class="nav-link">
+                            <i class="fas fa-fw @item.IconClass"></i>
+                            <span class="menu-text">@item.Title</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        <a class="button nav-link" id="@item.ElementId">
+                            <i class="fas fa-fw @item.IconClass"></i>
+                            <span class="menu-text">@item.Name</span>
+                        </a>
+                    </li>
+                }
             }
-            else
-            {
-                <li><a class="button" id="@item.ElementId">@item.Name</a></li>
-            }
-        }
-    </ul>
+        </ul>
+    </div>
 </aside>
+
+<style>
+    .sidebar {
+        width: 250px;
+        transition: width 0.3s ease-in-out;
+        overflow: hidden;
+    }
+
+    .sidebar-content {
+        width: 250px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .sidebar.closed {
+        width: 4% !important;
+    }
+
+        .sidebar.closed .sidebar-content {
+            transform: translateX(-10px);
+        }
+
+        .sidebar.closed .sidebar-title,
+        .sidebar.closed .sidebar-divider,
+        .sidebar.closed .menu-text {
+            opacity: 0;
+            width: 0;
+            display: none;
+        }
+
+        .sidebar.closed .custom-menu-elements li a {
+            padding: 10px 5px;
+            text-align: center;
+        }
+
+        .sidebar.closed .custom-menu-elements li .fa-fw {
+            margin-right: 0;
+            font-size: 1.2rem;
+        }
+
+    .main-content {
+        margin-left: 250px;
+        transition: margin-left 0.3s ease-in-out;
+        width: calc(100% - 250px);
+    }
+
+    .sidebar.closed ~ .main-content {
+        margin-left: 4%;
+        width: calc(100% - 4%);
+    }
+
+    .custom-menu-elements {
+        list-style: none;
+        padding-left: 0;
+    }
+
+        .custom-menu-elements li {
+            margin: 10px 0;
+            white-space: nowrap;
+        }
+
+            .custom-menu-elements li a {
+                text-decoration: none;
+                color: #333;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                padding: 8px 15px;
+                border-radius: 4px;
+                transition: all 0.2s;
+            }
+
+                .custom-menu-elements li a:hover {
+                    color: #007bff;
+                    background-color: rgba(0, 123, 255, 0.1);
+                }
+
+                .custom-menu-elements li a .fa-fw {
+                    margin-right: 10px;
+                    width: 20px;
+                    text-align: center;
+                }
+
+    @@media (max-width: 768px) {
+        #sidebarToggle {
+            padding: 0.5rem 0.75rem;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleButton = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        const toggleIcon = document.getElementById('toggleIcon');
+
+        const isSidebarClosed = localStorage.getItem('sidebarClosed') === 'true';
+
+        if (isSidebarClosed) {
+            sidebar.classList.add('closed');
+            toggleIcon.classList.remove('fa-xmark');
+            toggleIcon.classList.add('fa-bars');
+        } else {
+            sidebar.classList.remove('closed');
+            toggleIcon.classList.remove('fa-bars');
+            toggleIcon.classList.add('fa-xmark');
+        }
+
+        toggleButton.addEventListener('click', () => {
+            sidebar.classList.toggle('closed');
+
+            const isNowClosed = sidebar.classList.contains('closed');
+            localStorage.setItem('sidebarClosed', isNowClosed);
+
+            if (isNowClosed) {
+                toggleIcon.classList.remove('fa-xmark');
+                toggleIcon.classList.add('fa-bars');
+            } else {
+                toggleIcon.classList.remove('fa-bars');
+                toggleIcon.classList.add('fa-xmark');
+            }
+        });
+    });
+</script>
