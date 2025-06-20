@@ -1,0 +1,251 @@
+﻿@model List<ProjectManagementSystem.Application.Abstractions.GithubDependency.Dto.DependencyInfoDto>
+
+<div class="dependency-view">
+    <div class="dependency-header">
+        <h5><i class="fas fa-project-diagram"></i> Proje Bağımlılıkları</h5>
+        <div class="license-legend">
+            <span class="badge mit-badge" data-bs-toggle="tooltip" title="Serbest kullanım, değiştirme ve dağıtım">MIT</span>
+            <span class="badge apache-badge" data-bs-toggle="tooltip" title="Patent korumalı açık kaynak">Apache</span>
+            <span class="badge gpl-badge" data-bs-toggle="tooltip" title="Türev çalışmalar açık kaynak olmalı">GPL</span>
+            <span class="badge postgresql-badge" data-bs-toggle="tooltip" title="MIT benzeri, ticari marka korumalı">PostgreSQL</span>
+        </div>
+    </div>
+
+    <div class="dependency-table-container">
+        <table class="dependency-table">
+            <thead>
+                <tr>
+                    <th class="icon-col"><i class="fas fa-cube"></i></th>
+                    <th>Paket Adı</th>
+                    <th>Versiyon</th>
+                    <th>Lisans</th>
+                    <th>Yönetici</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var dep in Model)
+                {
+                    <tr>
+                        <td>@Html.Raw(dep.GetPackageIcon())</td>
+                        <td>
+                            <div class="package-info">
+                                <span class="package-name">@dep.Name</span>
+                                @if (!string.IsNullOrEmpty(dep.PackageUrl))
+                                {
+                                    <a href="@dep.GetPackageUrl()" target="_blank" class="package-link" data-bs-toggle="tooltip" title="Paket detayları">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                }
+                            </div>
+                        </td>
+                        <td class="version-col">@dep.Version</td>
+                        <td>
+                            <span class="license-badge @dep.GetLicenseBadgeClass()"
+                                  data-bs-toggle="tooltip"
+                                  title="@dep.GetLicenseDescription()">
+                                @dep.License
+                            </span>
+                        </td>
+                        <td>
+                            <span class="manager-badge @dep.PackageManager.ToLower()-bg">
+                                @dep.PackageManager
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="dependency-footer">
+        <small class="text-muted">
+            <i class="fas fa-info-circle"></i> Toplam @Model.Count bağımlılık listeleniyor
+        </small>
+    </div>
+</div>
+
+<style>
+    .dependency-view {
+        font-family: 'Segoe UI', Roboto, sans-serif;
+        border: 1px solid #eaeaea;
+        border-radius: 6px;
+        background: white;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .dependency-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+        .dependency-header h5 {
+            margin: 0;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+    .license-legend .badge {
+        margin-left: 6px;
+        font-size: 0.75em;
+        font-weight: 500;
+        cursor: default;
+    }
+
+    .dependency-table-container {
+        overflow-x: auto;
+        padding: 0 8px;
+    }
+
+    .dependency-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9em;
+    }
+
+        .dependency-table th {
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 500;
+            color: #555;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .dependency-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #f8f8f8;
+            vertical-align: middle;
+        }
+
+        .dependency-table tr:hover td {
+            background-color: #fafafa;
+        }
+
+    .icon-col {
+        width: 40px;
+        text-align: center;
+    }
+
+    .package-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .package-name {
+        font-weight: 500;
+    }
+
+    .package-link {
+        color: #666;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+        .package-link:hover {
+            opacity: 1;
+            color: #0066cc;
+        }
+
+    .version-col {
+        font-family: 'Roboto Mono', monospace;
+        color: #666;
+    }
+
+    .license-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8em;
+        font-weight: 500;
+        min-width: 60px;
+        text-align: center;
+    }
+
+    .manager-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8em;
+        font-weight: 500;
+        background: #f0f0f0;
+        color: #555;
+    }
+
+    /* Lisans renkleri */
+    .mit-badge {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .apache-badge {
+        background-color: #fff3e0;
+        color: #e65100;
+    }
+
+    .gpl-badge {
+        background-color: #ffebee;
+        color: #c62828;
+    }
+
+    .postgresql-badge {
+        background-color: #e3f2fd;
+        color: #1565c0;
+    }
+
+    .unknown-badge {
+        background-color: #f5f5f5;
+        color: #616161;
+    }
+
+    /* Paket yönetici arkaplanları */
+    .npm-bg {
+        background: #fff0f0;
+        color: #cb3837;
+    }
+
+    .nuget-bg {
+        background: #f0f7ff;
+        color: #004880;
+    }
+
+    .github-bg {
+        background: #f0f0f0;
+        color: #333;
+    }
+
+    .dependency-footer {
+        padding: 8px 16px;
+        border-top: 1px solid #f0f0f0;
+        background: #fafafa;
+    }
+
+    @@media (max-width: 768px) {
+        .dependency-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .license-legend {
+            width: 100%;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 4px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
