@@ -42,7 +42,6 @@
 
 #sidebar {
     width: var(--sidebar-width);
-    background: white;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
     position: relative;
@@ -50,7 +49,7 @@
 }
 
     #sidebar.active {
-        width: var(--sidebar-collapsed-width);
+        width: 17%;
     }
 
 .sidebar-header {
