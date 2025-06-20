@@ -14,14 +14,13 @@ public class DependencyInfoDto
     {
         return License switch
         {
-            "MIT" => "Özgür kullanım, değiştirme ve dağıtma hakkı",
-            "Apache-2.0" => "Patent korumalı açık kaynak lisansı",
-            "GPL" => "Türetilen eserler de açık kaynak olmalı",
-            "PostgreSQL" => "MIT benzeri, ticari marka korumalı",
-            "BSD" => "Minimum kısıtlama ile özgür kullanım",
-            "ISC" => "MIT'ye çok benzer basit lisans",
-            "LGPL" => "Kütüphane kullanımı için esnek GPL",
-            _ => "Lisans bilgisi belirtilmemiş"
+            "MIT" => "Permissive open-source license: free for personal and commercial use, modification, and distribution. No warranty or liability. No cost.",
+            "Apache-2.0" => "Open-source license with patent protection: free for commercial use, modification, and distribution. Requires preservation of license and NOTICE file. No cost.",
+            "GPL" => "Strong copyleft license: allows commercial use but requires derivative works to also be open-source under GPL. Cannot be used in proprietary software without open-sourcing. No cost.",
+            "LGPL" => "Lesser GPL: suitable for libraries; allows linking in proprietary software, but modifications to the LGPL-covered parts must be open-sourced. Free for commercial use.",
+            "BSD" => "Permissive license with minimal restrictions: free for commercial and non-commercial use. Requires attribution. No cost.",
+            "ISC" => "Very permissive license similar to MIT: allows free use, modification, and distribution, including commercially. No cost.",
+            _ => "License information not provided or not recognized."
         };
     }
 
