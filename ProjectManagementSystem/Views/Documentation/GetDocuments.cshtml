@@ -108,7 +108,10 @@
                 </div>
 
                 <div class="card-footer">
-                    <button class="delete-button">delete</button>
+                    <form asp-action="DeleteDocumentation" asp-controller="Documentation" method="post">
+                        <input type="hidden" name="Id" value="@document.Id">
+                        <button class="delete-button">delete</button>
+                    </form>
                 </div>
             </div>
         }

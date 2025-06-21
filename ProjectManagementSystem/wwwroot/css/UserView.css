@@ -115,10 +115,10 @@ table {
     border-collapse: collapse;
 }
 
-th, td {
-    padding: 12px;
-    text-align: left;
-}
+    table th, td {
+        padding: 12px;
+        text-align: center;
+    }
 
 thead {
     background: #f1f5f9;

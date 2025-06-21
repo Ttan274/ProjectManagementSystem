@@ -45,6 +45,23 @@ namespace ProjectManagementSystem.Application.Documentation
             }
         }
 
+        public async Task<bool> DeleteDocumentation(Guid id)
+        {
+            if (id == Guid.Empty)
+                return false;
+
+            try
+            {
+                var response = await _documentationWriteRepository.RemoveAsync(id);
+
+                return response;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
 
         //Buradki sıkıntı bütün dökümasyonlar dönüyo sadece aynı departman içindekiler dönmesi lazım
         public async Task<List<DocumentationDto>> GetAllDocumentations()

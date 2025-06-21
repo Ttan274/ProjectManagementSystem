@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystem.Application.Abstractions.Documentation;
 using ProjectManagementSystem.Application.Abstractions.Documentation.Dto;
 
@@ -13,13 +14,6 @@ namespace ProjectManagementSystem.Controllers
             _documentationService = documentationService;
         }
 
-        [HttpGet]
-        public IActionResult CreateDocumentation(Guid Id)
-        {
-            DocumentationDto documentation = new DocumentationDto { TaskId = Id };
-            return View(documentation);
-        }
-
         [HttpPost]
         public async Task<IActionResult> CreateDocumentation(DocumentationDto documentation)
         {
@@ -32,6 +26,13 @@ namespace ProjectManagementSystem.Controllers
             }
 
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteDocumentation(Guid id)
+        {
+            await _documentationService.DeleteDocumentation(id);
+            return RedirectToAction("GetDocuments", "Documentation");
         }
 
         public async Task<IActionResult> GetDocuments()

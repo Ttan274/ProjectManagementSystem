@@ -2,6 +2,22 @@
 @{
     Layout = "_MainLayout";
 }
+<link rel="stylesheet" href="~/css/modal.css">
+<style>
+    button.action {
+        background-color: #f0f0f0;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+    }
+
+        button.action:hover {
+            background-color: #e0e0e0;
+        }
+</style>
+
 
 <main class="content">
     <div class="header">
@@ -20,7 +36,7 @@
                     <th>Task Description</th>
                     <th>Task Priority</th>
                     <th>Task Status</th>
-                    <th colspan="2">Documentation</th>
+                    <th>Documentation</th>
                 </tr>
             </thead>
             <tbody>
@@ -47,20 +63,12 @@
                             @if (item.Documentation == null)
                             {
                                 <td colspan="2">
-                                    <form method="get" asp-action="CreateDocumentation" asp-controller="Documentation">
-                                        <input type="hidden" name="Id" value="@item.Id">
-                                        <button>Add Documentation</button>
-                                    </form>
+                                    <button class="open-doc-btn" data-taskid="@item.Id">Add Documentation</button>
                                 </td>
                             }
                             else
                             {
-                                <td>
-                                    @item.Documentation.Header
-                                </td>
-                                <td>
-                                    @item.Documentation.Text
-                                </td>
+                               <td>Documentation has been created</td>
                             }
                             
                         </tr>
@@ -70,3 +78,35 @@
     </div>
 </main>
 
+
+<div id="docModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <form method="post" asp-action="CreateDocumentation" asp-controller="Documentation" class="doc-form">
+            <input type="hidden" name="TaskId" id="modalTaskId">
+            <input type="text" name="Header" placeholder="Header" required autocomplete="off">
+            <input type="text" name="Text" placeholder="Text" required autocomplete="off">
+            <button class="action" type="submit">Create</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.open-doc-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            var taskId = this.getAttribute('data-taskid');
+            document.getElementById('modalTaskId').value = taskId;
+            document.getElementById('docModal').style.display = 'block';
+        });
+    });
+
+    document.querySelector('.close').addEventListener('click', function () {
+        document.getElementById('docModal').style.display = 'none';
+    });
+
+    window.onclick = function (event) {
+        if (event.target == document.getElementById('docModal')) {
+            document.getElementById('docModal').style.display = 'none';
+        }
+    }
+</script>
