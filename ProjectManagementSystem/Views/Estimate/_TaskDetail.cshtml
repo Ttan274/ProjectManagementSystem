@@ -1,0 +1,90 @@
+﻿@using ProjectManagementSystem.Application.Abstractions.Task.Dto
+@model TaskDto
+@{
+    Layout = null;
+}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+<div class="task-detail-header">
+    <h2 class="task-detail-title">@Model.TaskName</h2>
+    <div class="task-meta">
+        <span>Status: @(Model.State?.ToString() ?? "Unknown")</span>
+        <span class="task-estimate">@Model.EffortScore points</span>
+    </div>
+</div>
+
+<div class="task-detail-description">
+    <p>@Model.TaskDesc</p>
+</div>
+
+<div class="task-detail-section">
+    <h3>Details</h3>
+    <div class="task-properties">
+        <div class="task-property-label">Assignee:</div>
+        <div>@(Model.AppUser?.UserName ?? "Not Assigned")</div>
+
+        <div class="task-property-label">Priority:</div>
+        <div>@(Model.Priority?.ToString() ?? "Not Set")</div>
+
+        <div class="task-property-label">Estimate Type:</div>
+        <div>Story Points</div> @* sabit değer, istersen dinamikleştiririz *@
+    </div>
+</div>
+
+<div class="task-detail-section">
+    <h3>Subtasks</h3>
+    @if (Model.DependentTasks != null && Model.DependentTasks.Any())
+    {
+        <ul style="padding-left: 20px; margin-top: 10px;">
+            @foreach (var sub in Model.DependentTasks)
+            {
+                <li>@sub.TaskName</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p style="color: gray; padding-left: 10px;">No subtasks.</p>
+    }
+</div>
+
+<!-- Estimation Section -->
+<div class="estimation-section">
+    <h3 class="estimation-title">
+        <i class="fas fa-chart-line"></i> Task Estimation
+    </h3>
+
+    <div class="estimation-cards">
+        @foreach (var point in Model.EstimatePoints)
+        {
+            <div class="estimation-card revealed" data-value="@point">@point</div>
+        }
+        <div class="estimation-card revealed" data-value="?">?</div>
+    </div>
+
+    <div class="vote-status" id="vote-status" style="display: none;">
+        <i class="fas fa-check-circle"></i> Your vote has been submitted
+    </div>
+
+    <div class="estimation-actions">
+        <button class="btn btn-primary" id="submit-vote">Submit Vote</button>
+        <button class="btn btn-secondary" id="reveal-votes" disabled>Reveal Votes</button>
+    </div>
+
+    <div class="results-section" id="results-section" style="display: none;">
+        <h4 class="results-title">Estimation Results</h4>
+        <div id="results-list"></div>
+        <div class="average-result" id="average-result">
+            Average: <span id="average-value">0</span>
+        </div>
+    </div>
+
+    <div class="final-estimation" id="final-estimation" style="display: none;">
+        <h3 class="final-estimation-title">
+            <i class="fas fa-check-circle"></i> Final Estimation
+        </h3>
+        <div class="final-estimation-form">
+            <input type="number" class="final-estimation-input" id="final-estimate-value" placeholder="Points">
+            <button class="btn btn-primary" id="submit-final-estimate" onclick="estimateTask()">Set Final Estimate</button>
+        </div>
+    </div>
+</div>

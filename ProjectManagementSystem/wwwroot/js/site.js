@@ -55,6 +55,11 @@
         if (appInfosLink) {
             appInfosLink.href = "/AppInfo/Index?projectId=" + encodeURIComponent(projectId);
         }
+
+        var estimateLink = document.getElementById("goToEstimateBtn");
+        if (estimateLink) {
+            estimateLink.href = "/Estimate/Index?projectId=" + encodeURIComponent(projectId);
+        }
     }
 });
 

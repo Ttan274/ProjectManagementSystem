@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Application.Abstractions.Dto;
+using ProjectManagementSystem.Application.Abstractions.Estimate.Dto;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Sprint;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Task;
 using ProjectManagementSystem.Application.Abstractions.Task;
 using ProjectManagementSystem.Application.Abstractions.Task.Dto;
 using ProjectManagementSystem.Common.Enums;
+using ProjectManagementSystem.Common.ServiceResponse;
 
 namespace ProjectManagementSystem.Application.Task
 {
@@ -15,14 +17,16 @@ namespace ProjectManagementSystem.Application.Task
         private readonly ITaskWriteRepository _taskWriteRepository;
         private readonly ISprintReadRepository _sprintReadRepository;
         private readonly IMapper _mapper;
+        private readonly IServiceResponseHelper _serviceResponseHelper;
 
         public TaskService(ITaskReadRepository taskReadRepository, ITaskWriteRepository taskWriteRepository,
-            ISprintReadRepository sprintReadRepository, IMapper mapper)
+            ISprintReadRepository sprintReadRepository, IMapper mapper, IServiceResponseHelper serviceResponseHelper)
         {
             _taskReadRepository = taskReadRepository;
             _taskWriteRepository = taskWriteRepository;
             _sprintReadRepository = sprintReadRepository;
             _mapper = mapper;
+            _serviceResponseHelper = serviceResponseHelper;
         }
 
         public async Task<bool> CreateTask(TaskDto task)
@@ -224,6 +228,46 @@ namespace ProjectManagementSystem.Application.Task
             catch (Exception)
             {
                 throw;
+            }
+        }
+
+        public async Task<ServiceResponse<TaskDto>> GetEstimateTask(Guid id)
+        {
+            try
+            {
+                var task = await _taskReadRepository.GetQueryable()
+                                                        .Include(x => x.AppUser)
+                                                        .Include(x => x.DependentTasks)
+                                                     .Where(x => x.Status)
+                                                     .Where(y => y.Id == id)
+                                                     .OrderByDescending(x => x.CreatedDatee)
+                                                     .FirstOrDefaultAsync();
+
+                task ??= new Domain.Entities.Task();
+
+                var mappedResult = _mapper.Map<Domain.Entities.Task, TaskDto>(task);
+
+                return _serviceResponseHelper.SetSuccess(mappedResult);
+            }
+            catch (Exception)
+            {
+                return _serviceResponseHelper.SetError<TaskDto>("Server Error");
+            }
+        }
+
+        public async Task<ServiceResponse<bool>> UpdateTaskEffort(Guid taskId, int effort)
+        {
+            try
+            {
+                var task = await _taskReadRepository.GetFirstOrDefaultAsync(x => x.Id == taskId);
+
+                task.EffortScore = effort;
+
+                return _serviceResponseHelper.SetSuccess(_taskWriteRepository.Update(task));
+            }
+            catch (Exception)
+            {
+                return _serviceResponseHelper.SetError<bool>("Server Error");
             }
         }
     }

@@ -65,6 +65,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapHub<ChatHub>("/ChatHub");
+app.MapHub<EstimateHub>("/estimateHub");
 
 app.MapControllerRoute(
     name: "default",

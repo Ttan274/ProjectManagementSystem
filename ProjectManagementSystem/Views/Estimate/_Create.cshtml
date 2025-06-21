@@ -1,0 +1,30 @@
+﻿@using ProjectManagementSystem.Application.Abstractions.Estimate.Dto
+@model CreateEstimateDto
+@{
+    Layout = null;
+}
+<div>
+    <form asp-action="Create" asp-controller="Estimate" id="estimate-form">
+        <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
+        <div class="form-group">
+            <label for="estimate-title">Title</label>
+            <input type="text" id="estimate-title" name="Title" class="form-control" placeholder="Enter estimate title" required>
+        </div>
+        <div class="form-group">
+            <label for="estimate-sprint">Sprint</label>
+            <select asp-for="SprintId" asp-items="Model.SprintList" id="estimate-sprint" class="form-control" required>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="estimate-type">Estimate Type</label>
+            <select id="estimate-type" name="Type" class="form-control" required>
+                <option value="">Select Estimate Type</option>
+                <option value="@((int)EstimateType.ZeroToFive)">0-5</option>
+                <option value="@((int)EstimateType.ZeroToTen)">0-10</option>
+                <option value="@((int)EstimateType.Doubling)">Doubling (1-2-4-8-16-32-64-128)</option>
+                <option value="@((int)EstimateType.Fibonacci)">Fibonacci (1-2-3-5-8-13-21-34-55-89)</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>

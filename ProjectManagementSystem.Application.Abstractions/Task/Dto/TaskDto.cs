@@ -29,5 +29,6 @@ namespace ProjectManagementSystem.Application.Abstractions.Task.Dto
         public Domain.Entities.Documentation? Documentation { get; set; }
         public Guid? TaskId { get; set; }
         public ICollection<TaskDto>? DependentTasks { get; set; }
+        public int[] EstimatePoints { get; set; }
     }
 }

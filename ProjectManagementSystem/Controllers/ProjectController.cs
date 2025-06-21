@@ -99,18 +99,13 @@ namespace ProjectManagementSystem.Controllers
         [Authorize(Roles = "Employee")]
         public async Task<IActionResult> TaskAction(ProjectViewModel projectModel)
         {
-            if (ModelState.IsValid)
-            {
-                var response = await _taskService.CreateTask(projectModel.TaskToCreate);
-                
-                if (response)
-                {
-                    var model = await GetProjectViewModel(projectModel.Project.Id);
-                    return RedirectToAction("Index", "Board", new { projectId = projectModel.Project.Id });
-                }
-            }
+            var response = await _taskService.CreateTask(projectModel.TaskToCreate!);
+            
+            if (!response)
+                return RedirectToAction("Index", "Board", new { projectId = projectModel.Project!.Id });
 
-            return View();
+            var model = await GetProjectViewModel(projectModel.Project!.Id);
+            return RedirectToAction("Index", "Board", new { projectId = projectModel.Project.Id });
         }
 
         [HttpPost]

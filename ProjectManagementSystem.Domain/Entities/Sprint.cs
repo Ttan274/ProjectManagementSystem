@@ -15,6 +15,7 @@ namespace ProjectManagementSystem.Domain.Entities
         //Connections
         public Guid ProjectId { get; set; }
         public Project? Project { get; set; }
-        public ICollection<Task>? Tasks { get; set; }
+        public ICollection<Task>? Tasks { get; set; } = [];
+        public ICollection<Estimate>? Estimates { get; set; }
     }
 }

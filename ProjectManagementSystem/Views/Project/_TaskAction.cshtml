@@ -127,6 +127,12 @@
                         </h6>
                     </div>
                     <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="TaskToCreate.EffortScore" class="form-label small fw-semibold">
+                                Effort
+                            </label>
+                            <input asp-for="TaskToCreate.EffortScore" type="number" min="0" max="128" class="form-control form-control-sm"/>
+                        </div>
                         <!-- Status -->
                         <div class="mb-3">
                             <label asp-for="TaskToCreate.State" class="form-label small fw-semibold">
@@ -228,7 +234,6 @@
     });
 
     function confirmDelete(itemId) {
-        debugger;
       var deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
       deleteModal.show();
 

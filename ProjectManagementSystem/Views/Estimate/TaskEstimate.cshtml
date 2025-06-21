@@ -1,0 +1,260 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ProjectManagementSystem.Application.Abstractions.Estimate.Dto
+@using ProjectManagementSystem.Domain.Entities
+@inject UserManager<AppUser> userManager;
+@model TaskEstimateInfoDto
+@Html.Hidden("ProjectId", Model.ProjectId)
+<link href="~/css/taskestimate.css" rel="stylesheet" asp-append-version="true"/>
+@{
+    Layout = "_MainLayout";
+    var user = await userManager.GetUserAsync(User);
+}
+    <div class="container">
+        <!-- Header Section -->
+        <div class="estimate-detail-header">
+            <div>
+                <h1>User Authentication Module</h1>
+                <div class="estimate-meta">
+                    <span class="estimate-meta-item">
+                        <i class="fas fa-tag"></i> @Model.SprintName
+                    </span>
+                    <span class="estimate-meta-item">
+                        <i class="fas fa-clock"></i> @Model.CreatedDate
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="estimate-content">
+            <!-- Task List -->
+            <div class="task-list-container">
+                <div class="task-list">
+                    @if (Model.Task != null && Model.Task.Any())
+                    {
+                        foreach (var task in Model.Task)
+                        {
+                            <div class="task-item" data-task-id="@task.Id">
+                                <div class="task-title">@task.TaskName</div>
+                                <div class="task-meta">
+                                    <span>Status: @task.State</span>
+                                    @* <span class="task-estimate">@task.EffortScore points</span> *@
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="no-tasks">
+                            <p>No tasks found.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+            <!-- Task Detail View -->
+            <div class="task-detail-container" id="TaskDetail">
+            </div>
+        </div>
+    </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+<script>
+    let currentTaskId = null;
+    const estimateId = "@Model.EstimateId";
+
+    const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/estimateHub")
+            .build();
+
+        connection.start().then(() => {
+            connection.invoke("JoinEstimateGroup", estimateId);
+            console.log("SignalR connected and joined group:", estimateId);
+        }).catch(err => console.error(err.toString()));
+
+    document.addEventListener('DOMContentLoaded', function () {
+        let selectedCard = null;
+        var votes = []; // { taskId: [ {user,value} ] }
+
+        const taskItems = document.querySelectorAll('.task-item');
+        const taskDetailContainer = document.querySelector('.task-detail-container');
+
+        // Handle task selection
+        taskItems.forEach(item => {
+            item.addEventListener('click', function () {
+                taskItems.forEach(i => i.classList.remove('active'));
+
+                this.classList.add('active');
+
+                const taskId = this.getAttribute('data-task-id');
+
+                connection.invoke("NotifyTaskUpdated", estimateId, taskId)
+                    .catch(err => console.error(err.toString()));
+            });
+        });
+
+        connection.on("ReceiveTaskUpdate", function (taskId) {
+            updateTaskDetail(taskId);
+        });
+
+        // Load task detail partial view
+        function updateTaskDetail(taskId) {
+        currentTaskId = taskId;
+
+        // Seçili active class'ını güncelle
+        taskItems.forEach(i => i.classList.remove('active'));
+        const selectedTaskItem = Array.from(taskItems).find(i => i.getAttribute('data-task-id') === taskId);
+        if (selectedTaskItem) {
+            selectedTaskItem.classList.add('active');
+        }
+
+        $.ajax({
+            url: '@Url.Action("TaskDetail", "Estimate")',
+            method: 'GET',
+            data: { taskId: taskId, type: "@Model.Type" },
+            success: function (response) {
+                $('#TaskDetail').html(response);
+                initEstimation(taskId, []);
+                taskDetailContainer.classList.add('active');
+            },
+            error: function () {
+                $.notify("Error loading form!", "error");
+            }
+        });
+        }
+
+        connection.on("NotifySuccess", function () {
+            toastr.success("Task Successfully Estimated");
+        });
+
+        connection.on("NotifyError", function () {
+            toastr.error("Task Estimate Failed");
+        });
+
+        // Estimation setup
+        function initEstimation(taskId, votes) {
+            const estimationCards = document.querySelectorAll('.estimation-card');
+            let selectedCard = null;
+
+            estimationCards.forEach(card => {
+                card.addEventListener('click', function () {
+                    if (selectedCard) selectedCard.classList.remove('selected');
+                    this.classList.add('selected');
+                    selectedCard = this;
+                    document.getElementById('submit-vote').disabled = false;
+                });
+            });
+
+            document.getElementById('submit-vote').addEventListener('click', function () {
+                if (!selectedCard) return;
+
+                document.getElementById('vote-status').style.display = 'block';
+                this.disabled = true;
+                document.getElementById('reveal-votes').disabled = false;
+
+                const voteValue = selectedCard.getAttribute('data-value');
+                const userName = "@user!.UserName";
+                // votes.push({ user: "You", value: voteValue });
+
+                connection.invoke("SendVote", estimateId, taskId, userName, voteValue)
+                .catch(err => console.error(err.toString()));
+
+                // voteList[taskId].push({ user: userName, value: voteValue });
+            });
+
+             connection.on("ReceiveVote", function (vote) {
+                const existingVoteIndex = votes.findIndex(v => v.user === vote.user);
+                if (existingVoteIndex >= 0) {
+                    votes[existingVoteIndex].value = vote.value;
+                } else {
+                    votes.push({ user: vote.user, value: vote.value });
+                }
+            });
+
+            document.getElementById('reveal-votes').addEventListener('click', function () {
+                connection.invoke("RevealVotes", estimateId, currentTaskId)
+                .catch(err => console.error(err.toString()));
+            });
+
+            connection.on("VotesRevealed", function (data) {
+                revealFn();
+            });
+
+            function revealFn()
+            {
+                const average = calculateAverage(votes);
+
+                $("#final-estimate-value").val(average);
+
+                const resultsList = document.getElementById('results-list');
+
+                resultsList.innerHTML = votes.map(vote => `
+                    <div class="result-item">
+                        <span class="result-user">${vote.user}</span>
+                        <span class="result-value">${vote.value}</span>
+                    </div>
+                `).join('');
+
+                document.getElementById('average-value').textContent = average;
+                document.getElementById('results-section').style.display = 'block';
+                document.getElementById('final-estimation').style.display = 'block';
+
+                estimationCards.forEach(card => card.classList.add('revealed'));
+                document.getElementById('reveal-votes').classList.add('btn-disabled');
+            }
+
+            // document.getElementById('submit-final-estimate').addEventListener('click', function () {
+            //     const finalEstimate = document.getElementById('final-estimate-value').value;
+            //     if (!finalEstimate) {
+            //         alert('Please enter a final estimate value');
+            //         return;
+            //     }
+
+            //     alert(`Final estimate of ${finalEstimate} points has been saved!`);
+
+            //     const activeTaskItem = document.querySelector(`.task-item[data-task-id="${taskId}"]`);
+            //     const estimateBadge = activeTaskItem.querySelector('.task-estimate');
+            //     if (estimateBadge) estimateBadge.textContent = `${finalEstimate} points`;
+
+            //     const taskDetailEstimate = document.querySelector('.task-detail-header .task-estimate');
+            //     if (taskDetailEstimate) taskDetailEstimate.textContent = `${finalEstimate} points`;
+            // });
+
+            if (votes.length > 0) {
+                document.getElementById('reveal-votes').click();
+            }
+        }
+
+        // Calculate vote average
+        function calculateAverage(votes) {
+            const numericalVotes = votes
+                .filter(v => v.value !== '?')
+                .map(v => parseInt(v.value));
+            return numericalVotes.length > 0
+                ? (numericalVotes.reduce((a, b) => a + b, 0) / numericalVotes.length).toFixed(1)
+                : '0';
+        }
+    });
+
+    function estimateTask()
+    {
+            let effort = $("#final-estimate-value").val();
+
+            $.ajax({
+                url: '@Url.Action("UpdateEffort", "Estimate")',
+                type: 'POST',
+                data: { taskId: currentTaskId, effort : effort },
+                success: function (response) {
+
+                    if (response.status) {
+                        connection.invoke("NotifySuccessEstimate", estimateId)
+                    }
+                    else {
+                        connection.invoke("NotifyFailEstimate", estimateId)
+                    }
+
+                },
+                error: function () {
+                  toastr.error("Error")
+                }
+            });
+        }
+</script>

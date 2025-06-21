@@ -1,5 +1,6 @@
 ﻿using ProjectManagementSystem.Application.Abstractions.Dto;
 using ProjectManagementSystem.Application.Abstractions.Task.Dto;
+using ProjectManagementSystem.Common.ServiceResponse;
 
 namespace ProjectManagementSystem.Application.Abstractions.Task
 {
@@ -15,5 +16,7 @@ namespace ProjectManagementSystem.Application.Abstractions.Task
         Task<Guid> CreateSubtask(CreateSubTaskDto dto);
         Task<bool> DeleteSubtask(DeleteSubTaskDto dto);
         Task<bool> UpdateSubtask(UpdateSubTaskDto dto);
+        Task<ServiceResponse<TaskDto>> GetEstimateTask(Guid id);
+        Task<ServiceResponse<bool>> UpdateTaskEffort(Guid taskId, int effort);
     }
 }

@@ -17,6 +17,7 @@ namespace ProjectManagementSystem.Persistance.DbContext
         public DbSet<AppInfo> AppInfos { get; set; }
         public DbSet<ProjectTeamConfig> ProjectTeamConfigs { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
+        public DbSet<Estimate> Estimates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -57,6 +58,18 @@ namespace ProjectManagementSystem.Persistance.DbContext
                .WithMany(m => m.ReceivedMessages)
                .HasForeignKey(m => m.ReceiverId)
                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Estimate>()
+                .HasOne(x => x.Proje)
+                .WithMany(x => x.Estimates)
+                .HasForeignKey(x => x.ProjectId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Estimate>()
+                .HasOne(x => x.Sprint)
+                .WithMany(x => x.Estimates)
+                .HasForeignKey(x => x.SprintId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

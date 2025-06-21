@@ -1,0 +1,89 @@
+﻿@using ProjectManagementSystem.Application.Abstractions.Estimate.Dto
+@model EstimateInfoDto
+
+@{
+    Layout = "_MainLayout";
+}
+@Html.Hidden("ProjectId", Model.ProjectId)
+<link rel="stylesheet" href="~/css/estimate.css" asp-append-version="true"/>
+<div class="container" style="display:flex; flex-direction:column">
+    <!-- Header Section -->
+    <div class="estimates-header" style="align-items:center;text-align:center;">
+        <h1>@Model.ProjectName Project Estimates</h1>
+        <button class="btn btn-primary" id="new-estimate-btn" onclick="openCreateModal('@Model.ProjectId')">
+            <i class="fas fa-plus"></i> New Estimate
+        </button>
+    </div>
+    <hr />
+    @if (Model.Estimates == null || Model.Estimates.Count == 0)
+    {
+        <div style="display: flex; justify-content: center; align-items: center; height: 300px;">
+            <h3>There is no created estimate for this project</h3>
+        </div>
+    }
+    else
+    {
+        <div class="estimates-list">
+            <!-- Estimate Card 1 -->
+            @foreach (var item in Model.Estimates)
+            {
+                <div class="estimate-card">
+                    <div class="estimate-header">
+                        <h3>@item.Title</h3>
+                        <span class="estimate-badge">@item.SprintName</span>
+                    </div>
+                    <div class="estimate-details">
+                        <p><strong>Type:</strong> @item.TypeDescription</p>
+                        <p><strong>Total Estimate:</strong> @item.TotalEstimate</p>
+                        <p><strong>Created:</strong> @item.CreatedDate</p>
+                    </div>
+                    <div class="estimate-actions">
+                        <button class="btn btn-secondary" onclick="location.href='@Url.Action("TaskEstimate", "Estimate", new { estimateId = item.Id })'">View Details</button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="estimateModal" tabindex="-1" aria-labelledby="estimateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="estimateModalLabel">Create New Estimate</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="createEstimateContainer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script>
+        // JavaScript for modal functionality
+        document.addEventListener('DOMContentLoaded', function() {
+          // Form submission
+          document.getElementById('save-estimate').addEventListener('click', function() {
+            // Here you would typically handle form submission
+            alert('Estimate created successfully!');
+            closeModal();
+            document.getElementById('estimate-form').reset();
+          });
+        });
+
+    function openCreateModal(projectId) {
+        $.ajax({
+            url: '@Url.Action("Create", "Estimate")',
+            method: 'GET',
+            data: { projectId: projectId },
+            success: function (response) {
+                $('#createEstimateContainer').html(response);
+                var modal = new bootstrap.Modal(document.getElementById('estimateModal'));
+                modal.show();
+            },
+            error: function () {
+                $.notify("Error loading form!", "error");
+            }
+        });
+    }
+</script>
