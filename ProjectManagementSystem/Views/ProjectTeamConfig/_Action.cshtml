@@ -25,9 +25,12 @@
 
         <!-- Performance Metrics Section -->
         <section class="col-lg-6">
-            <div class="card shadow-sm p-1 w-100 h-100">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Performance Metrics</h5>
+            <div class="card border p-1 w-100 h-100">
+                <div class="d-flex align-items-center mb-3 p-2">
+                    <div style="width: 35px;height: 35px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-chart-line text-white fs-5"></i>
+                    </div>
+                    <h5 class="ms-3 mb-0">Performance Metrics</h5>
                 </div>
                 <div class="card-body">
                     <div class="mb-4">
@@ -67,9 +70,12 @@
 
         <!-- Coding Parameters Section -->
         <section class="col-lg-6">
-            <div class="card shadow-sm p-1 w-100 h-100">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0"><i class="fas fa-laptop-code me-2"></i>Coding Parameters</h5>
+            <div class="card border p-1 w-100 h-100">
+                <div class="d-flex align-items-center mb-3 p-2">
+                    <div style="width: 35px;height: 35px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-code-slash  text-white fs-5"></i>
+                    </div>
+                    <h5 class="ms-3 mb-0">Coding Metrics</h5>
                 </div>
                 <div class="card-body">
                     <div class="mb-4">
@@ -104,7 +110,7 @@
     <div class="row mt-4">
         <div class="col text-end">
             <button onclick="@(isCreate ? "createProjectConfig()" : "updateProjectConfig()")" class="btn btn-primary px-4 py-2 shadow-sm">
-                <i class="fas fa-save me-2"></i>@(isCreate ? "Save" : "Update") Configuration
+                @(isCreate ? "Save" : "Update") Configuration
             </button>
         </div>
     </div>
@@ -112,19 +118,24 @@
     <!-- Team Profile Section -->
     <section class="row mt-4">
         <div class="col-12">
-            <div class="card shadow-sm w-100 p-1">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0"><i class="fas fa-users me-2"></i>Team Profile</h5>
+            <div class="card shadow w-100 p-1">
+                <div class="d-flex align-items-center  p-3">
+                    <div style="width: 35px;height: 35px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-users text-white fs-5"></i>
+                    </div>
+                    <h5 class="ms-3 mb-0">Team Profile</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body pt-0">
                     <div class="mb-3">
                         <label class="form-label" for="teamIntroduction">Describe your team</label>
                         <textarea class="form-control" id="teamIntroduction" placeholder="Example: Our team consists of 5 developers (2 frontend, 2 backend, 1 full-stack) working on a web application project. We use Agile methodology with 2-week sprints..." rows="5">@Model.TeamIntroduction</textarea>
                     </div>
 
-                    <button class="btn btn-outline-info w-100 mt-3 d-flex align-items-center justify-content-center" id="aiSupportButton" onclick="handleAiSupportButtonClick()">
-                        <i class="fas fa-robot me-2"></i> Get AI Weight Suggestions
-                    </button>
+                    <div class="col text-end">
+                        <button id="aiSupportButton" onclick="handleAiSupportButtonClick()" class="btn btn-primary px-4 py-2 shadow-sm">
+                            Get AI Suggestions
+                        </button>
+                    </div>
 
                     <div class="text-center mt-3" id="aiResponseMessage" style="display: none;">
                         <div class="spinner-border text-info" role="status">
