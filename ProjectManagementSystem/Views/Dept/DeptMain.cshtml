@@ -3,109 +3,149 @@
     Layout = "_MainLayout";
 }
 
-<main class="content">
-    <div class="header">
-        <div class="create-btn">
-            <button type="button" data-bs-toggle="modal" data-bs-target="#projectModal">Create New Project</button>
+<main class="container-fluid min-vh-100 px-4">
+    <!-- Header Section -->
+    <header class="d-flex justify-content-between align-items-center py-4">
+        <h1 class="h4 fw-semibold text-dark mb-0">Team Dashboard</h1>
+        <div class="d-flex align-items-center gap-3">
+            <button type="button" class="btn btn-primary px-4 py-2" data-bs-toggle="modal" data-bs-target="#projectModal">
+                <i class="bi bi-plus-lg me-2"></i>New Project
+            </button>
+            <img src="/images/default_avatar.jpg" alt="User" class="rounded-circle border border-2 border-dark" width="42" height="42">
         </div>
-        <div>
-            <img src="/images/default_avatar.jpg" alt="User" class="member-avatar-circle">
+    </header>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card border-0 bg-white shadow-sm rounded-3 p-3">
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width: 36px;height: 36px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-folder text-white fs-5"></i>
+                    </div>
+                    <h6 class="ms-3 mb-0 text-muted">Total Projects</h6>
+                </div>
+
+                <div class="card-body d-flex justify-content-center align-items-end mb-1">
+                    <h3 class="fs-3 fw-bold text-dark mb-0">@Model.Projects.Count</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 bg-white shadow-sm rounded-3 p-3">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="btn-primary rounded-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                        <i class="bi bi-people-fill text-white fs-5"></i>
+                    </div>
+                    <h6 class="ms-3 mb-0 text-muted">Team Members</h6>
+                </div>
+
+                <div class="card-body d-flex justify-content-center align-items-end mb-1">
+                    <h3 class="fs-3 fw-bold text-dark mb-0">@Model.Users.Count</h3>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="overview">
-        <div class="card">
-            <h3>Projects</h3>
-            <p><strong>@Model.Projects.Count</strong></p>
-            <small>0 Completed</small>
+
+    <!-- Projects Table -->
+    <div class="card border-0 bg-white shadow-sm rounded-3 overflow-hidden">
+        <div class="d-flex align-items-center mb-3">
+            <div style="width: 36px;height: 36px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+                <i class="bi bi-list-task text-white fs-5"></i>
+            </div>
+            <h6 class="ms-3 mb-0 text-muted">Projects</h6>
         </div>
-        <div class="card">
-            <h3>Employees</h3>
-            <p><strong>@Model.Users.Count</strong></p>
-            <small>100% Available</small>
-        </div>
-        <div class="card">
-            <h3>Test</h3>
-            <p><strong>Test</strong></p>
-            <small>Test</small>
-        </div>
-    </div>
-    <div class="projects-section">
-        <table>
-            <thead>
-                <tr>
-                    <th>Project Name</th>
-                    <th>Project Description</th>
-                    <th>Hours</th>
-                    <th>Priority</th>
-                    <th>Project Details</th>
-                    <th>Progress</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.Projects)
-                {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-dark text-white">
                     <tr>
-                        <td>@item.ProjectName</td>
-                        <td>@item.ProjectDesc</td>
-                        <td>@item.EstimatedHours</td>
-                        <td>
-                            @if (@item.Priority.ToString() == "Low")
-                            {
-                                <span class="badge low">@item.Priority.ToString()</span>
-                            }
-                            else if (@item.Priority.ToString() == "Medium")
-                            {
-                                <span class="badge medium">@item.Priority.ToString()</span>
-                            }
-                            else
-                            {
-                                <span class="badge high">@item.Priority.ToString()</span>
-                            }
-                        </td>
-                        <td>
-                            <form method="get" asp-action="ProjectMain" asp-controller="Project">
-                                <input type="hidden" asp-for="Id" value="@item.Id">
-                                <button class="details-button">Details</button>
-                            </form>
-                        </td>
-                        <td><div class="progress-bar"><div class="progress-fill" style="width: 0"></div></div></td>
+                        <th class="ps-4 py-3 fw-normal">Project Name</th>
+                        <th class="py-3 fw-normal">Description</th>
+                        <th class="py-3 fw-normal">Hours</th>
+                        <th class="py-3 fw-normal">Priority</th>
+                        <th class="pe-4 py-3 fw-normal">Status</th>
+                        <th class="py-3 fw-normal">Details</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Projects)
+                    {
+                        <tr class="border-top border-light">
+                            <td class="ps-4 py-3 fw-semibold">@item.ProjectName</td>
+                            <td class="py-3 text-muted">@item.ProjectDesc</td>
+                            <td class="py-3">@item.EstimatedHours</td>
+                            <td class="py-3">
+                                @if (item.Priority.ToString() == "Low")
+                                {
+                                    <span class="badge bg-info bg-opacity-10 text-info-emphasis px-3 py-2">@item.Priority.ToString()</span>
+                                }
+                                else if (item.Priority.ToString() == "Medium")
+                                {
+                                    <span class="badge bg-warning bg-opacity-10 text-warning-emphasis px-3 py-2">@item.Priority.ToString()</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger bg-opacity-10 text-danger-emphasis px-3 py-2">@item.Priority.ToString()</span>
+                                }
+                            </td>
+                            <td class="pe-4 py-3">
+                                @(item.Status ? "In Progress" : "Done")
+                            </td>
+                            <td class="py-3">
+                                <form method="get" asp-action="ProjectMain" asp-controller="Project">
+                                    <input type="hidden" asp-for="Id" value="@item.Id">
+                                    <button class="btn btn-sm btn-outline-dark px-3">
+                                        <i class="bi bi-box-arrow-up-right me-1"></i>View
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
-    
-    <!--Project Modal-->
+
+    <!-- Project Modal -->
     <div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg">
                 <div class="modal-header">
-                    <h2 class="modal-title fs-5" id="projectModalLabel">Create New Project</h2>
+                    <h5 class="modal-title fs-5" id="projectModalLabel">Create New Project</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form method="post" asp-action="CreateProject" asp-controller="Dept">
                     <div class="modal-body">
                         <input type="hidden" asp-for="ProjectDto.TeamId" value="@Model.Id">
+
                         <div class="mb-3">
-                            <input type="text" class="form-control" asp-for="ProjectDto.ProjectName" placeholder="Project Name" autocomplete="off" required>
+                            <label class="form-label text-muted small mb-1">Project Name</label>
+                            <input type="text" class="form-control border-dark border-opacity-25 py-2" asp-for="ProjectDto.ProjectName" placeholder="Project Name" required>
                         </div>
+
                         <div class="mb-3">
-                            <input type="text" class="form-control" asp-for="ProjectDto.ProjectDesc" placeholder="Project Description" autocomplete="off" required>
+                            <label class="form-label text-muted small mb-1">Description</label>
+                            <textarea class="form-control border-dark border-opacity-25 py-2" rows="2" asp-for="ProjectDto.ProjectDesc" placeholder="Project Description" required></textarea>
                         </div>
-                        <div class="mb-3">
-                            <input type="text" class="form-control" asp-for="ProjectDto.EstimatedHours" placeholder="Estimated Hours" autocomplete="off" required>
-                        </div>
-                        <div class="mb-3">
-                            <select class="form-select" asp-for="ProjectDto.Priority">
-                                <option value="@Priority.Low">Low</option>
-                                <option value="@Priority.Medium">Medium</option>
-                                <option value="@Priority.High">High</option>
-                            </select>
+
+                        <div class="row g-2">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small mb-1">Estimated Hours</label>
+                                <input type="number" class="form-control border-dark border-opacity-25 py-2" asp-for="ProjectDto.EstimatedHours" placeholder="Estimated Hours" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small mb-1">Priority</label>
+                                <select class="form-select border-dark border-opacity-25 py-2" asp-for="ProjectDto.Priority">
+                                    <option value="@Priority.Low">Low</option>
+                                    <option value="@Priority.Medium">Medium</option>
+                                    <option value="@Priority.High">High</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Create</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary px-4">Create</button>
                     </div>
                 </form>
             </div>

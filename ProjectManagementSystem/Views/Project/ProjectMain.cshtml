@@ -1,78 +1,141 @@
 ﻿@model ProjectViewModel
 @{
     Layout = "_MainLayout";
+    ViewData["Title"] = "Project Dashboard";
 }
-<link rel="stylesheet" href="~/css/modal.css">
-<main class="content">
-    <div class="header">
-        <div class="create-btn">
-            <button onclick="openSprintModal('@Model.Project.Id')">Create New Sprint</button>
+<main class="container-fluid min-vh-100 px-4">
+    <header class="d-flex justify-content-between align-items-center py-4">
+        <h1 class="h4 fw-semibold text-dark mb-0">@Model.Project.ProjectName Project Dashboard</h1>
+    </header>
+
+    <div class="row g-4 mb-4">
+        <!-- Total Sprints -->
+        <div class="col-md-4">
+            <div class="card border-0 bg-white shadow-sm rounded-3 p-3">
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width: 36px;height: 36px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+                        <i class="fa-solid fa-person-running text-white fs-5"></i>
+                    </div>
+                    <h6 class="ms-3 mb-0 text-muted">Total Sprints</h6>
+                </div>
+                <div class="card-body d-flex justify-content-center align-items-end mb-1">
+                    <h3 class="fs-1 fw-bold text-dark mb-0">@Model.Project.Sprints.Count</h3>
+                </div>
+            </div>
         </div>
-        <div>
-            <img src="/images/default_avatar.jpg" alt="User" class="member-avatar-circle">
+
+        <!-- Total Tasks -->
+        <div class="col-md-4">
+            <div class="card border-0 bg-white shadow-sm rounded-3 p-3">
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width: 36px;height: 36px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+                        <i class="fa-solid fa-list-check text-white fs-5"></i>
+                    </div>
+                    <h6 class="ms-3 mb-0 text-muted">Total Tasks</h6>
+                </div>
+                <div class="card-body d-flex justify-content-center align-items-end mb-1">
+                    <h3 class="fs-1 fw-bold text-dark mb-0">@Model.Project.Sprints.SelectMany(x => x.Tasks).Count()</h3>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="overview">
-        <div class="card" onclick="setSprintsVisibility()">
-            <h3>Sprints</h3>
-            <p><strong>@Model.Project.Sprints.Count</strong></p>
-            <small>0 Completed</small>
+
+        <!-- Completed Efforts -->
+        <div class="col-md-4">
+            <div class="card border-0 bg-white shadow-sm rounded-3 p-3">
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width: 36px;height: 36px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+                        <i class="fa-regular fa-hourglass-half text-white fs-5"></i>
+                    </div>
+                    <h6 class="ms-3 mb-0 text-muted">Completed Efforts</h6>
+                </div>
+                <div class="card-body d-flex justify-content-center align-items-end mb-1">
+                    <h3 class="fs-1 fw-bold text-dark mb-0">@Model.Project.Sprints.SelectMany(x => x.Tasks).Sum(x => x.EffortScore)</h3>
+                </div>
+            </div>
         </div>
-        <div class="card" onclick="setTasksVisibility()">
-            <h3>Tasks</h3>
-            <p><strong>0</strong></p>
-            <small>0 Completed</small>
-        </div>
-        <div class="card">
-            <h3>Test</h3>
-            <p><strong>Test</strong></p>
-            <small>Test</small>
-        </div>
-    </div>
-    <div class="projects-section" id="sprintsSection">
-        <h3>Sprints</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Sprint Name</th>
-                    <th>Start Date</th>
-                    <th>Finish Date</th>
-                    <th>Total Task</th>
-                    <th>Progress</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.Project.Sprints)
-                {
-                    <tr>
-                        <td>@item.SprintName</td>
-                        <td>@item.StartDate.ToString()</td>
-                        <td>@item.FinishDate.ToString()</td>
-                        <td>@item.Tasks.Count</td>
-                        <td><div class="progress-bar"><div class="progress-fill" style="width: 0%"></div></div></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
     </div>
 
-    <div class="projects-section" id="tasksSection">
-        <h3>Tasks</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Task Name</th>
-                    <th>Task Description</th>
-                    <th>Related Sprint</th>
-                    <th>Assigned Employee</th>
-                    <th>Task Priority</th>
-                    <th>Task Status</th>
-                </tr>
-            </thead>
-            <tbody>
+    <!-- Sprints Table -->
+    <div class="projects-section" id="sprintsSection">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="d-flex align-items-center mb-3">
+                <div style="width: 36px;height: 36px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+                    <i class="fa-solid fa-person-running text-white fs-5"></i>
+                </div>
+                <h4 class="ms-3 mb-0 text-muted">Sprints</h4>
+            </div>
+            <button class="btn btn-primary" onclick="openSprintModal('@Model.Project.Id')">
+                <i class="bi bi-plus-lg me-2"></i>Create New Sprint
+            </button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped" id="sprintsTable">
+                <thead>
+                    <tr>
+                        <th>Sprint Name</th>
+                        <th>Start Date</th>
+                        <th>Finish Date</th>
+                        <th>Total Task</th>
+                        <th>Progress</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Project.Sprints)
+                    {
+                        var completedTaskCount = item.Tasks.Count(x => x.State == ProjectStatus.Done);
+                        var totalTaskCount = item.Tasks.Count;
+                        var taskCompletionsRate = totalTaskCount > 0
+                        ? ((double)completedTaskCount / totalTaskCount) * 100
+                        : 0;
+
+                        <tr>
+                            <td>@item.SprintName</td>
+                            <td>@item.StartDate?.ToString("yyyy-MM-dd")</td>
+                            <td>@item.FinishDate?.ToString("yyyy-MM-dd")</td>
+                            <td>@totalTaskCount</td>
+                            <td>
+                                <div class="progress" style="height: 20px;">
+                                    <div class="progress-bar bg-success" role="progressbar"
+                                         style="width: @taskCompletionsRate.ToString("F0")%;"
+                                         aria-valuenow="@taskCompletionsRate.ToString("F0")"
+                                         aria-valuemin="0" aria-valuemax="100">
+                                        @taskCompletionsRate.ToString("F0")%
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Tasks Table -->
+    <div class="projects-section mt-4" id="tasksSection">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="d-flex align-items-center mb-3">
+                <div style="width: 36px;height: 36px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+                    <i class="fa-solid fa-list-check text-white fs-5"></i>
+                </div>
+                <h4 class="ms-3 mb-0 text-muted">Tasks</h4>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped" id="tasksTable">
+                <thead>
+                    <tr>
+                        <th>Task Name</th>
+                        <th>Task Description</th>
+                        <th>Related Sprint</th>
+                        <th>Assigned Employee</th>
+                        <th>Task Priority</th>
+                        <th>Task Status</th>
+                    </tr>
+                </thead>
+                <tbody>
                     @foreach (var sprint in Model.Project.Sprints)
                     {
-                        @foreach (var item in sprint.Tasks)
+                        foreach (var item in sprint.Tasks)
                         {
                             <tr>
                                 <td>@item.TaskName</td>
@@ -80,45 +143,40 @@
                                 <td>@sprint.SprintName</td>
                                 <td>@item.AppUser?.UserName</td>
                                 <td>
-                                    @if (@item.Priority.ToString() == "Low")
+                                    @if (item.Priority.ToString() == "Low")
                                     {
-                                        <span class="badge low">@item.Priority.ToString()</span>
+                                        <span class="badge bg-success">@item.Priority</span>
                                     }
-                                    else if (@item.Priority.ToString() == "Medium")
+                                    else if (item.Priority.ToString() == "Medium")
                                     {
-                                        <span class="badge medium">@item.Priority.ToString()</span>
+                                        <span class="badge bg-warning">@item.Priority</span>
                                     }
                                     else
                                     {
-                                        <span class="badge high">@item.Priority.ToString()</span>
+                                        <span class="badge bg-danger">@item.Priority</span>
                                     }
                                 </td>
-                            <td>@item.State.ToString()</td>
+                                <td>@item.State</td>
                             </tr>
                         }
-                    }                
-            </tbody>
-        </table>
-    </div>
-
-    <div id="sprintModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('sprintModal', 'sprintActionContent')">&times;</span>
-            <h2>Create Sprint</h2>
-            <div id="sprintActionContent">
-            </div>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 
+    @Html.Hidden("ProjectId", Model.Project.Id)
+
+    <!-- Task Modal -->
     <div id="taskModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('taskModal', 'taskActionContent')">&times;</span>
             <h2>Create Task</h2>
-            <div id="taskActionContent">
-            </div>
+            <div id="taskActionContent"></div>
         </div>
     </div>
 
+    <!-- Task Detail Modal -->
     <div class="modal fade" id="taskDetailModal" tabindex="-1" aria-labelledby="taskDetailModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content shadow-lg rounded-4">
@@ -126,90 +184,74 @@
                     <h5 class="modal-title" id="taskDetailModalLabel">Görev Detayları</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
                 </div>
-                <div id="taskDetailContainer">
+                <div id="taskDetailContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sprint Modal -->
+    <div class="modal fade" id="sprintModal" aria-hidden="true" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sprintModalLabel">Create New Sprint</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+                <div class="modal-body" id="sprintActionContent"></div>
             </div>
         </div>
     </div>
 </main>
-@Html.Hidden("ProjectId", Model.Project.Id)
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
 <script>
-    $(document).ready(function() {
-        $('.js-example-basic-single').select2({
-            width: '100%'
-        });
-        $(`#sprintActionContent`).html('');
-        $(`#taskActionContent`).html('');
+    $(document).ready(function () {
+        initializeDataTables("#sprintsTable");
+        initializeDataTables("#tasksTable");
+
+        $('.js-example-basic-single').select2({ width: '100%' });
+        $('#sprintActionContent').html('');
+        $('#taskActionContent').html('');
     });
-    function openSprintModal(id){
+
+    function openSprintModal(id) {
         $.ajax({
-                url: '/Project/CreateSprint',
-                method: 'Get',   
-                contentType: 'application/json',
-                data: { projectId: id },
-                success: function (response) {
-                    $("#sprintActionContent").html(response);
-                    document.getElementById('sprintModal').style.display='block';
-                },
-                error: function (xhr, status, error) {
-                    $.notify("Error!", "error");
-                }
+            url: '/Project/CreateSprint',
+            method: 'GET',
+            contentType: 'application/json',
+            data: { projectId: id },
+            success: function (response) {
+                $('#sprintActionContent').html(response);
+                new bootstrap.Modal(document.getElementById('sprintModal')).show();
+            },
+            error: function () {
+                $.notify("Error!", "error");
+            }
         });
     }
 
-    function openTaskModal(id, teamId){
+    function openTaskModal(id, teamId) {
         $.ajax({
-                url: '/Project/TaskAction',
-                method: 'Get',   
-                contentType: 'application/json',
-                data: { projectId: id, teamId: teamId},
-                success: function (response) {
-                    $("#taskActionContent").html(response);
-                    document.getElementById('taskModal').style.display='block';
-                },
-                error: function (xhr, status, error) {
-                    $.notify("Error!", "error");
-                }
+            url: '/Project/TaskAction',
+            method: 'GET',
+            contentType: 'application/json',
+            data: { projectId: id, teamId: teamId },
+            success: function (response) {
+                $('#taskActionContent').html(response);
+                document.getElementById('taskModal').style.display = 'block';
+            },
+            error: function () {
+                $.notify("Error!", "error");
+            }
         });
     }
-
-    function GoToBoard(id){
-        $.ajax({
-                url: '/Board/Index',
-                method: 'Get',
-                contentType: 'application/json',
-                data: { projectId: id },
-                success: function (response) {
-                    $("#sprintActionContent").html(response);
-                    document.getElementById('sprintModal').style.display='block';
-                },
-                error: function (xhr, status, error) {
-                    $.notify("Error!", "error");
-                }
-        });
-    }
-
-    const sModal = document.getElementById("sprintModal");
-    const tModal = document.getElementById("taskModal");
-    
-    window.onclick = (e) => {
-        if (e.target === sModal) sModal.style.display = "none";
-        if (e.target === tModal) tModal.style.display = "none";
-    };
 
     function closeModal(id, resetId) {
         document.getElementById(id).style.display = "none";
-        $(`#${resetId}`).html('');
-    }
-  
-    function setSprintsVisibility() {
-        const section = document.getElementById("sprintsSection");
-        section.classList.toggle("hidden");
+        $('#' + resetId).html('');
     }
 
-    function setTasksVisibility() {
-        const section = document.getElementById("tasksSection");
-        section.classList.toggle("hidden");
-    }
+    window.onclick = function (e) {
+        if (e.target == document.getElementById("sprintModal")) $('#sprintModal').hide();
+        if (e.target == document.getElementById("taskModal")) $('#taskModal').hide();
+    };
 </script>

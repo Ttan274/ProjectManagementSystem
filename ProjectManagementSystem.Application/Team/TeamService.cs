@@ -147,7 +147,7 @@ namespace ProjectManagementSystem.Application.Team
                         member.Name,
                         member.Tasks,
                         CompletedTasks = member.Tasks
-                            .Where(task => task.Completed == true)
+                            .Where(task => task.State == Common.Enums.ProjectStatus.Done)
                             .Select(task => new
                             {
                                 task.CompletedAt,
@@ -156,9 +156,9 @@ namespace ProjectManagementSystem.Application.Team
                             })
                             .ToList(),
                         BugsResolved = member.Tasks.Count(task =>
-                            task.Type == Common.Enums.TaskType.BugFix && task.Completed == true),
+                            task.Type == Common.Enums.TaskType.BugFix && task.State == Common.Enums.ProjectStatus.Done),
                         StoryPointsCompleted = member.Tasks
-                            .Where(task => task.Completed == true)
+                            .Where(task => task.State == Common.Enums.ProjectStatus.Done)
                             .Select(task => task.EffortScore)
                             .Sum()
                     })

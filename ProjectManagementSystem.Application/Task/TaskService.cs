@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Application.Abstractions.Dto;
-using ProjectManagementSystem.Application.Abstractions.Estimate.Dto;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Sprint;
 using ProjectManagementSystem.Application.Abstractions.Repositories.Task;
 using ProjectManagementSystem.Application.Abstractions.Task;
@@ -76,7 +75,7 @@ namespace ProjectManagementSystem.Application.Task
             {
                 return [];
             }
-        } 
+        }
 
         public async Task<List<TaskDto>> GetMyAllTasks(Guid userId)
         {
@@ -138,7 +137,7 @@ namespace ProjectManagementSystem.Application.Task
         {
             try
             {
-                var task = await _taskReadRepository.GetQueryable()
+                var task = await _taskReadRepository.GetQueryable(tracking: false)
                                                     .Include(x => x.DependentTasks)
                                                     .FirstOrDefaultAsync(x => x.Id == id);
 
@@ -191,7 +190,7 @@ namespace ProjectManagementSystem.Application.Task
                 task.DependentTasks ??= [];
 
                 task.DependentTasks.Add(entity);
-                
+
                 await _taskWriteRepository.SaveAsync();
 
                 return entity.Id;

@@ -84,7 +84,7 @@ namespace ProjectManagementSystem.Controllers
             var users = await _userService.GetAllUsersByTeamId(project.TeamId);
 
             if (taskId != Guid.Empty)
-               model.TaskToCreate = await _taskService.GetById(taskId);
+                model.TaskToCreate = await _taskService.GetById(taskId);
 
             model.Project = project;
             model.TaskToCreate ??= new();
@@ -100,7 +100,7 @@ namespace ProjectManagementSystem.Controllers
         public async Task<IActionResult> TaskAction(ProjectViewModel projectModel)
         {
             var response = await _taskService.CreateTask(projectModel.TaskToCreate!);
-            
+
             if (!response)
                 return RedirectToAction("Index", "Board", new { projectId = projectModel.Project!.Id });
 

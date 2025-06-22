@@ -17,7 +17,6 @@ namespace ProjectManagementSystem.Domain.Entities
         public TaskType Type { get; set; }
         public int EffortScore { get; set; }
         public bool? IsUrgent { get; set; }
-        public bool? Completed { get; set; }
         public DateTime? CompletedAt { get; set; }
 
         //Connections

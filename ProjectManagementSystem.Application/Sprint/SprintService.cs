@@ -45,9 +45,11 @@ namespace ProjectManagementSystem.Application.Sprint
         {
             try
             {
-                var sprints = await sprintReadRepository.GetQueryable()
+                var sprints = await sprintReadRepository.GetQueryable(tracking: false)
                                                          .Where(x => x.Status)
                                                          .Where(y => y.ProjectId == id)
+                                                         .Include(x => x.Tasks)
+                                                         .ThenInclude(x => x.AppUser)
                                                          .OrderByDescending(x => x.CreatedDatee)
                                                          .ToListAsync();
 
@@ -55,11 +57,6 @@ namespace ProjectManagementSystem.Application.Sprint
                     return [];
 
                 var mappedResult = mapper.Map<List<Domain.Entities.Sprint>, List<SprintDto>>(sprints);
-
-                foreach (var item in mappedResult)
-                {
-                    item.Tasks = await taskService.GetAllTasksBySprintId(item.Id);
-                }
 
                 return mappedResult;
             }
@@ -123,7 +120,7 @@ namespace ProjectManagementSystem.Application.Sprint
                             Type = task.Type,
                             CreatedAt = task.CreatedDatee,
                             CompletedAt = task.CompletedAt,
-                            IsCompleted = task.Completed,
+                            IsCompleted = task.State == Common.Enums.ProjectStatus.Done,
                             Number = task.TaskNumber,
                             Priority = task.Priority,
                             HasDocumentation = task.Documentation != null

@@ -6,7 +6,7 @@
 
 #taskModal .modal-header {
     padding: 1rem 1.5rem;
-    border-bottom: none;
+    /* border-bottom: none; */
 }
 
 .task-create-container {
@@ -18,32 +18,32 @@
     background: transparent;
 }
 
-.title-section .title-input:focus {
-    box-shadow: none;
-    border-bottom: 1px solid #0d6efd;
-}
+    .title-section .title-input:focus {
+        box-shadow: none;
+        border-bottom: 1px solid #0d6efd;
+    }
 
 #taskTabs .nav-link {
     font-weight: 500;
     border: none;
     padding: 0.75rem 1.25rem;
-    color: #0d6efd;
+    color: var(--primary-color);
 }
 
-#taskTabs .nav-link.active {
-    color: white;
-    background: #0d6efd;
-    border-bottom: 2px solid #0d6efd;
-}
+    #taskTabs .nav-link.active {
+        color: white;
+        background: var(--primary-color);
+        border-bottom: 2px solid var(--primary-color);
+    }
 
 .task-properties {
     border: none;
     border-radius: 0.5rem;
 }
 
-.task-properties .card-header {
-    border-bottom: 1px solid rgba(0,0,0,0.1);
-}
+    .task-properties .card-header {
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
 
 .subtask-item {
     border-left: 3px solid #0d6efd;
@@ -52,9 +52,9 @@
     padding: 0.5em;
 }
 
-.subtask-item:hover {
-    background-color: #f8f9fa;
-}
+    .subtask-item:hover {
+        background-color: #f8f9fa;
+    }
 
 .ai-suggestion-card {
     cursor: pointer;
@@ -62,10 +62,10 @@
     width: auto;
 }
 
-.ai-suggestion-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
-}
+    .ai-suggestion-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+    }
 
 @media (max-width: 992px) {
     .task-properties {
@@ -78,10 +78,10 @@
     transition: border-bottom 0.3s ease;
 }
 
-.task-title-input:focus {
-    border-bottom: 2px solid #0d6efd !important;
-    box-shadow: none !important;
-}
+    .task-title-input:focus {
+        border-bottom: 2px solid #0d6efd !important;
+        box-shadow: none !important;
+    }
 
 .subtask-item .form-control[readonly] {
     background-color: #f8f9fa;

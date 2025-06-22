@@ -5,23 +5,37 @@
     <!-- Board Header -->
     <div class="board-header">
         <div class="project-info">
-            <h2 class="project-title">@Model.ProjectName</h2>
+            <div class="d-flex align-items-center mb-3">
+                <div style="width: 40px;height: 40px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+                    <i class="fas fa-fw fa-th-large text-white fs-5"></i>
+                </div>
+                <h3 class="ms-3 mb-0">@Model.ProjectName</h3>
+            </div>
             <div class="project-meta">
                 <span class="badge bg-primary">@Model.ProjectCode</span>
                 <span class="text-muted">Son güncelleme: @DateTime.Now.ToString("dd MMM yyyy HH:mm")</span>
             </div>
         </div>
-        <div class="board-actions">
-            <button class="btn btn-sm btn-outline-primary" onclick="openTaskModal()">
-                <i class="bi bi-plus-lg"></i> Create Task
-            </button>
-            <div class="btn-group display-block max-100">
-                <select asp-for="SprintId" asp-items="Model.SprintList" class="js-example-basic-single" id="sprintSelect">
+        <div class="board-actions d-flex align-items-center gap-3 flex-wrap p-3">
+            <div>
+                <button class="btn btn-primary d-flex align-items-center gap-2 px-4" onclick="openTaskModal()">
+                    <i class="bi bi-plus-lg"></i>
+                    <span>Create Task</span>
+                </button>
+            </div>
+            <div class="flex-grow-1" style="min-width: 250px;">
+                <select asp-for="SprintId" asp-items="Model.SprintList"
+                        class="js-example-basic-single form-select w-100"
+                        id="sprintSelect">
                 </select>
-                <br/>
-                <span><i><small>@Model.SprintInterval</small></i></span>
+            </div>
+            <div>
+                <div class="bg-white border rounded-pill px-4 py-2 text-muted small">
+                    <i>@Model.SprintInterval</i>
+                </div>
             </div>
         </div>
+
     </div>
 
     <!-- Board Columns -->
@@ -37,8 +51,8 @@
                     @foreach (var task in column.Tasks)
                     {
                         <div class="task-card urgent" @*  @(task.IsUrgent ? "urgent" : "") *@
-                        data-task-id="@task.Id"
-                        draggable="true">
+                             data-task-id="@task.Id"
+                             draggable="true">
                             <div class="task-header">
                                 <span class="task-id">@task.TaskCode</span>
                                 <div class="task-priority @GetPriorityClass(task.Priority)"></div>
@@ -51,11 +65,11 @@
                                 <div class="subtask-progress">
                                     <div class="progress">
                                         <div class="progress-bar"
-                                        role="progressbar"
-                                        style="width: @task.SubtaskCompletionPercentage%"
-                                        aria-valuenow="@task.SubtaskCompletionPercentage"
-                                        aria-valuemin="0"
-                                        aria-valuemax="100">
+                                             role="progressbar"
+                                             style="width: @task.SubtaskCompletionPercentage%"
+                                             aria-valuenow="@task.SubtaskCompletionPercentage"
+                                             aria-valuemin="0"
+                                             aria-valuemax="100">
                                         </div>
                                     </div>
                                     <small class="text-muted">@task.CompletedSubtasks/@task.Subtasks.Count tamamlandı</small>
@@ -72,16 +86,6 @@
                                             </option>
                                         }
                                     </select>
-                                    @* <div class="avatar-group">
-                                        @foreach (var assignee in task.Assignees.Take(2))
-                                        {
-                                            <img src="@assignee.AvatarUrl" alt="@assignee.Name" title="@assignee.Name" class="avatar">
-                                        }
-                                        @if (task.Assignees.Count > 2)s
-                                        {
-                                            <span class="avatar-more">+@(task.Assignees.Count - 2)</span>
-                                        }
-                                    </div> *@
                                 </div>
                                 <div class="task-actions">
                                     <button class="btn btn-sm btn-link p-0 text-muted"
@@ -120,8 +124,9 @@
 <script>
     $(document).ready(function() {
         $('.js-example-basic-single').select2({
-            width: '100%'
-        });
+                width: 'resolve',
+                minimumResultsForSearch: Infinity
+            });
 
         doDragOperations()
 
@@ -167,6 +172,12 @@
     function openTaskModal(taskId) {
         var projectId = '@Model.ProjectId';
         var teamId = '@Model.TeamId';
+
+        if (!taskId) {
+            $('#taskModalLabel').text('Create Task');
+        } else {
+            $('#taskModalLabel').text('Update Task');
+        }
 
         $.ajax({
             url: '/Project/TaskAction',

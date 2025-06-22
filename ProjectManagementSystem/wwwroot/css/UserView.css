@@ -7,18 +7,18 @@
 
 body {
     display: flex;
-    background: bisque;
+    background-color: #f5f7fa !important;
     margin: 0;
     padding: 0;
     min-height: 100vh;
 }
 
 .sidebar {
-    width: 250px;
+    /* width: 250px; */
     background: #1a202c !important;
     color: white;
     min-height: 100vh;
-    padding: 20px 16px;
+    padding: 20px 5px;
     transition: width 0.3s ease-in-out;
     overflow: hidden;
 }
@@ -36,10 +36,9 @@ body {
         .sidebar ul li {
             /*margin-bottom: 16px;
             margin-top: 16px;*/
-            /*padding: 2vh;*/
+            margin-bottom: 0px;
             color: #a0aec0;
             cursor: pointer;
-            border-top: 1px solid #ccc;
             border-radius: 2px;
         }
 
@@ -71,7 +70,7 @@ body {
     color: white;
     border: none;
     border-radius: 8px;
-    cursor:pointer;
+    cursor: pointer;
 }
 
 .overview {
@@ -87,7 +86,6 @@ body {
     color: black;
     border-radius: 10px;
     padding: 20px;
-    width: 22%;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
@@ -96,12 +94,12 @@ body {
     }
 
 .projects-section {
-    margin: 30px;
     background: white;
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
+
 .projects-task-section {
     margin: 30px;
     background: #f5f7fb;
@@ -117,7 +115,6 @@ table {
 
     table th, td {
         padding: 12px;
-        text-align: center;
     }
 
 thead {
@@ -144,7 +141,7 @@ thead {
 }
 
 .progress-bar {
-    height: 6px;
+    height: 20px;
     background-color: #e0e0e0;
     border-radius: 4px;
     overflow: hidden;
@@ -165,11 +162,11 @@ thead {
 }
 
 .pad-0 {
-    padding:0 !important;
+    padding: 0 !important;
 }
 
 .display-block {
-    display:block !important;
+    display: block !important;
 }
 
 /*.task-assignee {
@@ -180,9 +177,9 @@ thead {
     flex:1;
 }*/
 
-.custom-menu-elements{
+.custom-menu-elements {
     padding-left: 0;
-    text-align:left;
+    text-align: left;
     margin-top: 5vh;
 }
 
@@ -198,6 +195,6 @@ thead {
         margin: 0;
     }
 
-.txt-center{
-    text-align:center;
+.txt-center {
+    text-align: center;
 }

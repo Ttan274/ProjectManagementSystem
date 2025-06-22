@@ -5,7 +5,12 @@
 }
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
 <div class="task-detail-header">
-    <h2 class="task-detail-title">@Model.TaskName</h2>
+    <div class="d-flex align-items-center mb-3">
+        <div style="width: 40px;height: 40px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+            <i class="fa-solid fa-clipboard-list text-white fs-4"></i>
+        </div>
+        <h4 class="ms-3 mb-0">@Model.TaskName</h4>
+    </div>
     <div class="task-meta">
         <span>Status: @(Model.State?.ToString() ?? "Unknown")</span>
         <span class="task-estimate">@Model.EffortScore points</span>

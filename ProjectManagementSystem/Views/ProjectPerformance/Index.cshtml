@@ -32,7 +32,7 @@
             const selectedTabId = $(e.target).attr("id");
             localStorage.setItem("lastSelectedTabId", selectedTabId);
         });
-    
+
     </script>
 }
 
@@ -46,12 +46,9 @@
 }
 else
 {
-    <main class="content">
-        <div class="header">
-        </div>
-        <div class="dashboard-container m-3">
-            <partial name="_DashboardHeader" />
-
+    <main class="container-fluid min-vh-100 px-4">
+        <partial name="_DashboardHeader" />
+        <div class="dashboard-container pt-2">
             <ul class="nav nav-tabs" id="performanceTabs" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true"><i class="bi bi-graph-up me-1"></i> Performance Indicators</button>
