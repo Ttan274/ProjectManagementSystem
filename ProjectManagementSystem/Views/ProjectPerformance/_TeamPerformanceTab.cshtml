@@ -1,61 +1,89 @@
 ﻿<div class="team-performance">
     <h5 class="section-title mt-4 mb-3">
-        <i class="bi bi-award-fill" style="color: var(--warning-color);"></i> Team Overall Performance Score
+        <i class="bi bi-bar-chart-line-fill"></i> Team Overall Performance Score
     </h5>
 
     <div class="sprint-metrics" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
         <div class="metric-card animate__animated animate__fadeIn">
             <div class="metric-header">
-                <i class="bi bi-star-fill icon-warning"></i>
-                <h5>Overall Score</h5>
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width: 36px;height: 34px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-award-fill text-white fs-5"></i>
+                    </div>
+                    <h5 class="ms-3 mb-0 text-muted">Overall Score <i class="bi bi-question-circle-fill text-secondary fs-6" data-bs-toggle="tooltip" data-bs-original-title="The overall score represents the combined performance of all metrics."></i></h5>
+                </div>
             </div>
             <div class="metric-value" id="teamOverallScore">Loading...</div>
             <div class="metric-description">Average of all metrics as a performance indicator.</div>
         </div>
         <div class="metric-card animate__animated animate__fadeIn">
             <div class="metric-header">
-                <i class="bi bi-check-all icon-success"></i>
-                <h5>Avg. Task Completion</h5>
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width: 36px;height: 34px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-check-all text-white fs-5"></i>
+                    </div>
+                    <h5 class="ms-3 mb-0 text-muted">Avg. Task Completion <i class="bi bi-question-circle-fill text-secondary fs-6" data-bs-toggle="tooltip" data-bs-original-title="This shows the average task completion rate of all team members."></i></h5>
+                </div>
             </div>
             <div class="metric-value" id="teamAvgTaskCompletion">Loading...</div>
             <div class="metric-description">Average task completion rate of team members.</div>
         </div>
         <div class="metric-card animate__animated animate__fadeIn">
             <div class="metric-header">
-                <i class="bi bi-clock-fill icon-primary"></i>
-                <h5>Avg. On-Time Delivery</h5>
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width: 36px;height: 34px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-clock-fill text-white fs-5"></i>
+                    </div>
+                    <h5 class="ms-3 mb-0 text-muted">Avg. On-Time Delivery <i class="bi bi-question-circle-fill text-secondary fs-6" data-bs-toggle="tooltip" data-bs-original-title="This metric tracks the average on-time delivery rate of all team members."></i></h5>
+                </div>
             </div>
             <div class="metric-value" id="teamAvgOnTimeDelivery">Loading...</div>
             <div class="metric-description">Average on-time delivery rate of team members.</div>
         </div>
         <div class="metric-card animate__animated animate__fadeIn">
             <div class="metric-header">
-                <i class="bi bi-bullseye icon-info"></i>
-                <h5>Avg. Target Proximity</h5>
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width: 36px;height: 34px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-bullseye text-white fs-5"></i>
+                    </div>
+                    <h5 class="ms-3 mb-0 text-muted">Avg. Target Proximity <i class="bi bi-question-circle-fill text-secondary fs-6" data-bs-toggle="tooltip" data-bs-original-title="This measures how close the team is to achieving the sprint goals."></i></h5>
+                </div>
             </div>
             <div class="metric-value" id="teamAvgTargetProximity">Loading...</div>
             <div class="metric-description">Average proximity to sprint goals.</div>
         </div>
         <div class="metric-card animate__animated animate__fadeIn">
             <div class="metric-header">
-                <i class="bi bi-code-slash icon-primary"></i>
-                <h5>Avg. Coding Score</h5>
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width: 36px;height: 34px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-code-slash text-white fs-5"></i>
+                    </div>
+                    <h5 class="ms-3 mb-0 text-muted">Avg. Coding Score <i class="bi bi-question-circle-fill text-secondary fs-6" data-bs-toggle="tooltip" data-bs-original-title="The average coding score reflects the quality and efficiency of the code written by team members."></i></h5>
+                </div>
             </div>
             <div class="metric-value" id="teamAvgCodingScore">Loading...</div>
             <div class="metric-description">Average coding score of team members.</div>
         </div>
         <div class="metric-card animate__animated animate__fadeIn">
             <div class="metric-header">
-                <i class="bi bi-arrow-repeat icon-secondary"></i>
-                <h5>Avg. Refactor Rate</h5>
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width: 36px;height: 34px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-arrow-repeat text-white fs-5"></i>
+                    </div>
+                    <h5 class="ms-3 mb-0 text-muted">Avg. Refactor Rate <i class="bi bi-question-circle-fill text-secondary fs-6" data-bs-toggle="tooltip" data-bs-original-title="This shows how often the team refactors their code to improve its quality."></i></h5>
+                </div>
             </div>
             <div class="metric-value" id="teamAvgRefactorRate">Loading...</div>
             <div class="metric-description">Average refactor rate of team members.</div>
         </div>
         <div class="metric-card animate__animated animate__fadeIn">
             <div class="metric-header">
-                <i class="bi bi-pencil-square icon-warning"></i>
-                <h5>Avg. Commit Efficiency</h5>
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width: 36px;height: 34px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-pencil-square text-white fs-5"></i>
+                    </div>
+                    <h5 class="ms-3 mb-0 text-muted">Avg. Commit Efficiency <i class="bi bi-question-circle-fill text-secondary fs-6" data-bs-toggle="tooltip" data-bs-original-title="This metric shows how efficiently the team is committing their code changes."></i></h5>
+                </div>
             </div>
             <div class="metric-value" id="teamAvgCommitEfficiency">Loading...</div>
             <div class="metric-description">Average commit efficiency of team members.</div>

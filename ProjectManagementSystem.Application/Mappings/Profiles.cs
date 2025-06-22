@@ -22,7 +22,8 @@ namespace ProjectManagementSystem.Application.Mappings
             CreateMap<Domain.Entities.Team, TeamDto>().ReverseMap();
             CreateMap<Domain.Entities.Project, ProjectDto>().ReverseMap();
             CreateMap<Domain.Entities.Sprint, SprintDto>().ReverseMap();
-            CreateMap<Domain.Entities.Task, TaskDto>().ReverseMap();
+            CreateMap<Domain.Entities.Task, TaskDto>().ReverseMap()
+                .ForMember(dest => dest.AppUser, opt => opt.MapFrom(src => src.AppUser));
             CreateMap<Domain.Entities.Documentation, DocumentationDto>().ReverseMap();
             CreateMap<Domain.Entities.AppInfo, AppGitCredentialDto>()
                 .ForMember(dest => dest.PatToken, opt => opt.MapFrom(src => src.GitHubPatToken))

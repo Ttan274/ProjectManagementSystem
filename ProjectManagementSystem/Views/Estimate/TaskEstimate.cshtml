@@ -3,87 +3,93 @@
 @using ProjectManagementSystem.Domain.Entities
 @inject UserManager<AppUser> userManager;
 @model TaskEstimateInfoDto
+
 @Html.Hidden("ProjectId", Model.ProjectId)
-<link href="~/css/taskestimate.css" rel="stylesheet" asp-append-version="true"/>
+<link href="~/css/taskestimate.css" rel="stylesheet" asp-append-version="true" />
+
 @{
     Layout = "_MainLayout";
     var user = await userManager.GetUserAsync(User);
 }
-    <div class="container">
-        <!-- Header Section -->
-        <div class="estimate-detail-header">
-            <div>
-                <h1>User Authentication Module</h1>
-                <div class="estimate-meta">
-                    <span class="estimate-meta-item">
-                        <i class="fas fa-tag"></i> @Model.SprintName
-                    </span>
-                    <span class="estimate-meta-item">
-                        <i class="fas fa-clock"></i> @Model.CreatedDate
-                    </span>
-                </div>
-            </div>
-        </div>
 
-        <!-- Main Content -->
-        <div class="estimate-content">
-            <!-- Task List -->
-            <div class="task-list-container">
-                <div class="task-list">
-                    @if (Model.Task != null && Model.Task.Any())
-                    {
-                        foreach (var task in Model.Task)
-                        {
-                            <div class="task-item" data-task-id="@task.Id">
-                                <div class="task-title">@task.TaskName</div>
-                                <div class="task-meta">
-                                    <span>Status: @task.State</span>
-                                    @* <span class="task-estimate">@task.EffortScore points</span> *@
-                                </div>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <div class="no-tasks">
-                            <p>No tasks found.</p>
-                        </div>
-                    }
+<div class="container">
+    <!-- Header Section -->
+    <div class="estimate-detail-header">
+        <div>
+            <div class="d-flex align-items-center mb-3">
+                <div style="width: 40px;height: 40px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+                    <i class="bi bi-hourglass-split text-white fs-5"></i>
                 </div>
+                <h4 class="ms-3 mb-0">Task Estimation Session</h4>
             </div>
-            <!-- Task Detail View -->
-            <div class="task-detail-container" id="TaskDetail">
+            <div class="estimate-meta">
+                <span class="estimate-meta-item">
+                    <i class="fas fa-tag"></i> Sprint: @Model.SprintName
+                </span>
+                <span class="estimate-meta-item">
+                    <i class="fas fa-clock"></i> Created: @Model.CreatedDate
+                </span>
             </div>
         </div>
     </div>
+
+    <!-- Main Content -->
+    <div class="estimate-content">
+        <!-- Task List -->
+        <div class="task-list-container">
+            <div class="task-list">
+                @if (Model.Task != null && Model.Task.Any())
+                {
+                    foreach (var task in Model.Task)
+                    {
+                        <div class="task-item" data-task-id="@task.Id">
+                            <div class="task-title">@task.TaskName</div>
+                            <div class="task-meta">
+                                <span>Status: @task.State</span>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="no-tasks">
+                        <p>No tasks available for estimation.</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Task Detail View -->
+        <div class="task-detail-container" id="TaskDetail"></div>
+    </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
 <script>
     let currentTaskId = null;
     const estimateId = "@Model.EstimateId";
 
     const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/estimateHub")
-            .build();
+        .withUrl("/estimateHub")
+        .build();
 
-        connection.start().then(() => {
-            connection.invoke("JoinEstimateGroup", estimateId);
-            console.log("SignalR connected and joined group:", estimateId);
-        }).catch(err => console.error(err.toString()));
+    connection.start().then(() => {
+        connection.invoke("JoinEstimateGroup", estimateId);
+        console.log("SignalR connected and joined group:", estimateId);
+    }).catch(err => console.error(err.toString()));
 
     document.addEventListener('DOMContentLoaded', function () {
         let selectedCard = null;
-        var votes = []; // { taskId: [ {user,value} ] }
+        var votes = [];
 
         const taskItems = document.querySelectorAll('.task-item');
         const taskDetailContainer = document.querySelector('.task-detail-container');
 
-        // Handle task selection
         taskItems.forEach(item => {
             item.addEventListener('click', function () {
                 taskItems.forEach(i => i.classList.remove('active'));
 
                 this.classList.add('active');
-
                 const taskId = this.getAttribute('data-task-id');
 
                 connection.invoke("NotifyTaskUpdated", estimateId, taskId)
@@ -95,41 +101,38 @@
             updateTaskDetail(taskId);
         });
 
-        // Load task detail partial view
         function updateTaskDetail(taskId) {
-        currentTaskId = taskId;
+            currentTaskId = taskId;
 
-        // Seçili active class'ını güncelle
-        taskItems.forEach(i => i.classList.remove('active'));
-        const selectedTaskItem = Array.from(taskItems).find(i => i.getAttribute('data-task-id') === taskId);
-        if (selectedTaskItem) {
-            selectedTaskItem.classList.add('active');
-        }
-
-        $.ajax({
-            url: '@Url.Action("TaskDetail", "Estimate")',
-            method: 'GET',
-            data: { taskId: taskId, type: "@Model.Type" },
-            success: function (response) {
-                $('#TaskDetail').html(response);
-                initEstimation(taskId, []);
-                taskDetailContainer.classList.add('active');
-            },
-            error: function () {
-                $.notify("Error loading form!", "error");
+            taskItems.forEach(i => i.classList.remove('active'));
+            const selectedTaskItem = Array.from(taskItems).find(i => i.getAttribute('data-task-id') === taskId);
+            if (selectedTaskItem) {
+                selectedTaskItem.classList.add('active');
             }
-        });
+
+            $.ajax({
+                url: '@Url.Action("TaskDetail", "Estimate")',
+                method: 'GET',
+                data: { taskId: taskId, type: "@Model.Type" },
+                success: function (response) {
+                    $('#TaskDetail').html(response);
+                    initEstimation(taskId, []);
+                    taskDetailContainer.classList.add('active');
+                },
+                error: function () {
+                    $.notify("Failed to load task details.", "error");
+                }
+            });
         }
 
         connection.on("NotifySuccess", function () {
-            toastr.success("Task Successfully Estimated");
+            toastr.success("Task estimation submitted successfully.");
         });
 
         connection.on("NotifyError", function () {
-            toastr.error("Task Estimate Failed");
+            toastr.error("Task estimation failed to submit.");
         });
 
-        // Estimation setup
         function initEstimation(taskId, votes) {
             const estimationCards = document.querySelectorAll('.estimation-card');
             let selectedCard = null;
@@ -152,15 +155,12 @@
 
                 const voteValue = selectedCard.getAttribute('data-value');
                 const userName = "@user!.UserName";
-                // votes.push({ user: "You", value: voteValue });
 
                 connection.invoke("SendVote", estimateId, taskId, userName, voteValue)
-                .catch(err => console.error(err.toString()));
-
-                // voteList[taskId].push({ user: userName, value: voteValue });
+                    .catch(err => console.error(err.toString()));
             });
 
-             connection.on("ReceiveVote", function (vote) {
+            connection.on("ReceiveVote", function (vote) {
                 const existingVoteIndex = votes.findIndex(v => v.user === vote.user);
                 if (existingVoteIndex >= 0) {
                     votes[existingVoteIndex].value = vote.value;
@@ -171,21 +171,18 @@
 
             document.getElementById('reveal-votes').addEventListener('click', function () {
                 connection.invoke("RevealVotes", estimateId, currentTaskId)
-                .catch(err => console.error(err.toString()));
+                    .catch(err => console.error(err.toString()));
             });
 
             connection.on("VotesRevealed", function (data) {
                 revealFn();
             });
 
-            function revealFn()
-            {
+            function revealFn() {
                 const average = calculateAverage(votes);
-
                 $("#final-estimate-value").val(average);
 
                 const resultsList = document.getElementById('results-list');
-
                 resultsList.innerHTML = votes.map(vote => `
                     <div class="result-item">
                         <span class="result-user">${vote.user}</span>
@@ -201,29 +198,11 @@
                 document.getElementById('reveal-votes').classList.add('btn-disabled');
             }
 
-            // document.getElementById('submit-final-estimate').addEventListener('click', function () {
-            //     const finalEstimate = document.getElementById('final-estimate-value').value;
-            //     if (!finalEstimate) {
-            //         alert('Please enter a final estimate value');
-            //         return;
-            //     }
-
-            //     alert(`Final estimate of ${finalEstimate} points has been saved!`);
-
-            //     const activeTaskItem = document.querySelector(`.task-item[data-task-id="${taskId}"]`);
-            //     const estimateBadge = activeTaskItem.querySelector('.task-estimate');
-            //     if (estimateBadge) estimateBadge.textContent = `${finalEstimate} points`;
-
-            //     const taskDetailEstimate = document.querySelector('.task-detail-header .task-estimate');
-            //     if (taskDetailEstimate) taskDetailEstimate.textContent = `${finalEstimate} points`;
-            // });
-
             if (votes.length > 0) {
                 document.getElementById('reveal-votes').click();
             }
         }
 
-        // Calculate vote average
         function calculateAverage(votes) {
             const numericalVotes = votes
                 .filter(v => v.value !== '?')
@@ -234,27 +213,23 @@
         }
     });
 
-    function estimateTask()
-    {
-            let effort = $("#final-estimate-value").val();
+    function estimateTask() {
+        let effort = $("#final-estimate-value").val();
 
-            $.ajax({
-                url: '@Url.Action("UpdateEffort", "Estimate")',
-                type: 'POST',
-                data: { taskId: currentTaskId, effort : effort },
-                success: function (response) {
-
-                    if (response.status) {
-                        connection.invoke("NotifySuccessEstimate", estimateId)
-                    }
-                    else {
-                        connection.invoke("NotifyFailEstimate", estimateId)
-                    }
-
-                },
-                error: function () {
-                  toastr.error("Error")
+        $.ajax({
+            url: '@Url.Action("UpdateEffort", "Estimate")',
+            type: 'POST',
+            data: { taskId: currentTaskId, effort: effort },
+            success: function (response) {
+                if (response.status) {
+                    connection.invoke("NotifySuccessEstimate", estimateId)
+                } else {
+                    connection.invoke("NotifyFailEstimate", estimateId)
                 }
-            });
-        }
+            },
+            error: function () {
+                toastr.error("An error occurred while submitting the estimate.");
+            }
+        });
+    }
 </script>

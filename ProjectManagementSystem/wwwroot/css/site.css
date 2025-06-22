@@ -1,5 +1,5 @@
 :root {
-    --primary-color: #4361ee;
+    --primary-color: #4a6fa5 !important;
     --secondary-color: #3f37c9;
     --accent-color: #4895ef;
     --dark-color: #1b263b;
@@ -8,7 +8,7 @@
     --danger-color: #f72585;
     --warning-color: #f8961e;
     --info-color: #43aa8b;
-    --sidebar-width: 280px;
+    --sidebar-width: 260px;
     --sidebar-collapsed-width: 80px;
     --header-height: 70px;
     --card-bg: #ffffff;
@@ -218,7 +218,7 @@
     right: 0;
     padding: 15px;
     border-top: 1px solid rgba(0, 0, 0, 0.05);
-    width:100%;
+    width: 100%;
 }
 
 .user-profile {
@@ -478,8 +478,6 @@
 }
 
 .project-board {
-    padding: 20px;
-    /*background-color: #f5f7fb;*/
     min-height: calc(100vh - var(--header-height));
 }
 
@@ -533,11 +531,11 @@
     align-items: center;
 }
 
-.column-header h5 {
-    font-weight: 500;
-    margin: 0;
-    font-size: 0.95rem;
-}
+    .column-header h5 {
+        font-weight: 500;
+        margin: 0;
+        font-size: 0.95rem;
+    }
 
 .column-body {
     padding: 10px;
@@ -554,14 +552,14 @@
     transition: all 0.2s;
 }
 
-.task-card:hover {
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-}
+    .task-card:hover {
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
 
-.task-card.urgent {
-    border-left: 3px solid var(--danger-color);
-}
+    .task-card.urgent {
+        border-left: 3px solid var(--primary-color);
+    }
 
 .task-header {
     display: flex;
@@ -631,9 +629,9 @@
     margin-left: -8px;
 }
 
-.avatar:first-child {
-    margin-left: 0;
-}
+    .avatar:first-child {
+        margin-left: 0;
+    }
 
 .avatar-more {
     width: 24px;
@@ -653,19 +651,19 @@
     gap: 5px;
 }
 
-.task-meta .badge {
-    font-weight: 400;
-    padding: 3px 6px;
-}
+    .task-meta .badge {
+        font-weight: 400;
+        padding: 3px 6px;
+    }
 
 .add-task {
     text-align: center;
     padding: 5px 0;
 }
 
-.add-task .btn {
-    font-size: 0.8rem;
-}
+    .add-task .btn {
+        font-size: 0.8rem;
+    }
 
 .task-card[draggable="true"] {
     cursor: grab;
@@ -682,10 +680,10 @@
     margin: 8px 0;
 }
 
-.subtask-progress .progress {
-    height: 6px;
-    margin-bottom: 3px;
-}
+    .subtask-progress .progress {
+        height: 6px;
+        margin-bottom: 3px;
+    }
 
 .task-actions {
     display: flex;
@@ -718,13 +716,14 @@ select option {
 }
 
 .max-100 {
-   max-width: 100% !important;
-   max-height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
 }
 
 .hidden {
     display: none;
 }
+
 #globalLoader {
     display: none;
     position: fixed;
@@ -736,12 +735,12 @@ select option {
     z-index: 9999;
 }
 
-#globalLoader .loader-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
+    #globalLoader .loader-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
 
 .loader-ring {
     width: 100px;
@@ -761,6 +760,7 @@ select option {
         transform: rotate(360deg);
     }
 }
+
 .member-avatar-circle {
     width: 3em;
     height: 3em;
@@ -769,6 +769,6 @@ select option {
     object-fit: cover;
 }
 
-.btn-primary{
+.btn-primary {
     background-color: var(--primary-color) !important;
 }

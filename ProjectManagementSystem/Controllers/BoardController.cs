@@ -149,7 +149,7 @@ namespace ProjectManagementSystem.Controllers
                 model.Columns = CreateBoardColumns(tasks);
 
                 var currentSprint = sprints.FirstOrDefault(x => x.Id == selectedSprintId.Value);
-                model.SprintInterval = $"{currentSprint?.StartDate} - {currentSprint?.FinishDate}";
+                model.SprintInterval = $"{currentSprint?.StartDate?.ToString("yyyy-MM-dd")} - {currentSprint?.FinishDate?.ToString("yyyy-MM-dd")}";
 
                 var users = await _userService.GetAllUsersByTeamId(project.TeamId);
                 model.UserList.Add(new SelectListItem { Text = "Lütfen Seçiniz", Value = string.Empty });

@@ -11,5 +11,17 @@ namespace ProjectManagementSystem.Application.Abstractions.Team.Dto
         public ICollection<ProjectDto>? Projects { get; set; }
         public ICollection<UserDto>? Users { get; set; }
         public ProjectDto? ProjectDto { get; set; }
+
+        public string GetTeamName()
+        {
+            if (!string.IsNullOrWhiteSpace(TeamName))
+            {
+                return TeamName + " Team";
+            }
+            else
+            {
+                return "Team is not found";
+            }
+        }
     }
 }

@@ -5,213 +5,379 @@
 }
 
 <style>
-
     .chat-container {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh; /* Full height to center vertically */
+        height: 100vh;
         width: 100%;
     }
 
     .chat-wrapper {
         display: flex;
-        width: 900px;
+        width: 90%;
         max-width: 100%;
-        height: 600px;
+        height: 90%;
         background-color: white;
-        border-radius: 10px;
+        border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
 
-
         .chat-wrapper .chat-sidebar {
-            width: 250px;
+            width: 25%;
             background: #fff;
             border-right: 1px solid #ddd;
             padding: 20px;
             overflow-y: auto;
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
         }
 
     .chat-sidebar h2 {
-        font-size: 18px;
+        font-size: 20px;
         margin-bottom: 20px;
+        font-weight: 600;
+        color: #333;
     }
 
     .chat-sidebar .user {
-        padding: 10px;
-        border-radius: 6px;
-        margin-bottom: 10px;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 15px;
         cursor: pointer;
-        transition: 0.2s;
+        transition: 0.3s ease-in-out;
+        font-size: 1.15em;
     }
 
         .chat-sidebar .user:hover {
-            background: #f2f2f2;
+            background: #f7f7f7;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
     .chat-area {
         flex: 1;
         display: flex;
         flex-direction: column;
-        background-color: #e5ddd5;
+        background-color: #f4f4f4;
     }
 
     .chat-header {
-        padding: 15px 20px;
+        padding: 20px;
         background: #fff;
         border-bottom: 1px solid #ddd;
+        font-size: 18px;
         font-weight: bold;
+        color: #333;
     }
 
     .chat-messages {
         flex: 1;
-        padding: 20px;
+        padding: 1.5rem;
         overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
     }
 
     .message {
-        padding: 10px;
-        margin: 5px;
-        border-radius: 8px;
+        padding: 12px 18px;
+        margin: 6px;
+        border-radius: 10px;
         max-width: 60%;
+        word-wrap: break-word;
+        transition: 0.3s ease;
     }
 
     .mine {
-        background-color: #d1e7dd;
-        align-self: flex-start;
-        text-align: left;
-        margin-right: auto;
+        align-self: flex-end;
+        background-color: #DCF8C6;
+        margin-left: auto;
+        border-bottom-right-radius: 0;
     }
 
     .theirs {
-        background-color: #f8d7da;
-        align-self: flex-end;
-        text-align: right;
-        margin-left: auto;
+        align-self: flex-start;
+        background-color: white;
+        margin-right: auto;
+        border-bottom-left-radius: 0;
     }
 
-    #chatMessages {
+    .message-time {
+        font-size: 0.75rem;
+        color: #999;
+        margin-top: 3px;
+    }
+
+    .date-header {
+        text-align: center;
+        margin: 20px 0;
+        color: #888;
+        font-size: 0.9rem;
+        position: relative;
+    }
+
+        .date-header:before,
+        .date-header:after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+            margin: auto;
+        }
+
+        .date-header span {
+            padding: 0 12px;
+            position: relative;
+            background-color: #f4f4f4;
+        }
+
+    .message-container {
         display: flex;
         flex-direction: column;
+        margin-bottom: 10px;
+    }
+
+    .mine-container {
+        align-items: flex-end;
+    }
+
+    .theirs-container {
+        align-items: flex-start;
     }
 
     .chat-input {
-        padding: 15px 20px;
+        padding: 20px;
         background: #fff;
         border-top: 1px solid #ddd;
         display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
     #messageInput {
         flex: 1;
-        padding: 10px 15px;
+        padding: 12px 18px;
         border: 1px solid #ccc;
-        border-radius: 20px;
+        border-radius: 25px;
         outline: none;
+        font-size: 14px;
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
     }
 
     #sendButton {
-        margin-left: 10px;
-        padding: 10px 20px;
+        margin-left: 15px;
+        padding: 12px 20px;
         border: none;
         background: #007bff;
         color: white;
-        border-radius: 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background 0.3s ease;
     }
+
+        #sendButton:hover {
+            background: #0056b3;
+        }
 </style>
 
-<div class="chat-container">
-    <div class="chat-wrapper">
-        <!-- Renamed from aside to div to avoid layout conflict -->
-        <div class="chat-sidebar">
-            <h2>Chats</h2>
-            <ul id="userList">
-                @foreach (var user in Model)
-                {
-                    <li class="user" data-userid="@user.Id">@user.UserName</li>
-                }
-            </ul>
+<main class="container-fluid bg-light min-vh-100 px-5">
+    <header class="d-flex justify-content-between align-items-center pt-4">
+        <h1 class="h4 fw-semibold text-dark mb-0">Chats</h1>
+        <div class="d-flex align-items-center gap-3">
+            <img src="/images/default_avatar.jpg" alt="User" class="rounded-circle border border-2 border-dark" width="42" height="42">
         </div>
+    </header>
 
-        <main class="chat-area">
-            <div class="chat-header" id="chatHeader">Select a user</div>
-
-            <div class="chat-messages" id="chatMessages">
-                <!-- Messages will appear here -->
+    <div class="chat-container">
+        <div class="chat-wrapper">
+            <div class="chat-sidebar">
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width: 35px;height: 35px;" class="btn-primary rounded-2 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-chat-fill text-white fs-5"></i>
+                    </div>
+                    <h5 class="ms-3 mb-0">Chat</h5>
+                </div>
+                <ul id="userList" class="px-0">
+                    @foreach (var user in Model)
+                    {
+                        <li class="user d-flex align-items-center gap-2" data-userid="@user.Id">
+                            <i class="bi bi-person-fill"></i>
+                            <span>@user.UserName</span>
+                        </li>
+                    }
+                </ul>
             </div>
 
-            <div class="chat-input">
-                <input type="text" id="messageInput" placeholder="Type your message..." />
-                <button id="sendButton">Send</button>
-            </div>
-        </main>
+            <main class="chat-area">
+                <div class="chat-header" id="chatHeader">Select a user</div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages will appear here -->
+                </div>
+
+                <div class="chat-input">
+                    <input type="text" id="messageInput" placeholder="Type your message..." class="form-control me-2" />
+                    <button id="sendButton" class="btn btn-primary">Send</button>
+                </div>
+            </main>
+        </div>
     </div>
-</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js" ></script>
-<script>
-    const currentUserId = "@cUserID";
-    let selectedUserId = null;
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <script>
+        const currentUserId = "@cUserID";
+        let selectedUserId = null;
+        let lastMessageDate = null;
+        let lastMessageTime = null;
+        let lastMessageSender = null;
+        let lastMessage = null;
 
-    const connection = new signalR.HubConnectionBuilder().withUrl("/ChatHub").build();
+        const connection = new signalR.HubConnectionBuilder().withUrl("/ChatHub").build();
 
-    connection.on("MessageReceived", function (message) {
-        const isMine = message.senderId === currentUserId;
-        appendMessage(message, isMine);
-    });
-
-    connection.on("MessageSent", function (message) {
-        appendMessage(message, true);
-    });
-
-    connection.on("ChatHistoryReceived", function (messages) {
-
-        const chatBox = document.getElementById("chatMessages");
-        chatBox.innerHTML = "";
-        messages.forEach(msg => {
-            const isMine = msg.senderId === currentUserId;
-            appendMessage(msg, isMine);
+        connection.on("MessageReceived", function (message) {
+            const isMine = message.senderId === currentUserId;
+            appendMessage(message, isMine);
         });
-    });
 
-    function appendMessage(msg, isMine) {
-        const msgDiv = document.createElement("div");
-        msgDiv.className = isMine ? "message mine" : "message theirs";
-        msgDiv.innerText = msg.message;
-        document.getElementById("chatMessages").appendChild(msgDiv);
-    }
-
-    document.getElementById("sendButton").addEventListener("click", async () => {
-        const input = document.getElementById("messageInput");
-        const text = input.value.trim();
-        if (!text || selectedUserId === null) return;
-        
-        const messageDto = {
-            senderId: currentUserId,
-            receiverId: selectedUserId,
-            message: text
-        };
-
-        await connection.invoke("SendMessageAsync", messageDto);
-        input.value = "";
-    });
-
-    document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("userList").addEventListener("click", function (e) {
-            const li = e.target.closest(".user");
-            if (!li) return;
-
-            selectedUserId = li.dataset.userid;
-            loadChatWith(selectedUserId);
-            document.getElementById("chatHeader").innerText = "Chat with " + li.innerText;
+        connection.on("MessageSent", function (message) {
+            appendMessage(message, true);
         });
-    });
 
-    async function loadChatWith(userId) {
-        await connection.invoke("LoadChatHistory", currentUserId, userId);
-    }
+        connection.on("ChatHistoryReceived", function (messages) {
+            const chatBox = document.getElementById("chatMessages");
+            chatBox.innerHTML = "";
 
-    connection.start().then(() => console.log("Connected")).catch(err => console.error(err));
-</script>
+            let lastMessage = null;
+            messages.forEach(msg => {
+                const isMine = msg.senderId === currentUserId;
+                appendMessage(msg, isMine, lastMessage);
+                lastMessage = msg;
+            });
+            scrollToBottom();
+        });
+
+        function formatDateHeader(date) {
+            const options = { weekday: "long", day: "numeric", month: "long" };
+            return date.toLocaleDateString("en-GB", options);
+        }
+
+        function formatTime(date) {
+            return date.toLocaleTimeString("en-GB", {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+        }
+
+        function shouldShowDateHeader(currentMessage) {
+            const currentDate = new Date(currentMessage.createdDate);
+            if (lastMessageDate !== currentDate.toDateString()) {
+                return true;
+            }
+            return false;
+        }
+
+        function shouldShowTime(currentMessage) {
+            if (!lastMessage) return true;
+            if (currentMessage.senderId !== lastMessage.senderId) return true;
+
+            const currentTime = new Date(currentMessage.createdDate);
+            const previousTime = new Date(lastMessage.createdDate);
+            const timeDiff = (currentTime - previousTime) / (1000 * 60);
+
+            return timeDiff > 5;
+        }
+
+        function appendMessage(msg, isMine) {
+            const currentTime = new Date(msg.createdDate || Date.now());
+            const chatMessages = document.getElementById("chatMessages");
+
+            if (shouldShowDateHeader(msg)) {
+                const dateHeader = document.createElement("div");
+                dateHeader.className = "date-header";
+                dateHeader.innerHTML = `<span>${formatDateHeader(currentTime)}</span>`;
+                chatMessages.appendChild(dateHeader);
+            }
+
+            const msgContainer = document.createElement("div");
+            msgContainer.className = `message-container ${isMine ? "mine-container" : "theirs-container"}`;
+
+            if (shouldShowTime(msg)) {
+                const timeDiv = document.createElement("div");
+                timeDiv.className = "message-time";
+                timeDiv.textContent = formatTime(currentTime);
+                msgContainer.appendChild(timeDiv);
+            }
+
+            const msgDiv = document.createElement("div");
+            msgDiv.className = `message ${isMine ? "mine" : "theirs"}`;
+            msgDiv.textContent = msg.message;
+            msgContainer.appendChild(msgDiv);
+
+            chatMessages.appendChild(msgContainer);
+
+            lastMessageDate = currentTime.toDateString();
+            lastMessageTime = currentTime;
+            lastMessageSender = msg.senderId;
+            lastMessage = msg;
+        }
+
+        function scrollToBottom() {
+            const chatMessages = document.getElementById("chatMessages");
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        document.getElementById("sendButton").addEventListener("click", async () => {
+            const input = document.getElementById("messageInput");
+            const text = input.value.trim();
+            if (!text || selectedUserId === null) return;
+
+            const messageDto = {
+                senderId: currentUserId,
+                receiverId: selectedUserId,
+                message: text
+            };
+
+            await connection.invoke("SendMessageAsync", messageDto);
+            input.value = "";
+            input.focus();
+        });
+
+        document.getElementById("messageInput").addEventListener("keypress", async (e) => {
+            if (e.key === "Enter") {
+                const input = document.getElementById("messageInput");
+                const text = input.value.trim();
+                if (!text || selectedUserId === null) return;
+
+                const messageDto = {
+                    senderId: currentUserId,
+                    receiverId: selectedUserId,
+                    message: text
+                };
+
+                await connection.invoke("SendMessageAsync", messageDto);
+                input.value = "";
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("userList").addEventListener("click", function (e) {
+                const li = e.target.closest(".user");
+                if (!li) return;
+
+                selectedUserId = li.dataset.userid;
+                loadChatWith(selectedUserId);
+                document.getElementById("chatHeader").textContent = "Chat with " + li.querySelector("span").textContent;
+            });
+        });
+
+        async function loadChatWith(userId) {
+            await connection.invoke("LoadChatHistory", currentUserId, userId);
+        }
+
+        connection.start()
+            .then(() => console.log("Connected to chat hub"))
+            .catch(err => console.error("Connection failed: ", err));
+    </script>
+</main>

@@ -1,15 +1,14 @@
 ﻿@model Navbar
 
 <button id="sidebarToggle"
-        class="btn btn-primary-outline text-white position-fixed top-0 start-0 m-3"
+        class="btn btn-primary-outline text-white position-fixed top-0 start-0 my-3"
         style="z-index:1100;">
     <i id="toggleIcon" class="fas fa-bars"></i>
 </button>
 
 <aside id="sidebar" class="sidebar bg-light border-end vh-100 position-fixed start-0 top-0 closed">
-    <div class="sidebar-content p-2">
-        <h2 class="text-center sidebar-title">@Model.MainTitle</h2>
-        <hr class="my-2 sidebar-divider" />
+    <div class="sidebar-content p-0">
+        <h2 class="text-center sidebar-title w-100">@Model.MainTitle</h2>
         <ul class="custom-menu-elements">
             @foreach (var item in Model.NavbarItems)
             {
@@ -37,6 +36,10 @@
 </aside>
 
 <style>
+    #sidebarToggle{
+        font-size: 1.5rem;
+    }
+
     .sidebar {
         width: 250px;
         transition: width 0.3s ease-in-out;
@@ -44,16 +47,16 @@
     }
 
     .sidebar-content {
-        width: 250px;
+        width: 100%;
         transition: all 0.3s ease-in-out;
     }
 
     .sidebar.closed {
-        width: 4% !important;
+        width: 8vh !important;
     }
 
         .sidebar.closed .sidebar-content {
-            transform: translateX(-10px);
+            width: 100% !important;
         }
 
         .sidebar.closed .sidebar-title,
@@ -65,13 +68,15 @@
         }
 
         .sidebar.closed .custom-menu-elements li a {
-            padding: 10px 5px;
             text-align: center;
+            margin-top: 5px;
+            width: 100% !important;
+            justify-content: center;
         }
 
         .sidebar.closed .custom-menu-elements li .fa-fw {
             margin-right: 0;
-            font-size: 1.2rem;
+            font-size: 1.15rem;
         }
 
     .main-content {
@@ -101,7 +106,7 @@
                 font-weight: 500;
                 display: flex;
                 align-items: center;
-                padding: 8px 15px;
+                padding: 15px 15px;
                 border-radius: 4px;
                 transition: all 0.2s;
             }

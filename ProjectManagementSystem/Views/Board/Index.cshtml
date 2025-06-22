@@ -5,7 +5,13 @@
 }
 <script src="~/js/subTasks.js" asp-append-version="true"></script>
 
-<main class="content">
+<main class="container-fluid min-vh-100 px-4">
+    <header class="d-flex justify-content-between align-items-center py-4">
+        <h1 class="h4 fw-semibold text-dark mb-0">Project Board</h1>
+        <div class="d-flex align-items-center gap-3">
+            <img src="/images/default_avatar.jpg" alt="User" class="rounded-circle border border-2 border-dark" width="42" height="42">
+        </div>
+    </header>
     <div class="projects-section">
         <div id="board-content">
             <partial name="Board" model="Model"/>
@@ -127,11 +133,11 @@
 <div class="modal fade" id="taskModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content border-0">
-            <div class="modal-header bg-sidebar text-white px-4 py-3">
-                <h5 class="modal-title fs-5 fw-semibold">
-                    <i class="bi bi-plus-circle me-2"></i>Yeni Görev Ekle
+            <div class="modal-header px-4 py-3">
+                <h5 class="modal-title fs-5 fw-semibold" id="taskModalLabel">
+                    Create Task
                 </h5>
-                <button type="button" class="btn-close bg-info text-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body p-0" id="taskActionContent">

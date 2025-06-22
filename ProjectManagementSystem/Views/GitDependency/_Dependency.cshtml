@@ -1,13 +1,19 @@
-﻿@model List<ProjectManagementSystem.Application.Abstractions.GithubDependency.Dto.DependencyInfoDto>
+﻿@using ProjectManagementSystem.Application.Abstractions.GithubDependency.Dto
+@model List<ProjectManagementSystem.Application.Abstractions.GithubDependency.Dto.DependencyInfoDto>
 
 <div class="dependency-view">
     <div class="dependency-header">
-        <h5><i class="fas fa-project-diagram"></i> Proje Bağımlılıkları</h5>
+        @{
+            var licenses = new[] { "MIT", "Apache-2.0", "GPL", "PostgreSQL", "BSD", "ISC", "LGPL", "Commercial" };
+        }
+
         <div class="license-legend">
-            <span class="badge mit-badge" data-bs-toggle="tooltip" title="Serbest kullanım, değiştirme ve dağıtım">MIT</span>
-            <span class="badge apache-badge" data-bs-toggle="tooltip" title="Patent korumalı açık kaynak">Apache</span>
-            <span class="badge gpl-badge" data-bs-toggle="tooltip" title="Türev çalışmalar açık kaynak olmalı">GPL</span>
-            <span class="badge postgresql-badge" data-bs-toggle="tooltip" title="MIT benzeri, ticari marka korumalı">PostgreSQL</span>
+            @foreach (var license in licenses)
+            {
+                var badgeClass = DependencyInfoDto.GetLicenseBadgeClass(license);
+                var description = DependencyInfoDto.GetLicenseDescription(license);
+                <span class="badge @badgeClass" data-bs-toggle="tooltip" title="@description">@license</span>
+            }
         </div>
     </div>
 
@@ -16,10 +22,10 @@
             <thead>
                 <tr>
                     <th class="icon-col"><i class="fas fa-cube"></i></th>
-                    <th>Paket Adı</th>
-                    <th>Versiyon</th>
-                    <th>Lisans</th>
-                    <th>Yönetici</th>
+                    <th>Package Name</th>
+                    <th>Version</th>
+                    <th>License</th>
+                    <th>Manager</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,7 +38,7 @@
                                 <span class="package-name">@dep.Name</span>
                                 @if (!string.IsNullOrEmpty(dep.PackageUrl))
                                 {
-                                    <a href="@dep.GetPackageUrl()" target="_blank" class="package-link" data-bs-toggle="tooltip" title="Paket detayları">
+                                    <a href="@dep.GetPackageUrl()" target="_blank" class="package-link" data-bs-toggle="tooltip" title="View package details">
                                         <i class="fas fa-external-link-alt"></i>
                                     </a>
                                 }
@@ -59,7 +65,7 @@
 
     <div class="dependency-footer">
         <small class="text-muted">
-            <i class="fas fa-info-circle"></i> Toplam @Model.Count bağımlılık listeleniyor
+            <i class="fas fa-info-circle"></i> Total of @Model.Count dependencies listed
         </small>
     </div>
 </div>

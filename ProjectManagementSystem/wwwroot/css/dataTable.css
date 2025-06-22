@@ -1,54 +1,105 @@
-﻿
+﻿:root {
+    --datatable-blue: #4a90e2;
+    --datatable-blue-light: #e8f2fc;
+    --datatable-blue-lighter: #f0f7ff;
+    --datatable-blue-verylight: #f8fbff;
+    --datatable-text-dark: #000000;
+    --datatable-text-medium: #333333;
+    --datatable-border: #e0e0e0;
+}
+
 .datatable-header {
-    background-color: #f1f9ff; /* Arka plan rengi */
-    border-radius: 6px;
+    background-color: var(--datatable-blue-lighter) !important;
     margin-bottom: 10px;
+    padding: 12px 15px !important;
 }
 
-.dataTables_filter {
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
+.dataTables_filter input {
+    background-color: white !important;
+    border: 1px solid var(--datatable-border) !important;
+    border-radius: 4px !important;
+    padding: 8px 12px !important;
+    color: var(--datatable-text-dark) !important;
+    width: 100% !important;
+    max-width: 300px;
+    background-color: var(--datatable-blue-verylight) !important;
+    border-color: var(--datatable-blue) !important;
 }
 
-    .dataTables_filter label {
-        width: 100%;
+    .dataTables_filter input:focus {
+        border-color: var(--datatable-blue) !important;
+        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2) !important;
     }
+
+.datatable-body thead th {
+    background-color: white !important;
+    color: var(--datatable-text-dark) !important;
+    padding: 12px 15px !important;
+    border-bottom: 2px solid var(--datatable-blue) !important;
+    font-weight: 600;
+}
+
+/* Table Rows */
+.datatable-body tr.odd {
+    background-color: var(--datatable-blue-light) !important;
+}
+
+.datatable-body tr.even {
+    background-color: white !important;
+}
+
+.datatable-body tr:hover {
+    background-color: var(--datatable-blue-lighter) !important;
+}
+
+.datatable-body td {
+    padding: 10px 15px !important;
+    border-top: 1px solid var(--datatable-border) !important;
+    color: var(--datatable-text-medium) !important;
+}
 
 .datatable-footer {
     gap: 10px;
+    padding: 12px 15px;
+    margin-top: 10px;
+}
+
+.paginate_button {
+    color: var(--datatable-blue) !important;
+    border: 1px solid var(--datatable-border) !important;
+    padding: 6px 12px !important;
+    margin: 0 3px !important;
+    border-radius: 4px !important;
+}
+
+    .paginate_button.current {
+        background-color: var(--datatable-blue) !important;
+        color: white !important;
+        border-color: var(--datatable-blue) !important;
+    }
+
+    .paginate_button:hover:not(.disabled) {
+        background-color: var(--datatable-blue-light) !important;
+    }
+
+.dataTables_length select {
+    border: 1px solid var(--datatable-border) !important;
+    border-radius: 4px !important;
+    padding: 6px 12px !important;
+    color: var(--datatable-text-dark) !important;
+    background-color: white !important;
 }
 
 .dataTables_info {
-    order: 1;
+    color: var(--datatable-text-medium) !important;
 }
 
-.dataTables_paginate {
-    order: 2;
-    display: flex;
-    justify-content: flex-start;
-}
-
-.dataTables_length {
-    order: 3;
-    display: flex;
-    justify-content: flex-end;
-    flex-grow: 1;
-}
-
-
-.dataTables_wrapper .dataTables_filter {
-    float: left !important;
-    text-align: left !important;
-}
-
-.dataTables_filter label {
-    display: flex;
-    width: 100%;
-}
-
-    .dataTables_filter label::before {
-        content: "";
-        display: none;
+@media (max-width: 768px) {
+    .datatable-header {
+        flex-direction: column;
     }
+
+    .dataTables_filter input {
+        max-width: 100%;
+    }
+}

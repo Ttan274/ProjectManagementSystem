@@ -12,7 +12,12 @@ public class DependencyInfoDto
 
     public string GetLicenseDescription()
     {
-        return License switch
+        return GetLicenseDescription(License);
+    }
+
+    public static string GetLicenseDescription(string license)
+    {
+        return license switch
         {
             "MIT" => "Permissive open-source license: free for personal and commercial use, modification, and distribution. No warranty or liability. No cost.",
             "Apache-2.0" => "Open-source license with patent protection: free for commercial use, modification, and distribution. Requires preservation of license and NOTICE file. No cost.",
@@ -26,7 +31,12 @@ public class DependencyInfoDto
 
     public string GetLicenseBadgeClass()
     {
-        return License switch
+        return GetLicenseBadgeClass(License);
+    }
+
+    public static string GetLicenseBadgeClass(string license)
+    {
+        return license switch
         {
             "MIT" => "mit-badge",
             "Apache-2.0" => "apache-badge",
