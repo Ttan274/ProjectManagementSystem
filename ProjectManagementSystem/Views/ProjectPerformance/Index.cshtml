@@ -27,6 +27,7 @@
 @section Scripts {
     <script>
         const projectId = "@Html.Raw(ViewBag.ProjectId)";
+        const hasProjectConfigured = @(hasProjectConfigured ? 1 : 0);
 
         $(document).on("shown.bs.tab", 'button[data-bs-toggle="tab"]', function (e) {
             const selectedTabId = $(e.target).attr("id");

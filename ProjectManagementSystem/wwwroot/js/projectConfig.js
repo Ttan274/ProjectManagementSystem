@@ -280,7 +280,7 @@ function createProjectConfig() {
         },
         data: configData,
         success: function (response) {
-            if (response.success) {
+            if (!response.success) {
                 toastr.error(response.errorMessage || "Something went wrong", "Error");
                 return;
             }
@@ -288,12 +288,16 @@ function createProjectConfig() {
             toastr.success("Project configuration created successfully.", "Success");
 
             setTimeout(() => {
-                location.reload();
+                if (hasProjectConfigured === 0 && projectId) {
+                    window.location.href = `/ProjectPerformance/Index?projectId=${projectId}`;
+                } else {
+                    location.reload();
+                }
             }, 1000);
         },
         error: function (xhr) {
             const errorMsg = xhr.responseJSON?.errorMessage || "Failed to create configuration.";
-            toastr.error(errorMsg,"Error");
+            toastr.error(errorMsg, "Error");
         }
     });
 }
