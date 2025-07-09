@@ -9,7 +9,7 @@
 
     <div class="mb-3">
         <label for="Name" class="form-label">Name</label>
-        <input type="text" class="form-control" id="Name" name="Name" value="@Model.Name" required>
+        <input type="text" class="form-control" id="Name" name="Name" value="@Model.Name" required autocomplete="off">
     </div>
 
     <div class="mb-3">
@@ -19,7 +19,7 @@
 
     <div class="mb-3">
         <label for="AppCode" class="form-label">App Code</label>
-        <input type="number" class="form-control" id="AppCode" name="AppCode" value="@Model.AppCode" required>
+        <input type="number" class="form-control" id="AppCode" name="AppCode" value="@Model.AppCode" required autocomplete="off">
     </div>
 
     <div class="mb-3">
@@ -36,11 +36,11 @@
     <div class="row">
         <div class="col-md-6 mb-3">
             <label for="GitHubOwner" class="form-label">GitHub Owner</label>
-            <input type="text" class="form-control" id="GitHubOwner" name="GitHubOwner" value="@Model.GitHubOwner" required>
+            <input type="text" class="form-control" id="GitHubOwner" name="GitHubOwner" value="@Model.GitHubOwner" required autocomplete="off">
         </div>
         <div class="col-md-6 mb-3">
             <label for="GitHubRepo" class="form-label">GitHub Repo</label>
-            <input type="text" class="form-control" id="GitHubRepo" name="GitHubRepo" value="@Model.GitHubRepo" required>
+            <input type="text" class="form-control" id="GitHubRepo" name="GitHubRepo" value="@Model.GitHubRepo" required autocomplete="off">
         </div>
     </div>
 

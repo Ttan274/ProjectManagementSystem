@@ -54,7 +54,7 @@
                                 {
                                     <span class="badge medium">@item.Priority.ToString()</span>
                                 }
-                                else
+                                else if (@item.Priority.ToString() == "High")
                                 {
                                     <span class="badge high">@item.Priority.ToString()</span>
                                 }
