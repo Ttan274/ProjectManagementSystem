@@ -62,8 +62,6 @@ namespace ProjectManagementSystem.Application.Documentation
             }
         }
 
-
-        //Buradki sıkıntı bütün dökümasyonlar dönüyo sadece aynı departman içindekiler dönmesi lazım
         public async Task<List<DocumentationDto>> GetAllDocumentations()
         {
             try
